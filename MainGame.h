@@ -1,10 +1,13 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 class Image;
 class Timer;
 class TilemapTool;
 class Button;
+
+#include "Character.h"
+
 class MainGame : public GameObject
 {
 private:
@@ -14,12 +17,11 @@ private:
 	//HANDLE hTimer;
 	
 	wchar_t szText[128];
-
 	int FPS;
 	
-	//
 	Button* btn;
 	bool bRenderCollision;
+
 	// 콜리젼매니저 체크용
 	int collCount;
 	int activeCollCount;
@@ -29,6 +31,10 @@ private:
 	void ItemSpawnSimulation();
 
 	void TilemapMenuClicked(WORD id);
+
+	//test
+
+	Character testPlayer;
 
 public:
 	HRESULT Init();	// override (부모클래스와 같은 함수이름, 로직을 다르게 구현하고 싶을 때)
