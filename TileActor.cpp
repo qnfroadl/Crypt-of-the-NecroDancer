@@ -1,10 +1,10 @@
-﻿#include "Character.h"
+﻿#include "TileActor.h"
 
 #include "KeyManager.h"
 #include "CommonFunction.h"
 #include "Camera.h"
 
-void Character::Update()
+void TileActor::Update()
 {
 	if (KeyManager::GetInstance()->IsStayKeyDown('W'))
 	{
@@ -24,7 +24,7 @@ void Character::Update()
 	}
 }
 
-void Character::Render(HDC hdc)
+void TileActor::Render(HDC hdc)
 {
 	float screenX = Camera::GetInstance()->GetPos().x;
 	float screenY = Camera::GetInstance()->GetPos().y;
