@@ -2,7 +2,7 @@
 
 #include "GameActor.h"
 
-class Character : public GameActor
+class TileActor : public GameActor
 {
 	
 private:
