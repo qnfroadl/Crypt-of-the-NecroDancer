@@ -16,6 +16,8 @@
 #include "Camera.h"
 #include "EventManager.h"
 
+#include "SoundManager.h"
+
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
 
@@ -95,6 +97,10 @@ HRESULT MainGame::Init()
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
 
+	// Test. SoundManager
+	SoundManager::GetInstance()->Init();
+	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::LOBBY);
+	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
 
 	FPS = 144;
 
@@ -123,6 +129,9 @@ void MainGame::Release()
 	KeyManager::GetInstance()->Release();
 	ImageManager::GetInstance()->Release();
 	SceneManager::GetInstance()->Release();
+
+	// Test. SoundManager
+	SoundManager::GetInstance()->Release();
 
 	if (btn)
 	{
@@ -155,6 +164,9 @@ void MainGame::Update()
 	//test 
 	testPlayer.Update();
 	EventManager::GetInstance()->Update();
+	
+	// Test. SoundManager
+	SoundManager::GetInstance()->Update();
 }
 
 void MainGame::Render()
