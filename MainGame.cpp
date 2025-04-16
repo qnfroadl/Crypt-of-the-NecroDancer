@@ -14,6 +14,7 @@
 #include "Button.h"
 #include "AstarScene.h"
 #include "Camera.h"
+#include "EventManager.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -89,6 +90,12 @@ HRESULT MainGame::Init()
 	Camera::GetInstance()->SetSize(SIZE{600, 600});
 	Camera::GetInstance()->SetTarget(&testPlayer);
 
+	//Test EventManager
+	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
+	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
+	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
+
+
 	FPS = 144;
 
 	this->hdc = GetDC(g_hWnd);
@@ -147,6 +154,7 @@ void MainGame::Update()
 
 	//test 
 	testPlayer.Update();
+	EventManager::GetInstance()->Update();
 }
 
 void MainGame::Render()
