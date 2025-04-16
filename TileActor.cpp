@@ -31,3 +31,33 @@ void TileActor::Render(HDC hdc)
 
 	RenderRectAtCenter(hdc, GetPos().x - screenX, GetPos().y - screenY, 50,50);
 }
+
+void TileActor::SetHP(float _hp)
+{
+	hp = _hp;
+}
+
+void TileActor::SetMaxHP(float _hp)
+{
+	maxHp = _hp;
+}
+
+float TileActor::GetHP()
+{
+	return hp;
+}
+
+float TileActor::GetMaxHP()
+{
+	return maxHp;
+}
+
+const POINT& TileActor::GetTileIndex()
+{
+	return index;
+}
+
+void TileActor::SetTileIndex(const POINT& _index)
+{
+	index = _index;
+}

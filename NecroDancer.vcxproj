@@ -134,6 +134,7 @@
     <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="TileActor.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Event.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="BattleScene.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="TileActor.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="CommonFunction.h" />
