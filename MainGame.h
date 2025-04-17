@@ -31,7 +31,7 @@ private:
 
 	void TilemapMenuClicked(WORD id);
 
-
+	void InitResource();
 
 	PlayerManager* playerManager;
 

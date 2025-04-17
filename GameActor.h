@@ -3,12 +3,6 @@
 #include "GameObject.h"
 #include "config.h"
 
-
-enum class ActorType
-{
-	NONE, PLAYER, MONSTER, ITEM, TRAP, BLOCK,
-};
-
 class GameActor : public GameObject
 {
 	

@@ -1,14 +1,18 @@
 ﻿#pragma once
 
-#include "TileActor.h"
+#include "TileCharacter.h"
 
 class EventData;
-class Player : public TileActor
+class Player : public TileCharacter
 {
 
 private:
-    int playerIndex;
-    int coin;
+	// Player의 상태   
+    string name;
+    float hp;
+    float maxHP;
+	float attack;
+    
     int diamond;
 
     void OnBeatHit(EventData* data);             // 비트 성공 시
@@ -23,18 +27,25 @@ public:
     void Render(HDC hdc) override;
     void Release() override;
 
+	void SetName(string name) { this->name = name; }
+
     void Attack();                    //  공격
     void UseItem();                   // 아이템 사용
-
-    int GetPlayerIndex();
-    void SetPlayerIndex();
-
-    void AddCoin(int coin);
-    void AddDiamond(int diamon);
-    int GetCoin();
-    int GetDiamond();
 
     void TakeDamage(float damage);
     bool IsDead();
 
+	void SetHP(float hp) { this->hp = hp; }
+	float GetHP() { return this->hp; }
+
+    void SetMaxHP(float maxHP) { this->maxHP = maxHP; }
+	float GetMaxHP() { return this->maxHP; }
+
+	float GetAttack() { return this->attack; }
+	void SetAttack(float attack) { this->attack = attack; }
+
+	void SetDiamond(int diamond) { this->diamond = diamond; }
+    void AddDiamond(int diamond) { this->diamond += diamond; }
+	int GetDiamond() { return this->diamond; }
+	
 };

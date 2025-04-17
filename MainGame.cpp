@@ -72,6 +72,16 @@ void MainGame::TilemapMenuClicked(WORD id)
 	}
 }
 
+void MainGame::InitResource()
+{
+	// 필수적으로 로딩되는 이미지들 초기화 하기.
+
+	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_HEAD, L"Image/Player/cadence_heads.bmp", 96, 48,4, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_BODY, L"Image/Player/cadence_bodys.bmp", 96, 240, 4, 10, true, RGB(255, 0, 255));
+
+
+}
+
 HRESULT MainGame::Init()
 {
 	CollisionManager::GetInstance()->Init();
@@ -89,12 +99,17 @@ HRESULT MainGame::Init()
 
 	//Init Camera
 	Camera::GetInstance()->SetSize(SIZE{600, 600});
-	Camera::GetInstance()->SetTarget(&testPlayer);
 
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
+
+	playerManager = new PlayerManager();
+	playerManager->Init();
+	playerManager->GetPlayer(PlayerIndex::PLAYER1);
+	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
+
 
 
 	FPS = 144;
@@ -149,12 +164,10 @@ void MainGame::Update()
 
 	Camera::GetInstance()->Update();
 
-
 	UpdateCollisionInfo();
 	ItemSpawnSimulation();
 
 	//test 
-	testPlayer.Update();
 	EventManager::GetInstance()->Update();
 }
 
@@ -172,8 +185,6 @@ void MainGame::Render()
 		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
 		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
 	}
-
-	testPlayer.Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);
