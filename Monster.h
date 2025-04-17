@@ -1,8 +1,8 @@
-#pragma once
+Ôªø#pragma once
 #include "TileCharacter.h"
 
 class Player;
-enum class State
+enum class MonsterState
 {
 	IDLE,
 	ACTIVE,
@@ -27,7 +27,7 @@ typedef struct MonsterImageInfo {
 class Monster:public TileCharacter
 {
 private:
-
+	MonsterState state;
 	float light;
 	int beatCount;
 	int moveDelay;
@@ -44,7 +44,7 @@ private:
 		{ MONSTERTYPE::ARMERSKELETON, { "ArmerSkeleton",TEXT("Image/Monster/armoredskeleton_Normal.bmp"),144,24,8,1}},
 
 	};
-#pragma endregion ¿ÃπÃ¡ˆ ¡§∫∏ Table
+#pragma endregion Ïù¥ÎØ∏ÏßÄ Ï†ïÎ≥¥ Table
 
 public:
 	void Init(MONSTERTYPE p);

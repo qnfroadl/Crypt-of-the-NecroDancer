@@ -1,6 +1,8 @@
 ﻿#include "Camera.h"
 
 #include "CommonFunction.h"
+#include "Player.h"
+
 Camera::Camera()
 {
 
@@ -16,14 +18,9 @@ Camera::~Camera()
 
 }
 
-void Camera::SetTarget(shared_ptr<GameActor> _target)
+void Camera::SetTarget(weak_ptr<Player> _target)
 {
     wptTarget = _target;
-}
-
-void Camera::SetTarget(GameActor* _target)
-{
-    target = _target;
 }
 
 void Camera::SetSize(SIZE size)
@@ -41,15 +38,6 @@ void Camera::Update()
         const float y = lockedTarget->GetPos().y - viewSize.cy / 2;
 
         SetPos(x,y);
-    }
-
-    if (nullptr != target)
-    {
-        // 타겟이 항상 카메라의 중앙에 오도록.
-        const float x = target->GetPos().x - viewSize.cx / 2;
-        const float y = target->GetPos().y - viewSize.cy / 2;
-
-        SetPos(x, y);
     }
 }
 

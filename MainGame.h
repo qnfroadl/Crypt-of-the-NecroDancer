@@ -9,6 +9,7 @@ class Image;
 class Timer;
 class TilemapTool;
 class Button;
+class PlayerManager;
 
 
 class MainGame : public GameObject
@@ -35,10 +36,10 @@ private:
 
 	//void TilemapMenuClicked(WORD id);
 
-	//test
+	void InitResource();
 
-	TileActor testPlayer;
 	//test
+	PlayerManager* playerManager;
 	Monster testMoster;
 public:
 	HRESULT Init();	// override (부모클래스와 같은 함수이름, 로직을 다르게 구현하고 싶을 때)

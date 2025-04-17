@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "config.h"
 #include "Singleton.h"
@@ -15,31 +15,10 @@
 
 enum class EImageKey
 {
-	Player,
-	PickupBomb, PickupPower,
-	PlayerAttackDefault,
-	PlayerAttackMissile,
-	CanonShot,
-
-	// 캐논 각도별 이미지
-	Canon_210, Canon_250, Canon_270, Canon_290, Canon_330,
-
-	// Boss_Ship
-	ShipBase, ShipDestroyed,
-	// Boss_Bird
-	BirdAppear1, BirdAppear2, BirdBase, BirdDestroyLeft, BirdDestroyRight, BirdDestroy, BirdPropeller,
-	PlayerBomb,
-
-	ExplosionSmall, ExplosionNormal, ExplosionBig, ShotImpact,
-
-	// Enemy
-	FlyingEnemy, MidBossBasic, MidBossUpgrade, BeeCopter,
-
-	// Missile
-	MidBossStar, MidBossPyramid,
-
-	//Background
-	BG_SeaBottom, BG_SeaLoop,
+	CADENCE = 0, 
+	CADENCE_HEAD = CADENCE + 1,
+	CADENCE_BODY = CADENCE + 2,
+	
 };
 
 class Image;

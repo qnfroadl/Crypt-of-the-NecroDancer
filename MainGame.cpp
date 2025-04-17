@@ -15,6 +15,7 @@
 #include "AstarScene.h"
 #include "Camera.h"
 #include "EventManager.h"
+#include "PlayerManager.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -71,8 +72,20 @@ void MainGame::ItemSpawnSimulation()
 //	}
 //}
 
+void MainGame::InitResource()
+{
+	// 필수적으로 로딩되는 이미지들 초기화 하기
+	const static int BASE_SCALE = 4;
+
+	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_HEAD, L"Image/Player/cadence_heads.bmp", 96 * BASE_SCALE,  48 * BASE_SCALE, 4, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_BODY, L"Image/Player/cadence_bodys.bmp", 96 * BASE_SCALE , 240 * BASE_SCALE, 4, 10, true, RGB(255, 0, 255));
+
+}
+
 HRESULT MainGame::Init()
 {
+	InitResource();
+
 	CollisionManager::GetInstance()->Init();
 	KeyManager::GetInstance()->Init();
 	ImageManager::GetInstance()->Init();
@@ -87,13 +100,15 @@ HRESULT MainGame::Init()
 
 	//Init Camera
 	Camera::GetInstance()->SetSize(SIZE{600, 600});
-	Camera::GetInstance()->SetTarget(&testPlayer);
 
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
 
+	playerManager = new PlayerManager();
+	playerManager->Init();
+	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 
 	FPS = 144;
 
@@ -123,11 +138,6 @@ void MainGame::Release()
 	ImageManager::GetInstance()->Release();
 	SceneManager::GetInstance()->Release();
 
-	if (btn)
-	{
-		btn->Release();
-	}
-
 	if (backBuffer)
 	{
 		backBuffer->Release();
@@ -144,15 +154,15 @@ void MainGame::Update()
 	SceneManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
 	//btn->Update();
+	
+	playerManager->Update();
 
 	Camera::GetInstance()->Update();
-
 
 	UpdateCollisionInfo();
 	ItemSpawnSimulation();
 
 	//test 
-	testPlayer.Update();
 	EventManager::GetInstance()->Update();
 }
 
@@ -163,6 +173,8 @@ void MainGame::Render()
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 
+	playerManager->Render(hBackBufferDC);
+
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
@@ -170,8 +182,6 @@ void MainGame::Render()
 		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
 		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
 	}
-
-	testPlayer.Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);

@@ -7,6 +7,8 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "ActorDef.h"
+
 using namespace std;
 
 /*
@@ -21,13 +23,44 @@ using namespace std;
 #define DEG_TO_RAD(degree) ((3.14 / 180.0) * degree)
 #define RAD_TO_DEG(radian) ((180.0 / 3.14) * radian)
 
+#define POINT_UP	POINT{0, -1}
+#define POINT_DOWN	POINT{0, 1}
+#define POINT_LEFT	POINT{-1, 0}
+#define POINT_RIGHT POINT{1, 0}
+
+#define ANIM_FRAME_MS 0.1f
+
+enum class PlayerIndex
+{
+	PLAYER1 = 0,
+	PLAYER2 = 1,
+};
+
+enum class InputKey
+{
+	UP = 1 , 
+	DOWN = 2,  //1 << 1, 
+	LEFT = 4,  //1 << 2, 
+	RIGHT = 8, //1 << 3,
+	
+	UPDOWN = UP | DOWN,			//3
+	DOWNLEFT = DOWN | LEFT,		//6
+	UPLEFT = UP | LEFT,			//5	
+	UPRIGHT = UP | RIGHT,		//9
+};
+inline InputKey operator|(InputKey a, InputKey b)
+{
+	return static_cast<InputKey>(static_cast<int>(a) | static_cast<int>(b));
+}
+inline InputKey operator&(InputKey a, InputKey b)
+{
+	return static_cast<InputKey>(static_cast<int>(a) & static_cast<int>(b));
+}
+
 enum class GameTag
 {
 	
 };
-
-
-
 
 typedef struct tagCIRCLE
 {
