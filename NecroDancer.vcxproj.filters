@@ -62,6 +62,8 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="TileActor.cpp" />
     <ClCompile Include="TileCharacter.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Monster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -134,6 +136,8 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="TileActor.h" />
     <ClInclude Include="TileCharacter.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Monster.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="헤더파일">
