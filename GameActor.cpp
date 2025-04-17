@@ -1,7 +1,7 @@
 ﻿#include "GameActor.h"
 
 GameActor::GameActor()
-:type(ActorType::None), pos{0,0}
+:type(ActorType::NONE), pos{0,0}
 {
 	
 }
@@ -46,4 +46,9 @@ ActorType GameActor::GetType()
 void GameActor::SetType(ActorType _type)
 {
 	this->type = _type;
+}
+
+void GameActor::Interact(GameActor* actor)
+{
+
 }

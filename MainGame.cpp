@@ -15,6 +15,7 @@
 #include "AstarScene.h"
 #include "Camera.h"
 #include "EventManager.h"
+#include "PlayerManager.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -54,32 +55,43 @@ void MainGame::ItemSpawnSimulation()
 	}
 }
 
-void MainGame::TilemapMenuClicked(WORD id)
+//void MainGame::TilemapMenuClicked(WORD id)
+//{
+//	TilemapTool* tool = dynamic_cast<TilemapTool*>(SceneManager::GetInstance()->GetCurrentScene());
+//	if (nullptr != tool)
+//	{
+//		switch (id)
+//		{
+//		case MENU_ID_SAVE:
+//			tool->Save();
+//			break;
+//		case MENU_ID_LOAD:
+//			tool->Load();
+//			break;
+//		}
+//	}
+//}
+
+void MainGame::InitResource()
 {
-	TilemapTool* tool = dynamic_cast<TilemapTool*>(SceneManager::GetInstance()->GetCurrentScene());
-	if (nullptr != tool)
-	{
-		switch (id)
-		{
-		case MENU_ID_SAVE:
-			tool->Save();
-			break;
-		case MENU_ID_LOAD:
-			tool->Load();
-			break;
-		}
-	}
+	// 필수적으로 로딩되는 이미지들 초기화 하기
+	const static int BASE_SCALE = 4;
+
+	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_HEAD, L"Image/Player/cadence_heads.bmp", 96 * BASE_SCALE,  48 * BASE_SCALE, 4, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_BODY, L"Image/Player/cadence_bodys.bmp", 96 * BASE_SCALE , 240 * BASE_SCALE, 4, 10, true, RGB(255, 0, 255));
+
 }
 
 HRESULT MainGame::Init()
 {
+	InitResource();
+
 	CollisionManager::GetInstance()->Init();
 	KeyManager::GetInstance()->Init();
 	ImageManager::GetInstance()->Init();
 	SceneManager::GetInstance()->Init();
 
-	TilemapTool* tool = new TilemapTool();
-	SceneManager::GetInstance()->AddScene("TilemapTool", tool);
+	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
@@ -88,22 +100,24 @@ HRESULT MainGame::Init()
 
 	//Init Camera
 	Camera::GetInstance()->SetSize(SIZE{600, 600});
-	Camera::GetInstance()->SetTarget(&testPlayer);
 
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
 
+	playerManager = new PlayerManager();
+	playerManager->Init();
+	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 
 	FPS = 144;
 
 	this->hdc = GetDC(g_hWnd);
 
-	btn = new Button();
-	btn->Init();
-	
-	btn->Bind(std::bind(&TilemapTool::Load, tool));
+	//btn = new Button();
+	//btn->Init();
+	//
+	//btn->Bind(std::bind(&TilemapTool::Load, tool));
 	
 
 	backBuffer = new Image();
@@ -124,11 +138,6 @@ void MainGame::Release()
 	ImageManager::GetInstance()->Release();
 	SceneManager::GetInstance()->Release();
 
-	if (btn)
-	{
-		btn->Release();
-	}
-
 	if (backBuffer)
 	{
 		backBuffer->Release();
@@ -144,16 +153,16 @@ void MainGame::Update()
 	CollisionManager::GetInstance()->Update();
 	SceneManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
-	btn->Update();
+	//btn->Update();
+	
+	playerManager->Update();
 
 	Camera::GetInstance()->Update();
-
 
 	UpdateCollisionInfo();
 	ItemSpawnSimulation();
 
 	//test 
-	testPlayer.Update();
 	EventManager::GetInstance()->Update();
 }
 
@@ -164,15 +173,15 @@ void MainGame::Render()
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 
-	btn->Render(hBackBufferDC);
+	playerManager->Render(hBackBufferDC);
+
+	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
 		CollisionManager::GetInstance()->Render(hBackBufferDC);
 		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
 		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
 	}
-
-	testPlayer.Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);
@@ -232,9 +241,9 @@ LRESULT MainGame::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) 
 		{
-			case MENU_ID_SAVE:
-			case MENU_ID_LOAD:
-			TilemapMenuClicked(LOWORD(wParam));
+			//case MENU_ID_SAVE:
+			//case MENU_ID_LOAD:
+			//TilemapMenuClicked(LOWORD(wParam));
 
 			break;
 		}

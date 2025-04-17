@@ -5,8 +5,7 @@ class Image;
 class Timer;
 class TilemapTool;
 class Button;
-
-#include "Character.h"
+class PlayerManager;
 
 class MainGame : public GameObject
 {
@@ -30,11 +29,11 @@ private:
 	void UpdateCollisionInfo();
 	void ItemSpawnSimulation();
 
-	void TilemapMenuClicked(WORD id);
+	//void TilemapMenuClicked(WORD id);
 
-	//test
+	void InitResource();
 
-	Character testPlayer;
+	PlayerManager* playerManager;
 
 public:
 	HRESULT Init();	// override (부모클래스와 같은 함수이름, 로직을 다르게 구현하고 싶을 때)
