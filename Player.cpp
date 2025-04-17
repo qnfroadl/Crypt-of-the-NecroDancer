@@ -18,42 +18,16 @@ void Player::OnBeatMiss(EventData* data)
 
 }
 
-void Player::AnimJump()
+bool Player::JumpAnim()
 {
-	// 점프 애니메이션 처리
-	// jumpData.sx, jumpData.sy : 시작 위치
-	// jumpData.ex, jumpData.ey : 도착 위치
-	// jumpData.height : 점프 높이
-	float dt = TimerManager::GetInstance()->GetDeltaTime();
-	jumpData.animCurtime += dt;
-
-	float jupmY = sinf(3.141592f * dt) * 200;	//jump power 200
-	if (jumpData.animCurtime <= jumpData.totalAnimTime / 2)
-	{
-		jumpData.height += jupmY;
-	}
-	else
-	{
-		jumpData.height -= jupmY;
-	}
-
-	jumpData.sx += (jumpData.ex - jumpData.sx) * dt * speed;
-	jumpData.sy += (jumpData.ey - jumpData.sy) * dt * speed;
-
-
-	// 점프 종료.
-	if (jumpData.totalAnimTime <= jumpData.animCurtime)
+	if(TileCharacter::JumpAnim())
 	{
 		state = PlayerState::IDLE;
-		jumpData.sx = jumpData.ex;
-		jumpData.sy = jumpData.ey;
-
-		jumpData.height = 0;
-		jumpData.animCurtime = 0;
+		return true;
 	}
-	
-	SetPos(jumpData.sx, jumpData.sy);
+	return false;
 }
+
 
 Player::Player()
 	: state{}, hp(100), maxHP(100), attack(1), diamond(0), name("Cadence"), curFrame(0), speed(20), isLeft(false), elapsedTime(0)
@@ -117,7 +91,8 @@ void Player::Update()
 		}
 		break;
 	case PlayerState::JUMP:
-		AnimJump();
+		JumpAnim();
+		
 		break;
 
 	}
@@ -132,6 +107,8 @@ void Player::Render(HDC hdc)
 
 	RenderRectAtCenter(hdc, pos.x, pos.y, 50,50);
 
+
+	// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
 	// 캐릭터 몸통
 	body->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
 	// 캐릭터 머리
@@ -141,6 +118,12 @@ void Player::Render(HDC hdc)
 
 void Player::Release()
 {
+}
+
+void Player::Jump(int x, int y)
+{
+	state = PlayerState::JUMP;
+	TileCharacter::Jump(x, y);
 }
 
 void Player::Attack()
@@ -164,14 +147,4 @@ void Player::TakeDamage(float damage)
 bool Player::IsDead()
 {
 	return hp <= 0;
-}
-
-void Player::Jump(int x, int y)
-{
-	jumpData.sx = GetPos().x;
-	jumpData.sy = GetPos().y;
-	jumpData.ex = x;
-	jumpData.ey = y;
-	// 점프 상태로 변경
-	state = PlayerState::JUMP;
 }
