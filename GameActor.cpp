@@ -1,7 +1,7 @@
 ﻿#include "GameActor.h"
 
 GameActor::GameActor()
-:type(ActorType::None), pos{0,0}
+:type(ActorType::NONE), pos{0,0}
 {
 	
 }
