@@ -7,9 +7,10 @@ typedef struct _stJump
 	float sx; 
 	float sy; 
 
-    // 점프 높이.
-    int jumpSpeed = 40;
-    float time = 0.5f; // 총 점프 시간.
+    // 점프중인 높이.
+    float height = 0;   // 이만큼 렌더할때 빼줘야함.
+    float animCurtime = 0.0f;    // 애니메이션 진행 시간
+    float totalAnimTime = 0.2f;  // 총 점프 시간.
     // 도착 위치
     float ex;
     float ey;
@@ -28,7 +29,9 @@ private:
     PlayerState state;
 	stJump jumpData; // 점프 데이터
     
+    float elapsedTime;
     int curFrame;
+
 	// Player의 상태   
     string name;
     float hp;
@@ -36,7 +39,8 @@ private:
 	float attack;
     float speed;
     int diamond;
-    
+    bool isLeft;
+
     Image* body;    
 
     void OnBeatHit(EventData* data);             // 비트 성공 시

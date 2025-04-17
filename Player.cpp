@@ -24,30 +24,38 @@ void Player::AnimJump()
 	// jumpData.ex, jumpData.ey : 도착 위치
 	// jumpData.height : 점프 높이
 	float dt = TimerManager::GetInstance()->GetDeltaTime();
-	jumpData.time -= dt;
+	jumpData.animCurtime += dt;
 
-	float jupmY = 2; // sinf(3.141592f * dt);
-	jumpData.sy -= jupmY;
+	float jupmY = sinf(3.141592f * dt) * 200;	//jump power 200
+	if (jumpData.animCurtime <= jumpData.totalAnimTime / 2)
+	{
+		jumpData.height += jupmY;
+	}
+	else
+	{
+		jumpData.height -= jupmY;
+	}
 
-	jumpData.sx += (jumpData.ex - jumpData.sx) * dt;
-	float y = jumpData.sy + (jumpData.ey - jumpData.sy) * dt;
+	jumpData.sx += (jumpData.ex - jumpData.sx) * dt * speed;
+	jumpData.sy += (jumpData.ey - jumpData.sy) * dt * speed;
 
-	// 위로 점프 곡선 추가 (sin곡선)
-	
 
 	// 점프 종료.
-	if (jumpData.time <= 0)
+	if (jumpData.totalAnimTime <= jumpData.animCurtime)
 	{
 		state = PlayerState::IDLE;
 		jumpData.sx = jumpData.ex;
-		y = jumpData.ey;
+		jumpData.sy = jumpData.ey;
+
+		jumpData.height = 0;
+		jumpData.animCurtime = 0;
 	}
 	
-	SetPos(jumpData.sx, y);
+	SetPos(jumpData.sx, jumpData.sy);
 }
 
 Player::Player()
-	: state{}, hp(100), maxHP(100), attack(1), diamond(0), name("Cadence"), curFrame(0), speed(30)
+	: state{}, hp(100), maxHP(100), attack(1), diamond(0), name("Cadence"), curFrame(0), speed(20), isLeft(false)
 {
 	SetType(ActorType::PLAYER);
 }
@@ -72,13 +80,13 @@ HRESULT Player::Init()
 
 void Player::Update()
 {
-	static float delta = 0;	//1회만 초기화됨.
+	elapsedTime = 0;	//1회만 초기화됨.
 	
-	delta += TimerManager::GetInstance()->GetDeltaTime();
+	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
 
-	if (delta >= 0.1f)
+	if (elapsedTime >= 0.1f)
 	{
-		delta = 0;
+		elapsedTime = 0;
 		curFrame++;
 		if (image->GetMaxFrameX() <= curFrame)
 		{
@@ -92,10 +100,12 @@ void Player::Update()
 		// 키 입력에 따라 플레이어의 위치를 업데이트
 		if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LEFT))
 		{
+			isLeft = true;
 			Jump(GetPos().x - 50, GetPos().y);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RIGHT))
 		{
+			isLeft = false;
 			Jump(GetPos().x + 50, GetPos().y);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_UP))
@@ -119,9 +129,9 @@ void Player::Render(HDC hdc)
 	RenderRectAtCenter(hdc, GetPos().x, GetPos().y, 50,50);
 
 	// 캐릭터 몸통
-	body->FrameRender(hdc, GetPos().x, GetPos().y, curFrame, 0, false, true);
+	body->FrameRender(hdc, GetPos().x, GetPos().y - jumpData.height, curFrame, 0, isLeft, true);
 	// 캐릭터 머리
-	image->FrameRender(hdc, GetPos().x, GetPos().y, curFrame, 0, false, true);
+	image->FrameRender(hdc, GetPos().x, GetPos().y - jumpData.height, curFrame, 0, isLeft, true);
 
 }
 
@@ -158,7 +168,6 @@ void Player::Jump(int x, int y)
 	jumpData.sy = GetPos().y;
 	jumpData.ex = x;
 	jumpData.ey = y;
-	jumpData.time = 0.2f;
 	// 점프 상태로 변경
 	state = PlayerState::JUMP;
 }
