@@ -18,6 +18,9 @@ void SoundManager::Init()
 
 	system->createDSPByType(FMOD_DSP_TYPE_FFT, &fftDSP);
 
+	bgmVolume = 1.f;
+	effectVolume = 1.f;
+
 #pragma region AddSound
 	AddSound(ESoundKey::LOBBY, "Sound/Bgm/lobby.ogg", true);
 
