@@ -74,20 +74,20 @@ void Player::Update()
 		if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LEFT))
 		{
 			isLeft = true;
-			Jump(GetPos().x - 100, GetPos().y);
+			SetJumpData(GetPos().x - 100, GetPos().y);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RIGHT))
 		{
 			isLeft = false;
-			Jump(GetPos().x + 100, GetPos().y);
+			SetJumpData(GetPos().x + 100, GetPos().y);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_UP))
 		{
-			Jump(GetPos().x, GetPos().y - 100);
+			SetJumpData(GetPos().x, GetPos().y - 100);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_DOWN))
 		{
-			Jump(GetPos().x, GetPos().y + 100);
+			SetJumpData(GetPos().x, GetPos().y + 100);
 		}
 		break;
 	case PlayerState::JUMP:
@@ -120,10 +120,10 @@ void Player::Release()
 {
 }
 
-void Player::Jump(int x, int y)
+void Player::SetJumpData(int dx, int dy)
 {
 	state = PlayerState::JUMP;
-	TileCharacter::Jump(x, y);
+	TileCharacter::SetJumpData(dx, dy);
 }
 
 void Player::Attack()

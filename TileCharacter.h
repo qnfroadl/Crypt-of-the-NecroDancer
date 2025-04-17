@@ -16,8 +16,8 @@ typedef struct _stJump
 	float animCurtime = 0.0f;    // 애니메이션 진행 시간
 	float totalAnimTime = 0.2f;  // 총 점프 시간.
 	// 도착 위치
-	float ex;
-	float ey;
+	float dx;
+	float dy;
 }stJump;
 
 class TileCharacter : public TileActor
@@ -52,7 +52,7 @@ public:
 	inline float GetAttack() { return attack; }
 	inline void SetAttack(float _attack) { attack = _attack; }
 
-	virtual void Jump(int x, int y);
+	virtual void SetJumpData(int dx, int dy);
 
 };
 

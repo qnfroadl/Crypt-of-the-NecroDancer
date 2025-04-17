@@ -2,19 +2,14 @@
 
 #include "TimerManager.h"
 
-void TileCharacter::Jump(int x, int y)
+void TileCharacter::SetJumpData(int dx, int dy)
 {
-	bool bRet = false;
+	jumpData.animCurtime = 0 ;
+	jumpData.sx = GetPos().x;
+	jumpData.sy = GetPos().y;
+	jumpData.dx = dx;
+	jumpData.dy = dy;
 
-	if (0 == jumpData.animCurtime)
-	{
-		jumpData.sx = GetPos().x;
-		jumpData.sy = GetPos().y;
-		jumpData.ex = x;
-		jumpData.ey = y;
-		// 점프 상태로 변경
-	}
-	
 }
 
 bool TileCharacter::JumpAnim()
@@ -38,15 +33,15 @@ bool TileCharacter::JumpAnim()
 		jumpData.height -= jupmY;
 	}
 
-	jumpData.sx += (jumpData.ex - jumpData.sx) * dt * 20;
-	jumpData.sy += (jumpData.ey - jumpData.sy) * dt * 20;
+	jumpData.sx += (jumpData.dx - jumpData.sx) * dt * 20;
+	jumpData.sy += (jumpData.dy - jumpData.sy) * dt * 20;
 
 
 	// 점프 종료.
 	if (jumpData.totalAnimTime <= jumpData.animCurtime)
 	{
-		jumpData.sx = jumpData.ex;
-		jumpData.sy = jumpData.ey;
+		jumpData.sx = jumpData.dx;
+		jumpData.sy = jumpData.dy;
 
 		jumpData.height = 0;
 		jumpData.animCurtime = 0;
