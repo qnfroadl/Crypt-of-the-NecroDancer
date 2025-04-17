@@ -7,6 +7,8 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "ActorDef.h"
+
 using namespace std;
 
 /*

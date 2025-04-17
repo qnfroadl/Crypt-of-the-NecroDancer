@@ -31,3 +31,8 @@ void TileActor::Render(HDC hdc)
 
 	RenderRectAtCenter(hdc, GetPos().x - screenX, GetPos().y - screenY, 50,50);
 }
+
+void TileActor::Interact(GameActor* actor)
+{
+
+}

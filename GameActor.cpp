@@ -47,3 +47,8 @@ void GameActor::SetType(ActorType _type)
 {
 	this->type = _type;
 }
+
+void GameActor::Interact(GameActor* actor)
+{
+
+}

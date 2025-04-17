@@ -1,12 +1,11 @@
 ﻿#pragma once
 #include "GameObject.h"
 
-//test
-#include "TileActor.h"
 class Image;
 class Timer;
 class TilemapTool;
 class Button;
+class PlayerManager;
 
 class MainGame : public GameObject
 {
@@ -32,9 +31,9 @@ private:
 
 	void TilemapMenuClicked(WORD id);
 
-	//test
 
-	TileActor testPlayer;
+
+	PlayerManager* playerManager;
 
 public:
 	HRESULT Init();	// override (부모클래스와 같은 함수이름, 로직을 다르게 구현하고 싶을 때)

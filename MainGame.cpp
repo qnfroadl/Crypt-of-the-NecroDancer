@@ -15,6 +15,7 @@
 #include "AstarScene.h"
 #include "Camera.h"
 #include "EventManager.h"
+#include "PlayerManager.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
