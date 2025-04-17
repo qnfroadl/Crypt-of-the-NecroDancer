@@ -99,7 +99,7 @@ HRESULT MainGame::Init()
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Init();
-	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::LOBBY);
+	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
 
 	FPS = 144;
@@ -167,6 +167,10 @@ void MainGame::Update()
 	
 	// Test. SoundManager
 	SoundManager::GetInstance()->Update();
+	if (KeyManager::GetInstance()->IsOnceKeyDown('M'))
+	{
+		SoundManager::GetInstance()->ChangeSoundBgmShopkeeper();
+	}
 }
 
 void MainGame::Render()

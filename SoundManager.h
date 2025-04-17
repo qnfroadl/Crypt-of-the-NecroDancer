@@ -16,13 +16,28 @@ enum class ESoundKey
 	// Bgm
 	LOBBY,
 
-	ZONE_1_1,
-	ZONE_1_2,
-	ZONE_1_3,
+	ZONE1_1,
+	ZONE1_2,
+	ZONE1_3,
 
-	ZONE_2_1,
-	ZONE_2_2,
-	ZONE_2_3,
+	ZONE2_1,
+	ZONE2_2,
+	ZONE2_3,
+
+	// BgmShopkeeper
+	ZONE1_1_SHOPKEEPER_M,
+	ZONE1_1_SHOPKEEPER,
+	ZONE1_2_SHOPKEEPER_M,
+	ZONE1_2_SHOPKEEPER,
+	ZONE1_3_SHOPKEEPER_M,
+	ZONE1_3_SHOPKEEPER,
+
+	ZONE2_1_SHOPKEEPER_M,
+	ZONE2_1_SHOPKEEPER,
+	ZONE2_2_SHOPKEEPER_M,
+	ZONE2_2_SHOPKEEPER,
+	ZONE2_3_SHOPKEEPER_M,
+	ZONE2_3_SHOPKEEPER,
 
 	// Effect
 
@@ -38,6 +53,9 @@ private:
 	FMOD::Channel* channelBgmShopkeeper;
 	FMOD::ChannelGroup* channelGroupEffect;
 
+	ESoundKey keyBgm;
+	ESoundKey keyBgmShopkeeper;
+
 public:
 	void Init();
 	void Release();
@@ -48,6 +66,7 @@ public:
 
 	void PlaySoundEffect(ESoundKey effect);
 	void PlaySoundBgm(ESoundKey mainBgm, ESoundKey shopkeeperBgm=ESoundKey::NONE);
+	void ChangeSoundBgmShopkeeper();
 
 	// volume 0.0 ~ 1.0
 	void ChangeVolumeBgm(float volume);
