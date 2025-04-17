@@ -6,6 +6,7 @@ class TileActor : public GameActor
 {
 	
 private:
+	POINT index;
 
 public:
 	void Update() override;
