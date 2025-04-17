@@ -50,8 +50,11 @@ public:
 	void Update()  override;
 	void Render(HDC hdc)  override;
 
-	//void Save();
-	//void Load();
+	void Save(string filePath);
+	void Load(string filePath);
+
+	void LoadDialog();
+	void SaveDialog();
 
 		
 };

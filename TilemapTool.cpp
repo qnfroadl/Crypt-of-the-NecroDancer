@@ -3,15 +3,10 @@
 #include "Image.h"
 #include "CommonFunction.h"
 #include "KeyManager.h"
-#include <fstream>
-#include <sstream>
 #include "Tile.h"
 #include "Block.h"
-
-// 외부 또는 멤버 변수
-SelectedLayer selectedLayer = SelectedLayer::FLOOR;
-int selectedTileLX = 0;
-int selectedTileLY = 0;
+#include <commdlg.h>
+#include <fstream>
 
 TilemapTool::TilemapTool()
 	: sampleTile(nullptr),
@@ -26,6 +21,10 @@ TilemapTool::~TilemapTool()
 HRESULT TilemapTool::Init()
 {
 	SetClientRect(g_hWnd, TILEMAPTOOL_X, TILEMAPTOOL_Y);
+
+	selectedLayer = SelectedLayer::FLOOR;
+	selectedTileLX = 0;
+	selectedTileLY = 0;
 
 	sampleTile = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"), 234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
 	sampleWall = ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 384, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
@@ -65,6 +64,14 @@ void TilemapTool::Release()
 
 void TilemapTool::Update()
 {
+	if (KeyManager::GetInstance()->IsOnceKeyDown('S'))
+	{
+		SaveDialog();
+	}
+	if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
+	{
+		LoadDialog();
+	}
 	// 바닥 타일 샘플 선택
 	if (PtInRect(&rcSampleTile, g_ptMouse))
 	{
@@ -198,4 +205,135 @@ void TilemapTool::Render(HDC hdc)
 		sampleTile->FrameRender(hdc, previewX, previewY, selectedTileLX, selectedTileLY, false, true);
 	else if (selectedLayer == SelectedLayer::WALL)
 		sampleWall->FrameRender(hdc, previewX, previewY, selectedTileLX, selectedTileLY, false, true);
+}
+
+void TilemapTool::Save(string filePath)
+{
+	ofstream out(filePath);
+	if (!out.is_open()) return;
+
+	out << "TILEMAP" << endl;
+	out << "SIZE " << TILE_X << " " << TILE_Y << endl;
+
+	// FLOOR
+	out << "FLOOR" << endl;
+	for (int j = 0; j < TILE_Y; j++) {
+		for (int i = 0; i < TILE_X; i++) {
+			out << tiles[j][i]->GetTileNum() << " ";
+		}
+		out << endl;
+	}
+
+	// WALL (Block 번호 or -1)
+	out << "WALL" << endl;
+	for (int j = 0; j < TILE_Y; j++) {
+		for (int i = 0; i < TILE_X; i++) {
+			Block* block = tiles[j][i]->GetBlock();
+			if (block) out << block->GetTileNum() << " ";
+			else out << -1 << " ";
+		}
+		out << endl;
+	}
+
+	out.close();
+
+}
+
+void TilemapTool::Load(string filePath)
+{
+	ifstream in(filePath);
+	if (!in.is_open()) return;
+
+	string header;
+	in >> header;
+	if (header != "TILEMAP") return;
+
+	// 사이즈 읽기
+	string sizeLabel;
+	int tileX, tileY;
+	in >> sizeLabel >> tileX >> tileY;
+
+	if (tileX != TILE_X || tileY != TILE_Y) {
+		// 현재 툴 구조는 고정 크기이므로 size mismatch 시 로드 취소
+		return;
+	}
+
+	// FLOOR 로딩
+	string section;
+	in >> section;
+	if (section == "FLOOR") {
+		for (int j = 0; j < TILE_Y; j++) {
+			for (int i = 0; i < TILE_X; i++) {
+				int tileNum;
+				in >> tileNum;
+				tiles[j][i]->SetTileNum(tileNum);
+				tiles[j][i]->SetType(TileType::NORMAL);
+			}
+		}
+	}
+
+	// WALL 로딩
+	in >> section;
+	if (section == "WALL") {
+		for (int j = 0; j < TILE_Y; j++) {
+			for (int i = 0; i < TILE_X; i++) {
+				int wallNum;
+				in >> wallNum;
+
+				if (wallNum >= 0) {
+					Block* block = new Block();
+					block->SetTileNum(wallNum);
+					tiles[j][i]->SetBlock(block);
+				}
+				else {
+					tiles[j][i]->SetBlock(nullptr);
+				}
+			}
+		}
+	}
+
+	in.close();
+}
+
+void TilemapTool::LoadDialog()
+{
+	OPENFILENAME ofn = { 0 };
+	TCHAR szFile[MAX_PATH] = TEXT("");
+
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = g_hWnd;
+	ofn.lpstrFilter = TEXT("Tilemap Files (*.map)\0*.map\0All Files (*.*)\0*.*\0");
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_FILEMUSTEXIST;
+	ofn.lpstrDefExt = TEXT("map");
+
+	if (GetOpenFileName(&ofn)) {
+		std::wstring ws(ofn.lpstrFile);
+		std::string path(ws.begin(), ws.end());
+
+		Load(path);
+	}
+}
+
+
+void TilemapTool::SaveDialog()
+{
+	OPENFILENAME ofn = { 0 };
+	TCHAR szFile[MAX_PATH] = TEXT("");
+
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = g_hWnd;
+	ofn.lpstrFilter = TEXT("Tilemap Files (*.map)\0*.map\0All Files (*.*)\0*.*\0");
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_OVERWRITEPROMPT;
+	ofn.lpstrDefExt = TEXT("map");
+
+	if (GetSaveFileName(&ofn)) {
+		std::wstring ws(ofn.lpstrFile);
+		std::string path(ws.begin(), ws.end());
+
+		Save(path);  // 실제 저장 함수 호출
+	}
 }
