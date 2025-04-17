@@ -42,12 +42,15 @@ void EventManager::Update()
 		Event* event = queEvents.top();
 		queEvents.pop();
 
-		// 이벤트 노티
+		// 이벤트 노티, 매 프레임당 최대 10개의 이벤트만 처리한다. (일단은 로컬변수로 처리)
 		auto it = funcs[event->type].begin();
 
-		while (it != funcs[event->type].end())
+		int maxCount = 10;
+		int count = 0;
+		while (it != funcs[event->type].end() && count < maxCount)
 		{
 			(*it)(event->data);
+			count++;
 		}
 		
 		delete event;
