@@ -78,8 +78,7 @@ HRESULT MainGame::Init()
 	ImageManager::GetInstance()->Init();
 	SceneManager::GetInstance()->Init();
 
-	TilemapTool* tool = new TilemapTool();
-	SceneManager::GetInstance()->AddScene("TilemapTool", tool);
+	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
