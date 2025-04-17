@@ -2,7 +2,7 @@
 #include "TileCharacter.h"
 
 class Player;
-enum class State
+enum class MonsterState
 {
 	IDLE,
 	ACTIVE,
@@ -27,7 +27,7 @@ typedef struct MonsterImageInfo {
 class Monster:public TileCharacter
 {
 private:
-	State state;
+	MonsterState state;
 	float light;
 	int beatCount;
 	int moveDelay;
