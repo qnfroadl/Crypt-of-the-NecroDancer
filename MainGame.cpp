@@ -74,16 +74,18 @@ void MainGame::ItemSpawnSimulation()
 
 void MainGame::InitResource()
 {
-	// 필수적으로 로딩되는 이미지들 초기화 하기.
+	// 필수적으로 로딩되는 이미지들 초기화 하기
+	const static int BASE_SCALE = 4;
 
-	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_HEAD, L"Image/Player/cadence_heads.bmp", 96, 48,4, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_BODY, L"Image/Player/cadence_bodys.bmp", 96, 240, 4, 10, true, RGB(255, 0, 255));
-
+	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_HEAD, L"Image/Player/cadence_heads.bmp", 96 * BASE_SCALE,  48 * BASE_SCALE, 4, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_BODY, L"Image/Player/cadence_bodys.bmp", 96 * BASE_SCALE , 240 * BASE_SCALE, 4, 10, true, RGB(255, 0, 255));
 
 }
 
 HRESULT MainGame::Init()
 {
+	InitResource();
+
 	CollisionManager::GetInstance()->Init();
 	KeyManager::GetInstance()->Init();
 	ImageManager::GetInstance()->Init();
@@ -107,10 +109,7 @@ HRESULT MainGame::Init()
 
 	playerManager = new PlayerManager();
 	playerManager->Init();
-	playerManager->GetPlayer(PlayerIndex::PLAYER1);
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
-
-
 
 	FPS = 144;
 
@@ -140,11 +139,6 @@ void MainGame::Release()
 	ImageManager::GetInstance()->Release();
 	SceneManager::GetInstance()->Release();
 
-	if (btn)
-	{
-		btn->Release();
-	}
-
 	if (backBuffer)
 	{
 		backBuffer->Release();
@@ -161,6 +155,8 @@ void MainGame::Update()
 	SceneManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
 	//btn->Update();
+	
+	playerManager->Update();
 
 	Camera::GetInstance()->Update();
 
@@ -177,6 +173,8 @@ void MainGame::Render()
 	HDC hBackBufferDC = backBuffer->GetMemDC();
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
+
+	playerManager->Render(hBackBufferDC);
 
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)

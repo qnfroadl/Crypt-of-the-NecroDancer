@@ -27,7 +27,7 @@ HRESULT PlayerManager::Init()
 		players[i]->Init();
 	}
 	
-    return E_NOTIMPL;
+    return S_OK;
 }
 
 void PlayerManager::Update()

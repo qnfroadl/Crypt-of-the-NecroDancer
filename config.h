@@ -28,6 +28,8 @@ using namespace std;
 #define POINT_LEFT	POINT{-1, 0}
 #define POINT_RIGHT POINT{1, 0}
 
+#define ANIM_FRAME_MS 0.1f
+
 enum class PlayerIndex
 {
 	PLAYER1 = 0,
