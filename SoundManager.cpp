@@ -61,6 +61,10 @@ void SoundManager::Release()
 		}
 	}
 
+	fftDSP->release();
+
+	channelGroupEffect->release();
+
 	system->release();
 
 	ReleaseInstance();
