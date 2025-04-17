@@ -54,6 +54,8 @@ private:
 	FMOD::Channel* channelBgm;
 	FMOD::Channel* channelBgmShopkeeper;
 	FMOD::ChannelGroup* channelGroupEffect;
+	float bgmVolume;
+	float effectVolume;
 
 	FMOD::DSP* fftDSP;
 

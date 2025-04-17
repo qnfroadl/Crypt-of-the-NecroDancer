@@ -104,6 +104,8 @@ void SoundManager::PlaySoundEffect(ESoundKey effect)
 	{
 		system->playSound(sound, channelGroupEffect, false, nullptr);
 	}
+
+	ChangeVolumeEffect(effectVolume);
 }
 
 void SoundManager::PlaySoundBgm(ESoundKey mainBgm, ESoundKey shopkeeperBgm)
@@ -133,6 +135,8 @@ void SoundManager::PlaySoundBgm(ESoundKey mainBgm, ESoundKey shopkeeperBgm)
 		system->playSound(sound, nullptr, false, &channelBgmShopkeeper);
 		keyBgmShopkeeper = shopkeeperBgm;
 	}
+
+	ChangeVolumeBgm(bgmVolume);
 }
 
 void SoundManager::ChangeSoundBgmShopkeeper()
@@ -152,6 +156,8 @@ void SoundManager::ChangeSoundBgmShopkeeper()
 			{
 				system->playSound(sound, nullptr, false, &channelBgmShopkeeper);
 				channelBgmShopkeeper->setPosition(position, FMOD_TIMEUNIT_MS);
+				
+				ChangeVolumeBgm(bgmVolume);
 			}
 		}
 	}
@@ -159,13 +165,15 @@ void SoundManager::ChangeSoundBgmShopkeeper()
 
 void SoundManager::ChangeVolumeBgm(float volume)
 {
-	channelBgm->setVolume(volume);
-	channelBgmShopkeeper->setVolume(volume);
+	bgmVolume = volume;
+	channelBgm->setVolume(bgmVolume);
+	channelBgmShopkeeper->setVolume(bgmVolume);
 }
 
 void SoundManager::ChangeVolumeEffect(float volume)
 {
-	channelGroupEffect->setVolume(volume);
+	effectVolume = volume;
+	channelGroupEffect->setVolume(effectVolume);
 }
 
 ESoundKey SoundManager::GetCurrentKeyBgm()
