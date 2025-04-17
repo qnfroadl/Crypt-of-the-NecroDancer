@@ -1,4 +1,4 @@
-#include "Monster.h"
+﻿#include "Monster.h"
 #include "ImageManager.h"
 #include "Camera.h"
 #include "TimerManager.h"
@@ -8,7 +8,7 @@ void Monster::Init(MONSTERTYPE p)
 	imageInfo = FindImageInfo(p);
 	image = ImageManager::GetInstance()->AddImage(imageInfo.keyName, imageInfo.imagePath, imageInfo.width*2,imageInfo.height*2,
 		imageInfo.imageFrameX, imageInfo.ImageFrameY,true,RGB(255,0,255));
-	MonsterState = State::IDLE;
+	state = MonsterState::IDLE;
 	light = 0;
 	moveDelay = 3;
 	beatCount = 0;

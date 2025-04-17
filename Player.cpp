@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 
 #include "ImageManager.h"
+#include "Camera.h"
 
 //test
 #include "KeyManager.h"
@@ -55,7 +56,7 @@ void Player::AnimJump()
 }
 
 Player::Player()
-	: state{}, hp(100), maxHP(100), attack(1), diamond(0), name("Cadence"), curFrame(0), speed(20), isLeft(false)
+	: state{}, hp(100), maxHP(100), attack(1), diamond(0), name("Cadence"), curFrame(0), speed(20), isLeft(false), elapsedTime(0)
 {
 	SetType(ActorType::PLAYER);
 }
@@ -69,7 +70,7 @@ HRESULT Player::Init()
 {
 	image = ImageManager::GetInstance()->FindImage(EImageKey::CADENCE_HEAD);	//캐릭터 머리
 	body = ImageManager::GetInstance()->FindImage(EImageKey::CADENCE_BODY);		//캐릭터 몸통
-
+	
 	if (nullptr == image || nullptr == body)
 	{
 		return E_FAIL;
@@ -80,8 +81,6 @@ HRESULT Player::Init()
 
 void Player::Update()
 {
-	elapsedTime = 0;	//1회만 초기화됨.
-	
 	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
 
 	if (elapsedTime >= 0.1f)
@@ -101,20 +100,20 @@ void Player::Update()
 		if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LEFT))
 		{
 			isLeft = true;
-			Jump(GetPos().x - 50, GetPos().y);
+			Jump(GetPos().x - 100, GetPos().y);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RIGHT))
 		{
 			isLeft = false;
-			Jump(GetPos().x + 50, GetPos().y);
+			Jump(GetPos().x + 100, GetPos().y);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_UP))
 		{
-			Jump(GetPos().x, GetPos().y - 50);
+			Jump(GetPos().x, GetPos().y - 100);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_DOWN))
 		{
-			Jump(GetPos().x, GetPos().y + 50);
+			Jump(GetPos().x, GetPos().y + 100);
 		}
 		break;
 	case PlayerState::JUMP:
@@ -126,12 +125,17 @@ void Player::Update()
 
 void Player::Render(HDC hdc)
 {
-	RenderRectAtCenter(hdc, GetPos().x, GetPos().y, 50,50);
+	FPOINT pos = GetPos();
+	pos.x -= Camera::GetInstance()->GetPos().x;
+	pos.y -= Camera::GetInstance()->GetPos().y;
+
+
+	RenderRectAtCenter(hdc, pos.x, pos.y, 50,50);
 
 	// 캐릭터 몸통
-	body->FrameRender(hdc, GetPos().x, GetPos().y - jumpData.height, curFrame, 0, isLeft, true);
+	body->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
 	// 캐릭터 머리
-	image->FrameRender(hdc, GetPos().x, GetPos().y - jumpData.height, curFrame, 0, isLeft, true);
+	image->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
 
 }
 
