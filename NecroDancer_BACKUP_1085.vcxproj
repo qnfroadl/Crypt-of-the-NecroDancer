@@ -150,8 +150,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="Tile.cpp" />
+=======
     <ClCompile Include="TileCharacter.cpp" />
+>>>>>>> 08cc466f28db25f266135462c3d670264655c811
     <ClCompile Include="TilemapTool.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
@@ -182,8 +185,11 @@
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="TileCharacter.h" />
+<<<<<<< HEAD
     <ClInclude Include="Tile.h" />
+=======
+    <ClInclude Include="TileCharacter.h" />
+>>>>>>> 08cc466f28db25f266135462c3d670264655c811
     <ClInclude Include="TilemapTool.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />

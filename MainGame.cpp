@@ -54,22 +54,22 @@ void MainGame::ItemSpawnSimulation()
 	}
 }
 
-void MainGame::TilemapMenuClicked(WORD id)
-{
-	TilemapTool* tool = dynamic_cast<TilemapTool*>(SceneManager::GetInstance()->GetCurrentScene());
-	if (nullptr != tool)
-	{
-		switch (id)
-		{
-		case MENU_ID_SAVE:
-			tool->Save();
-			break;
-		case MENU_ID_LOAD:
-			tool->Load();
-			break;
-		}
-	}
-}
+//void MainGame::TilemapMenuClicked(WORD id)
+//{
+//	TilemapTool* tool = dynamic_cast<TilemapTool*>(SceneManager::GetInstance()->GetCurrentScene());
+//	if (nullptr != tool)
+//	{
+//		switch (id)
+//		{
+//		case MENU_ID_SAVE:
+//			tool->Save();
+//			break;
+//		case MENU_ID_LOAD:
+//			tool->Load();
+//			break;
+//		}
+//	}
+//}
 
 HRESULT MainGame::Init()
 {
@@ -100,10 +100,10 @@ HRESULT MainGame::Init()
 
 	this->hdc = GetDC(g_hWnd);
 
-	btn = new Button();
-	btn->Init();
-	
-	btn->Bind(std::bind(&TilemapTool::Load, tool));
+	//btn = new Button();
+	//btn->Init();
+	//
+	//btn->Bind(std::bind(&TilemapTool::Load, tool));
 	
 
 	backBuffer = new Image();
@@ -144,7 +144,7 @@ void MainGame::Update()
 	CollisionManager::GetInstance()->Update();
 	SceneManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
-	btn->Update();
+	//btn->Update();
 
 	Camera::GetInstance()->Update();
 
@@ -164,7 +164,7 @@ void MainGame::Render()
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 
-	btn->Render(hBackBufferDC);
+	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
 		CollisionManager::GetInstance()->Render(hBackBufferDC);
@@ -232,9 +232,9 @@ LRESULT MainGame::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) 
 		{
-			case MENU_ID_SAVE:
-			case MENU_ID_LOAD:
-			TilemapMenuClicked(LOWORD(wParam));
+			//case MENU_ID_SAVE:
+			//case MENU_ID_LOAD:
+			//TilemapMenuClicked(LOWORD(wParam));
 
 			break;
 		}
