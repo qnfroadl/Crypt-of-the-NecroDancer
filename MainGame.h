@@ -1,11 +1,16 @@
 ﻿#pragma once
 #include "GameObject.h"
 
+//test
+#include "TileActor.h"
+//L,J,H test
+#include "Monster.h"
 class Image;
 class Timer;
 class TilemapTool;
 class Button;
 class PlayerManager;
+
 
 class MainGame : public GameObject
 {
@@ -33,8 +38,9 @@ private:
 
 	void InitResource();
 
+	//test
 	PlayerManager* playerManager;
-
+	Monster testMoster;
 public:
 	HRESULT Init();	// override (부모클래스와 같은 함수이름, 로직을 다르게 구현하고 싶을 때)
 					// <-> overload (같은 함수 이름, 매개변수 타입과 갯수가 다르면 다른 함수로 처리)
