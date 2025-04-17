@@ -1,11 +1,24 @@
 #include "SoundManager.h"
 
+map<ESoundKey, string> bgmPath = {
+	{ESoundKey::LOBBY, "Sound/Bgm/lobby"},
+	{ESoundKey::ZONE1_1, "Sound/Bgm/zone1_1"},
+	{ESoundKey::ZONE1_2, "Sound/Bgm/zone1_2"},
+	{ESoundKey::ZONE1_3, "Sound/Bgm/zone1_3"},
+	{ESoundKey::ZONE2_1, "Sound/Bgm/zone2_1"},
+	{ESoundKey::ZONE2_2, "Sound/Bgm/zone2_2"},
+	{ESoundKey::ZONE2_3, "Sound/Bgm/zone2_3"},
+};
+
 void SoundManager::Init()
 {
 	FMOD::System_Create(&system);
 	system->init(512, FMOD_INIT_NORMAL, nullptr);
 	system->createChannelGroup("channelGroupEffect", &channelGroupEffect);
 
+	system->createDSPByType(FMOD_DSP_TYPE_FFT, &fftDSP);
+
+#pragma region AddSound
 	AddSound(ESoundKey::LOBBY, "Sound/Bgm/lobby.ogg", true);
 
 	AddSound(ESoundKey::ZONE1_1, "Sound/Bgm/zone1_1.ogg");
@@ -29,6 +42,9 @@ void SoundManager::Init()
 	AddSound(ESoundKey::ZONE2_1_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_1_shopkeeper.ogg");
 	AddSound(ESoundKey::ZONE2_2_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_2_shopkeeper.ogg");
 	AddSound(ESoundKey::ZONE2_3_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_3_shopkeeper.ogg");
+
+	AddSound(ESoundKey::MOV_DIG_FAIL, "Sound/Effect/mov_dig_fail.ogg");
+#pragma endregion
 }
 
 void SoundManager::Release()
@@ -107,6 +123,8 @@ void SoundManager::PlaySoundBgm(ESoundKey mainBgm, ESoundKey shopkeeperBgm)
 	{
 		system->playSound(sound, nullptr, false, &channelBgm);
 		keyBgm = mainBgm;
+
+		channelBgm->addDSP(FMOD_CHANNELCONTROL_DSP_HEAD, fftDSP);
 	}
 
 	sound = FindSound(shopkeeperBgm);
@@ -148,4 +166,31 @@ void SoundManager::ChangeVolumeBgm(float volume)
 void SoundManager::ChangeVolumeEffect(float volume)
 {
 	channelGroupEffect->setVolume(volume);
+}
+
+ESoundKey SoundManager::GetCurrentKeyBgm()
+{
+	return keyBgm;
+}
+
+unsigned int SoundManager::GetBgmPosition()
+{
+	if (channelBgm && !IsBgmEnd())
+	{
+		unsigned int position{};
+		channelBgm->getPosition(&position, FMOD_TIMEUNIT_MS);
+		return position;
+	}
+	return 0;
+}
+
+bool SoundManager::IsBgmEnd()
+{
+	if (channelBgm)
+	{
+		bool isPlaying{};
+		channelBgm->isPlaying(&isPlaying);
+		return !isPlaying;
+	}
+	return true;
 }

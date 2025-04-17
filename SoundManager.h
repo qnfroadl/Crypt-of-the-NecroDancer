@@ -40,8 +40,10 @@ enum class ESoundKey
 	ZONE2_3_SHOPKEEPER,
 
 	// Effect
-
+	MOV_DIG_FAIL,
 };
+
+extern map<ESoundKey, string> bgmPath;
 
 class SoundManager : public Singleton<SoundManager>
 {
@@ -52,6 +54,8 @@ private:
 	FMOD::Channel* channelBgm;
 	FMOD::Channel* channelBgmShopkeeper;
 	FMOD::ChannelGroup* channelGroupEffect;
+
+	FMOD::DSP* fftDSP;
 
 	ESoundKey keyBgm;
 	ESoundKey keyBgmShopkeeper;
@@ -71,4 +75,8 @@ public:
 	// volume 0.0 ~ 1.0
 	void ChangeVolumeBgm(float volume);
 	void ChangeVolumeEffect(float volume);
+
+	ESoundKey GetCurrentKeyBgm();
+	unsigned int GetBgmPosition();
+	bool IsBgmEnd();
 };

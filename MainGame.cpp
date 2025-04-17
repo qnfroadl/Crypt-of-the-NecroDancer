@@ -17,6 +17,7 @@
 #include "EventManager.h"
 
 #include "SoundManager.h"
+#include "BeatManager.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -101,6 +102,8 @@ HRESULT MainGame::Init()
 	SoundManager::GetInstance()->Init();
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
+	BeatManager::GetInstance()->Init();
+	BeatManager::GetInstance()->StartBeat();
 
 	FPS = 144;
 
@@ -132,6 +135,7 @@ void MainGame::Release()
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Release();
+	BeatManager::GetInstance()->Release();
 
 	if (btn)
 	{
@@ -171,6 +175,7 @@ void MainGame::Update()
 	{
 		SoundManager::GetInstance()->ChangeSoundBgmShopkeeper();
 	}
+	BeatManager::GetInstance()->Update();
 }
 
 void MainGame::Render()
