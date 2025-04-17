@@ -52,9 +52,11 @@
     <ClCompile Include="Camera.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>소스파일</Filter>
-    </ClCompile>
+    <ClCompile Include="TileActor.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="EventData.cpp" />
+    <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="TileCharacter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -117,9 +119,11 @@
     <ClInclude Include="Camera.h">
       <Filter>2D Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>헤더파일</Filter>
-    </ClInclude>
+    <ClInclude Include="TileActor.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="EventData.h" />
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="TileCharacter.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="헤더파일">
