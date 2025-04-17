@@ -135,8 +135,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="TileActor.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventData.cpp" />
@@ -151,7 +150,6 @@
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Tile.cpp" />
-    <ClCompile Include="TileCharacter.cpp" />
     <ClCompile Include="TilemapTool.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
@@ -164,8 +162,7 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="TileActor.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="CommonFunction.h" />
     <ClInclude Include="config.h" />
@@ -182,7 +179,6 @@
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="TileCharacter.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TilemapTool.h" />
     <ClInclude Include="Timer.h" />

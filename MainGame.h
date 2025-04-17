@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "GameObject.h"
 
+//test
+#include "TileActor.h"
 class Image;
 class Timer;
 class TilemapTool;
 class Button;
-
-#include "Character.h"
 
 class MainGame : public GameObject
 {
@@ -34,7 +34,7 @@ private:
 
 	//test
 
-	Character testPlayer;
+	TileActor testPlayer;
 
 public:
 	HRESULT Init();	// override (부모클래스와 같은 함수이름, 로직을 다르게 구현하고 싶을 때)
