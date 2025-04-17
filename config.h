@@ -15,8 +15,8 @@ using namespace std;
 	컴파일러에서 해당 코드를 뒤에 정의된 코드로 변경한다. 
 */
 
-#define TILEMAPTOOL_X 1620
-#define TILEMAPTOOL_Y 900
+#define TILEMAPTOOL_X 1200
+#define TILEMAPTOOL_Y 800
 #define WINSIZE_X	TILEMAPTOOL_X
 #define WINSIZE_Y	TILEMAPTOOL_Y
 

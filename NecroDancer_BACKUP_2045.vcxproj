@@ -136,8 +136,6 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerManager.cpp" />
-    <ClCompile Include="PositionManager.cpp" />
     <ClCompile Include="TileActor.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Event.cpp" />
@@ -152,14 +150,16 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="Tile.cpp" />
+=======
     <ClCompile Include="TileCharacter.cpp" />
+>>>>>>> 08cc466f28db25f266135462c3d670264655c811
     <ClCompile Include="TilemapTool.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActorDef.h" />
     <ClInclude Include="AstarScene.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -168,8 +168,6 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerManager.h" />
-    <ClInclude Include="PositionManager.h" />
     <ClInclude Include="TileActor.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="CommonFunction.h" />
@@ -187,8 +185,11 @@
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="TileCharacter.h" />
+<<<<<<< HEAD
     <ClInclude Include="Tile.h" />
+=======
+    <ClInclude Include="TileCharacter.h" />
+>>>>>>> 08cc466f28db25f266135462c3d670264655c811
     <ClInclude Include="TilemapTool.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />

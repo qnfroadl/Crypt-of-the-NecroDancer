@@ -29,7 +29,7 @@ private:
 	void UpdateCollisionInfo();
 	void ItemSpawnSimulation();
 
-	void TilemapMenuClicked(WORD id);
+	//void TilemapMenuClicked(WORD id);
 
 	void InitResource();
 
