@@ -51,6 +51,7 @@ HRESULT TilemapTool::Init()
 
 void TilemapTool::Release()
 {
+	if (tiles.empty())	return;
 	for (int j = 0; j < TILE_Y; j++)
 	{
 		for (int i = 0; i < TILE_X; i++)
