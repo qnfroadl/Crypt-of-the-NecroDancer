@@ -44,7 +44,7 @@ public:
     void Render(HDC hdc) override;
     void Release() override;
 
-    void Jump(int x, int y) override;
+    void SetJumpData(int dx, int dy) override;
 
 	void SetName(string name) { this->name = name; }
 
