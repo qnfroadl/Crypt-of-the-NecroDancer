@@ -6,7 +6,7 @@
 
 void BeatManager::Init()
 {
-	tempoRate = 1.f;
+	start = false;
 }
 
 void BeatManager::Release()
@@ -22,21 +22,33 @@ void BeatManager::Update()
 	if (beatDatas.size() > 0)
 	{
 		unsigned int beat = beatDatas.front();
-		if (abs((int)curPosition - (int)beat) < 20.f / tempoRate)
+		unsigned int beatInterval = beat - beatBefore;
+		// 플레이어 입력 반 박자 빠르거나 느리게까지 성공
+		if (abs((int)curPosition - (int)beat) <= beatInterval / 2.f)
 		{
-			SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
-			beatDatas.pop();
+			if (KeyManager::GetInstance()->IsOnceKeyDown(VK_SPACE))
+			{
+				SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
+				beatDatas.pop();
+				beatBefore = beat;
+			}
 		}
-		if (curPosition > beat + 20.f / tempoRate)
+		// 반 박자보다 더 느림
+		else if (curPosition > beat + beatInterval / 2.f)
 		{
 			beatDatas.pop();
+			beatBefore = beat;
 		}
+	}
+	else
+	{
+		start = false;
 	}
 }
 
 void BeatManager::StartBeat()
 {
-	queue<int> beatQueue;
+	queue<unsigned int> beatQueue;
 	
 	string beatFileStr = bgmPath[SoundManager::GetInstance()->GetCurrentKeyBgm()] + ".txt";
 	ifstream beatFile{ beatFileStr };
@@ -52,5 +64,6 @@ void BeatManager::StartBeat()
 		beatDatas = beatQueue;
 	}
 
+	beatBefore = 0;
 	start = true;
 }

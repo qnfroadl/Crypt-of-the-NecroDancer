@@ -6,8 +6,9 @@
 class BeatManager : public Singleton<BeatManager>
 {
 private:
-	float tempoRate;
-	queue<int> beatDatas;
+	queue<unsigned int> beatDatas;
+	unsigned int beatBefore;
+
 	bool start;
 
 public:
