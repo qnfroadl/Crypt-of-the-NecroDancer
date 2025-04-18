@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "ObservableValue.h"
 #include "TileCharacter.h"
+#include "IPlayerObserver.h"
 
-
+class IPlayerObserver;
 enum class PlayerState
 {
 	IDLE, JUMP, THROWREADY, THROW, 
@@ -13,20 +15,23 @@ class Player : public TileCharacter
 {
 
 private:
+	vector<IPlayerObserver*> observers;
+
     PlayerIndex playerIndex;
     PlayerState state;
 	
-    
     float elapsedTime;
     int curFrame;
 
-	// Player의 상태   
+	// Player의 상태
     string name;
-    float hp;
-    float maxHP;
+    ObservableValue<int> goldMultiple;
+    ObservableValue<float> hp;
+    ObservableValue<float> maxHP;
+    ObservableValue<int> diamond;
+
 	float attack;
     float speed;
-    int diamond;
     bool isLeft;
 
     Image* body;    
@@ -47,7 +52,7 @@ public:
 
     void SetJumpData(int dx, int dy) override;
 
-
+	void AddObserver(IPlayerObserver* observer) { if (observer) {observers.push_back(observer); }}
     void SetPlayerIndex(PlayerIndex index) { playerIndex = index;}
     PlayerIndex GetPlayerIndex() {return playerIndex;}
 	void SetName(string name) { this->name = name; }
@@ -58,18 +63,18 @@ public:
     void TakeDamage(float damage);
     bool IsDead();
 
-	void SetHP(float hp) { this->hp = hp; }
-	float GetHP() { return this->hp; }
+	void SetHP(float hp) { this->hp.Set(hp); }
+	float GetHP() { return this->hp.Get(); }
 
-    void SetMaxHP(float maxHP) { this->maxHP = maxHP; }
-	float GetMaxHP() { return this->maxHP; }
+    void SetMaxHP(float maxHP) { this->maxHP.Set(maxHP); }
+	float GetMaxHP() { return this->maxHP.Get(); }
 
 	float GetAttack() { return this->attack; }
 	void SetAttack(float attack) { this->attack = attack; }
 
-	void SetDiamond(int diamond) { this->diamond = diamond; }
-    void AddDiamond(int diamond) { this->diamond += diamond; }
-	int GetDiamond() { return this->diamond; }
+	void SetDiamond(int diamond) { this->diamond.Set(diamond); }
+    void AddDiamond(int diamond) { this->diamond.Set(this->diamond.Get() + diamond); }
+	int GetDiamond() { return this->diamond.Get(); }
 	
   
    
