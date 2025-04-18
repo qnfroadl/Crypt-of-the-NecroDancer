@@ -4,7 +4,7 @@
 #include <queue>
 
 class Image;
-class UIBeatMarker;
+class BeatMarkerManager;
 class BeatManager : public Singleton<BeatManager>
 {
 private:
@@ -14,8 +14,7 @@ private:
 	bool checkInputTime;
 	bool checkOnBeat; // 정박 체크
 
-	int totalBeats;
-	vector<UIBeatMarker*> markers;
+	BeatMarkerManager* markerManager;
 
 public:
 	void Init();

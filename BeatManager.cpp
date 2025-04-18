@@ -1,22 +1,24 @@
 #include "BeatManager.h"
 #include "SoundManager.h"
 #include "KeyManager.h"
-#include "UIBeatMarker.h"
+#include "BeatMarkerManager.h"
 
 #include <fstream>
 
 void BeatManager::Init()
 {
 	checkInputTime = false;
+
+	markerManager = new BeatMarkerManager();
 }
 
 void BeatManager::Release()
 {
-	for (auto marker : markers)
+	if (markerManager)
 	{
-		marker->Release();
-		delete marker;
-		marker = nullptr;
+		markerManager->Release();
+		delete markerManager;
+		markerManager = nullptr;
 	}
 
 	ReleaseInstance();
@@ -33,18 +35,17 @@ void BeatManager::Update()
 		}
 	}
 
+	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
+	// 마커 업데이트
+	if (markerManager)
+	{
+		markerManager->Update(curPosition);
+	}
+
 	if (beatDatas.size() > 0)
 	{
-		unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
 		unsigned int beat = beatDatas.front();
 		unsigned int beatInterval = beat - beatBefore;
-
-		// 마커 업데이트
-		for (auto marker : markers)
-		{
-			beatInterval = max(1, beatInterval);
-			if(marker) marker->Update((float)(beat - curPosition) / (float)beatInterval);
-		}
 
 		// 정박
 		if (!checkOnBeat)
@@ -52,14 +53,6 @@ void BeatManager::Update()
 			if (abs((int)curPosition - (int)beat) <= 20.f)
 			{
 				checkOnBeat = true;
-
-				// 마커 Init
-				bool red = false;
-				if (totalBeats - beatDatas.size() > totalBeats * 0.9f) red = true;
-				if (totalBeats - beatDatas.size() < totalBeats)
-				{
-					markers[totalBeats - beatDatas.size()]->Init(red);
-				}
 			}
 		}
 
@@ -77,10 +70,11 @@ void BeatManager::Render(HDC hdc)
 {
 	if (checkInputTime)
 	{
-		for (auto marker : markers)
+		if (markerManager)
 		{
-			marker->Render(hdc);
+			markerManager->Render(hdc);
 		}
+
 	}
 }
 
@@ -108,16 +102,9 @@ void BeatManager::StartBeat(bool _checkBeat)
 	checkInputTime = _checkBeat;
 	checkOnBeat = false;
 
-	totalBeats = beatDatas.size();
-
-	// totalBeatData 수만큼 마커 생성
-	int curSize = markers.size();
-	if (curSize < totalBeats)
+	if (markerManager)
 	{
-		for (int i = 0; i < totalBeats - curSize; ++i)
-		{
-			markers.push_back(new UIBeatMarker());
-		}
+		markerManager->Init(beatQueue);
 	}
 }
 

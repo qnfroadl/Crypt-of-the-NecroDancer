@@ -93,8 +93,11 @@
     <ClCompile Include="UIManager.cpp">
       <Filter>InputSystem &amp; UI\UI</Filter>
     </ClCompile>
-    <ClCompile Include="UIBeatMarker.cpp">
-      <Filter>InputSystem &amp; UI</Filter>
+    <ClCompile Include="BeatMarkerManager.cpp">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatMarker.cpp">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -204,8 +207,11 @@
     <ClInclude Include="UIManager.h">
       <Filter>InputSystem &amp; UI\UI</Filter>
     </ClInclude>
-    <ClInclude Include="UIBeatMarker.h">
-      <Filter>InputSystem &amp; UI</Filter>
+    <ClInclude Include="BeatMarkerManager.h">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatMarker.h">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +244,9 @@
     </Filter>
     <Filter Include="InputSystem &amp; UI\UI">
       <UniqueIdentifier>{b9adaf7d-7702-426f-92d4-70aa0cb806df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputSystem &amp; UI\UI\BeatMarker">
+      <UniqueIdentifier>{02624fd1-0262-4caf-91ab-f28cf4881a84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

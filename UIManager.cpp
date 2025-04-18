@@ -1,7 +1,6 @@
 #include "UIManager.h"
 #include "ImageManager.h"
 #include "UIBase.h"
-#include "UIBeatMarker.h"
 
 UIManager::UIManager()
 {

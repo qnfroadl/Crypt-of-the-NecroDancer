@@ -1,18 +1,19 @@
-#include "UIBeatMarker.h"
+#include "BeatMarker.h"
 #include "Image.h"
 #include "ImageManager.h"
 
-UIBeatMarker::UIBeatMarker()
-	: dead{true}, red {}
+BeatMarker::BeatMarker()
+	: dead{ true }, red{}, beatPosition{}, speed{ 3000.f }
 {
 }
 
-UIBeatMarker::~UIBeatMarker()
+BeatMarker::~BeatMarker()
 {
 }
 
-void UIBeatMarker::Init(bool _red)
+void BeatMarker::Init(unsigned int _beatPosition, bool _red)
 {
+	beatPosition = _beatPosition;
 	red = _red;
 	if (red)
 	{
@@ -30,22 +31,26 @@ void UIBeatMarker::Init(bool _red)
 	dead = false;
 }
 
-void UIBeatMarker::Release()
+void BeatMarker::Release()
 {
 }
 
-void UIBeatMarker::Update(float diff)
+void BeatMarker::Update(unsigned int curPosition)
 {
+	if (curPosition > beatPosition) dead = true;
 	if (dead) return;
-	if (diff <= 0) dead = true;
+
+	float diff = (float)(beatPosition - curPosition) / speed;
+	diff = max(0.f, min(1.f, diff));
+
 	RECT client;
 	GetClientRect(g_hWnd, &client);
 	float width = (client.right - client.left);
+
 	position.x = width * diff;
-	//position.x += diff;
 }
 
-void UIBeatMarker::Render(HDC hdc)
+void BeatMarker::Render(HDC hdc)
 {
 	if (dead) return;
 	if (image)
