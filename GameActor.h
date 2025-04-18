@@ -3,11 +3,6 @@
 #include "GameObject.h"
 #include "config.h"
 
-enum class ActorType
-{
-	None, 
-};
-
 class GameActor : public GameObject
 {
 	
@@ -29,4 +24,7 @@ public:
 
 	ActorType GetType();
 	void SetType(ActorType _type);
+
+	virtual void Interact(GameActor* actor);
+
 };

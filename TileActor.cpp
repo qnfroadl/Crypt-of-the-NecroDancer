@@ -6,22 +6,7 @@
 
 void TileActor::Update()
 {
-	if (KeyManager::GetInstance()->IsStayKeyDown('W'))
-	{
-		AddPos(0,-5);
-	}
-	else if(KeyManager::GetInstance()->IsStayKeyDown('A'))
-	{
-		AddPos(-5, 0);
-	}
-	else if (KeyManager::GetInstance()->IsStayKeyDown('S'))
-	{
-		AddPos(0, 5);
-	}
-	else if (KeyManager::GetInstance()->IsStayKeyDown('D'))
-	{
-		AddPos(5, 0);
-	}
+	
 }
 
 void TileActor::Render(HDC hdc)
@@ -30,4 +15,9 @@ void TileActor::Render(HDC hdc)
 	float screenY = Camera::GetInstance()->GetPos().y;
 
 	RenderRectAtCenter(hdc, GetPos().x - screenX, GetPos().y - screenY, 50,50);
+}
+
+void TileActor::Interact(GameActor* actor)
+{
+
 }

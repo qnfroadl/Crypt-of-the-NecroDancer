@@ -59,6 +59,15 @@
     <ClCompile Include="SoundManager.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="EventData.cpp" />
+    <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="Block.cpp" />
+    <ClCompile Include="TileActor.cpp" />
+    <ClCompile Include="TileCharacter.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Monster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -128,6 +137,15 @@
     <ClInclude Include="SoundManager.h">
       <Filter>2D Framework</Filter>
     </ClInclude>
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="EventData.h" />
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Tile.h" />
+    <ClInclude Include="Block.h" />
+    <ClInclude Include="TileActor.h" />
+    <ClInclude Include="TileCharacter.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Monster.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="헤더파일">
