@@ -16,8 +16,6 @@ void SoundManager::Init()
 	system->init(512, FMOD_INIT_NORMAL, nullptr);
 	system->createChannelGroup("channelGroupEffect", &channelGroupEffect);
 
-	system->createDSPByType(FMOD_DSP_TYPE_FFT, &fftDSP);
-
 	bgmVolume = 1.f;
 	effectVolume = 1.f;
 
@@ -60,8 +58,6 @@ void SoundManager::Release()
 
 		}
 	}
-
-	fftDSP->release();
 
 	channelGroupEffect->release();
 
@@ -132,8 +128,6 @@ void SoundManager::PlaySoundBgm(ESoundKey mainBgm, ESoundKey shopkeeperBgm)
 	{
 		system->playSound(sound, nullptr, false, &channelBgm);
 		keyBgm = mainBgm;
-
-		channelBgm->addDSP(FMOD_CHANNELCONTROL_DSP_HEAD, fftDSP);
 	}
 
 	sound = FindSound(shopkeeperBgm);

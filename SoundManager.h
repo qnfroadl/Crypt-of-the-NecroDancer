@@ -57,8 +57,6 @@ private:
 	float bgmVolume;
 	float effectVolume;
 
-	FMOD::DSP* fftDSP;
-
 	ESoundKey keyBgm;
 	ESoundKey keyBgmShopkeeper;
 
