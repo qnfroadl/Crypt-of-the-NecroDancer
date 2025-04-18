@@ -13,6 +13,7 @@ class Player : public TileCharacter
 {
 
 private:
+    PlayerIndex playerIndex;
     PlayerState state;
 	
     
@@ -46,6 +47,9 @@ public:
 
     void SetJumpData(int dx, int dy) override;
 
+
+    void SetPlayerIndex(PlayerIndex index) { playerIndex = index;}
+    PlayerIndex GetPlayerIndex() {return playerIndex;}
 	void SetName(string name) { this->name = name; }
 
     void Attack();                    //  공격
