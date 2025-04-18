@@ -222,6 +222,61 @@ void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, b
 
 }
 
+void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter)
+{
+    if (isCenter)
+    {
+        destX = destX - imageInfo->frameWidth/2;
+        destY = destY - imageInfo->frameHeight/2;
+    }
+    
+    if (isFlip && isTransparent)
+    {
+        StretchBlt(imageInfo->hTempDC, 0, 0,
+            imageInfo->frameWidth, imageInfo->frameHeight,
+            imageInfo->hMemDC,
+            (imageInfo->frameWidth * frameX) + (imageInfo->frameWidth + 1),
+            imageInfo->frameHeight * frameY,
+            -imageInfo->frameWidth, imageInfo->frameHeight,
+            SRCCOPY
+        );
+
+        GdiTransparentBlt(hdc,
+            destX, destY,
+            imageInfo->frameWidth * sizeX, imageInfo->frameHeight * sizeY,
+            imageInfo->hTempDC,
+            0, 0,
+            imageInfo->frameWidth, imageInfo->frameHeight,
+            transColor);
+    }
+    else if (isTransparent)
+    {
+        GdiTransparentBlt(hdc,
+            destX, destY,
+            imageInfo->frameWidth * sizeX, imageInfo->frameHeight * sizeY,
+            imageInfo->hMemDC,
+            imageInfo->frameWidth * frameX,
+            imageInfo->frameHeight * frameY,
+            imageInfo->frameWidth, imageInfo->frameHeight,
+            transColor);
+    }
+    else
+    {
+        BitBlt(
+            hdc,
+            destX, destY,
+            imageInfo->frameWidth * sizeX,
+            imageInfo->frameHeight * sizeY,
+            imageInfo->hMemDC,
+            imageInfo->frameWidth * frameX,
+            imageInfo->frameHeight * frameY,
+            SRCCOPY
+        );
+    }
+
+
+}
+
 void Image::RenderHeight(HDC hdc, int destX, int destY, int frameIndex, int totalFrame)
 {
     BitBlt(
