@@ -119,6 +119,8 @@ HRESULT MainGame::Init()
 	playerManager = new PlayerManager();
 	playerManager->Init();
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
+	testMoster = new Monster();
+	testMoster->Init(MONSTERTYPE::SLIME);
 
 
 	FPS = 144;
@@ -178,7 +180,7 @@ void MainGame::Update()
 	//btn->Update();
 	
 	playerManager->Update();
-
+	//testMoster->Update();
 	Camera::GetInstance()->Update();
 
 	UpdateCollisionInfo();
@@ -204,7 +206,7 @@ void MainGame::Render()
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 
 	playerManager->Render(hBackBufferDC);
-
+	//testMoster->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
