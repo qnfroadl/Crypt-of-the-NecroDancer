@@ -30,8 +30,12 @@ bool Player::JumpAnim()
 
 
 Player::Player()
-	: state{}, hp(100), maxHP(100), attack(1), diamond(0), name("Cadence"), curFrame(0), speed(20), isLeft(false), elapsedTime(0)
+	: state{}, attack(1), name("Cadence"), curFrame(0), speed(20), isLeft(false), elapsedTime(0)
 {
+	hp.Set(100);
+	maxHP.Set(100);
+	diamond.Set(0);
+
 	SetType(ActorType::PLAYER);
 }
 
@@ -49,6 +53,50 @@ HRESULT Player::Init()
 	{
 		return E_FAIL;
 	}
+
+	#pragma region Bind
+
+	gold.Bind([&](const int& preValue, const int& value)
+		{
+			for (auto observer : observers)
+			{
+				observer->OnPlayerGoldChanged(value, preValue < value ? false : true);
+			}
+		});
+
+	goldMultiple.Bind([&](const int& preValue, const int& value) 
+	{
+		for (auto observer : observers)
+		{
+			observer->OnPlayerGoldChanged(value, preValue < value? false : true);
+		}
+	});
+
+	hp.Bind([&](const float& preValue, const float& value)
+		{
+			for (auto observer : observers)
+			{
+				observer->OnPlayerHPChanged(value);
+			}
+		});
+
+	maxHP.Bind([&](const float& preValue, const float& value)
+		{
+			for (auto observer : observers)
+			{
+				observer->OnPlayerMaxHPChanged(value);
+			}
+		});
+
+	diamond.Bind([&](const int& preValue, const int& value)
+		{
+			for (auto observer : observers)
+			{
+				observer->OnPlayerDiamondChanged(value);
+			}
+		});
+	
+#pragma endregion
 
 	return S_OK;
 }
@@ -137,14 +185,17 @@ void Player::UseItem()
 
 void Player::TakeDamage(float damage)
 {
-	hp -= damage;
-	if (hp < 0)
+	float dmamgedHp = hp.Get() - damage;
+	if (dmamgedHp < 0)
 	{
-		hp = 0;
+		dmamgedHp = 0;
 	}
+
+	hp.Set(dmamgedHp);
+	
 }
 
 bool Player::IsDead()
 {
-	return hp <= 0;
+	return hp.Get() <= 0;
 }
