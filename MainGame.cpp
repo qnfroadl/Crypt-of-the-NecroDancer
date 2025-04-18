@@ -17,6 +17,9 @@
 #include "EventManager.h"
 #include "PlayerManager.h"
 
+#include "SoundManager.h"
+#include "BeatManager.h"
+
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
 
@@ -106,9 +109,17 @@ HRESULT MainGame::Init()
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
 
+	// Test. SoundManager
+	SoundManager::GetInstance()->Init();
+	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
+	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
+	BeatManager::GetInstance()->Init();
+	BeatManager::GetInstance()->StartBeat();
+
 	playerManager = new PlayerManager();
 	playerManager->Init();
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
+
 
 	FPS = 144;
 
@@ -138,6 +149,17 @@ void MainGame::Release()
 	ImageManager::GetInstance()->Release();
 	SceneManager::GetInstance()->Release();
 
+
+	// Test. SoundManager
+	SoundManager::GetInstance()->Release();
+	BeatManager::GetInstance()->Release();
+
+	if (btn)
+	{
+		btn->Release();
+	}
+
+
 	if (backBuffer)
 	{
 		backBuffer->Release();
@@ -164,6 +186,14 @@ void MainGame::Update()
 
 	//test 
 	EventManager::GetInstance()->Update();
+	
+	// Test. SoundManager
+	SoundManager::GetInstance()->Update();
+	if (KeyManager::GetInstance()->IsOnceKeyDown('M'))
+	{
+		SoundManager::GetInstance()->ChangeSoundBgmShopkeeper();
+	}
+	BeatManager::GetInstance()->Update();
 }
 
 void MainGame::Render()
