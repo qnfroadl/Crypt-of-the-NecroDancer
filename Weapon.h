@@ -1,48 +1,56 @@
 ﻿#pragma once
 
 #include "TileActor.h"
-#include "WeaponData.h"
+#include "ImageManager.h"
+#include "Player.h"
 
 class Monster;
 class Player;
+class WeaponMaterial;
 
 enum class DamageType
 {
     NORMAL, PIERCING, PHASING,
 };
-
-// NORMAL, BLOOD, GLASS, GOLDEN, OBSIDIAN, TITANIUM
-class IMaterialProperty
+enum class WeaponType
 {
-public:
-	virtual int ModifyDamage(int baseDamage) = 0;
-	virtual void OnAttackMonster(Player* owner, Monster* monster) = 0;
+	DAGGER, BROADSWORD,
 };
 
-// 대거, 브로드소드, 
-class IWeaponType
+class Weapon : public TileActor
 {
+private:
+	int curFrame;
+	
+	Player* owner;
+    Image* image;
+    DamageType damageType; 
+	WeaponType weaponType;
+    vector<POINT> range;
+	std::unique_ptr<WeaponMaterial> material;
 
-};
-
-
-
-class Weapon : TileActor
-{
-    DamageType damageType;
-    std::unique_ptr<IWeaponType> type;
-    std::unique_ptr<IMaterialProperty> material;
+	void InitRange();
+	void InitImage();
+	const string& GetWeaponTypeName();
 
 public:
-    void SetMaterial(std::unique_ptr<IMaterialProperty> newMat) 
-    {
-        material = std::move(newMat);
-    }
+	Weapon(DamageType damageType, WeaponType weaponType);
+	virtual ~Weapon(){}
 
-    void SetForm(std::unique_ptr<IWeaponType> newForm)
-    {
-        type = std::move(newForm);
-    }
+	virtual HRESULT Init();		// 멤버 변수의 초기화, 메모리 할당
+	virtual void Release();		// 메모리 해제
+	virtual void Update();		// 프레임 단위로 게임 로직 실행(데이터 계산)
+	virtual void Render(HDC hdc);	// 프레임 단위로 출력(이미지, 텍스트 등)
 
+	void SetWeaponType(DamageType damageType, WeaponType weaponType);
+	void SetMaterial(std::unique_ptr<WeaponMaterial> material);
+
+	void Interact(GameActor* actor) override;
+	void Drop();	// 무기 떨어뜨리기
+
+	void Attack();
+	
+	// 유리무기인 경우에는 유리조각 스폰.
+	void Destroy();
 
 };

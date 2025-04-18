@@ -2,6 +2,8 @@
 
 #include "GameObject.h"
 
+#include "IPlayerObserver.h"
+
 class Player;
 class TileMap;
 class PositionManager;
@@ -26,6 +28,8 @@ public:
 	void SetPositionManager(weak_ptr<PositionManager> positionManager);
 
 	weak_ptr<Player> GetPlayer(PlayerIndex index);
+	void BindPlayerObserver(PlayerIndex index, IPlayerObserver* observer);
+	
 
 };
 

@@ -6,8 +6,6 @@ PlayerManager::PlayerManager()
 	:playerCount(1)
 {
 	
-
-	
 }
 
 PlayerManager::~PlayerManager()
@@ -78,4 +76,12 @@ void PlayerManager::SetPositionManager(weak_ptr<PositionManager> _positionManage
 weak_ptr<Player> PlayerManager::GetPlayer(PlayerIndex index)
 {
     return players[int(index)];
+}
+
+void PlayerManager::BindPlayerObserver(PlayerIndex index, IPlayerObserver* observer)
+{
+	if (players[int(index)] != nullptr)
+	{
+		players[int(index)]->AddObserver(observer);
+	}
 }

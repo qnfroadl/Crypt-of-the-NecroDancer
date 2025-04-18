@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Block.cpp">
       <Filter>TileSystem</Filter>
     </ClCompile>
@@ -87,8 +86,19 @@
     <ClCompile Include="TimerManager.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Weapon.cpp" />
-    <ClCompile Include="IPlayerObserver.cpp" />
+    <ClCompile Include="IPlayerObserver.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame.cpp">
+      <Filter>2D Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponMaterial.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="TileItem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -191,12 +201,19 @@
     <ClInclude Include="TimerManager.h">
       <Filter>2D Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Weapon.h" />
-    <ClInclude Include="WeaponData.h">
+    <ClInclude Include="IPlayerObserver.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ObservableValue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
       <Filter>Item</Filter>
     </ClInclude>
-    <ClInclude Include="IPlayerObserver.h" />
-    <ClInclude Include="ObservableValue.h" />
+    <ClInclude Include="WeaponMaterial.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="TileItem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">

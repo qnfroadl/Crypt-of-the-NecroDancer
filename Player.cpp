@@ -2,6 +2,7 @@
 
 #include "ImageManager.h"
 #include "Camera.h"
+#include "Weapon.h"
 
 //test
 #include "KeyManager.h"
@@ -68,7 +69,7 @@ HRESULT Player::Init()
 	{
 		for (auto observer : observers)
 		{
-			observer->OnPlayerGoldChanged(value, preValue < value? false : true);
+			
 		}
 	});
 
@@ -198,4 +199,11 @@ void Player::TakeDamage(float damage)
 bool Player::IsDead()
 {
 	return hp.Get() <= 0;
+}
+
+void Player::AddWeapon(Weapon* weapon)
+{
+	//  검집이 있는게 아니면, 기존 무기를 떨어뜨리고, 새 무기를 장착 한다.
+
+
 }

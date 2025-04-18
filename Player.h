@@ -4,6 +4,7 @@
 #include "TileCharacter.h"
 #include "IPlayerObserver.h"
 
+class Weapon;
 class IPlayerObserver;
 enum class PlayerState
 {
@@ -76,7 +77,7 @@ public:
     void AddDiamond(int diamond) { this->diamond.Set(this->diamond.Get() + diamond); }
 	int GetDiamond() { return this->diamond.Get(); }
 	
-  
+	void AddWeapon(Weapon* weapon);
    
     
 };
