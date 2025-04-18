@@ -5,8 +5,9 @@ class Player;
 enum class MonsterState
 {
 	IDLE,
-	ACTIVE,
-	DIE,
+	ACTIVE,// "The player will take damage if there is an overlap in this state."
+	JUMP,
+	DEAD,
 };
 enum class MONSTERTYPE
 {
@@ -27,15 +28,18 @@ typedef struct MonsterImageInfo {
 class Monster:public TileCharacter
 {
 private:
+	MONSTERTYPE monsterType;
 	MonsterState state;
 	float light;
 	int beatCount;
 	int moveDelay;
+	int minFrame;
+	int maxFrame;
 	int animationFrame;
-	int elapsedFrame;
 	float elapsedTime;
 	Player* player;
 	MonsterImageInfo imageInfo;
+	float changeTime;
 #pragma region Image Box
 	unordered_map<MONSTERTYPE, MonsterImageInfo>MonsterInfoTable =
 	{
@@ -58,10 +62,14 @@ public:
 	void Trace();
 	void Dead();
 	void OnBeat();
-
+	void AttackTarget();
+	bool JumpAnim() override;
+	void SetJumpData(int dx, int dy)override;
 	MonsterImageInfo FindImageInfo(MONSTERTYPE _m);
+	
 	Monster();
 	virtual ~Monster();
+
 
 };
 

@@ -12,6 +12,7 @@ PlayerManager::PlayerManager()
 
 PlayerManager::~PlayerManager()
 {
+	Release();
 }
 
 HRESULT PlayerManager::Init()
