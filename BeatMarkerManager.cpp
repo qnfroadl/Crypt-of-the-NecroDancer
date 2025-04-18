@@ -1,7 +1,10 @@
 #include "BeatMarkerManager.h"
 #include "BeatMarker.h"
+#include "Beatheart.h"
 
 BeatMarkerManager::BeatMarkerManager()
+	: markers{}, beats{}, totalNum{},
+	heart{}
 {
 }
 
@@ -26,6 +29,12 @@ void BeatMarkerManager::Init(queue<unsigned int> beatQueue)
 	{
 		AddMarker();
 	}
+
+	if (!heart)
+	{
+		heart = new BeatHeart();
+	}
+	heart->Init();
 }
 
 void BeatMarkerManager::Release()
@@ -39,9 +48,16 @@ void BeatMarkerManager::Release()
 			marker = nullptr;
 		}
 	}
+
+	if (heart)
+	{
+		heart->Release();
+		delete heart;
+		heart = nullptr;
+	}
 }
 
-void BeatMarkerManager::Update(unsigned int curPosition)
+void BeatMarkerManager::Update(unsigned int curPosition, bool checkOnBeat)
 {
 	int activeMarkerNum{};
 	for (auto marker : markers)
@@ -57,6 +73,11 @@ void BeatMarkerManager::Update(unsigned int curPosition)
 	{
 		AddMarker();
 	}
+
+	if (heart)
+	{
+		heart->Update(checkOnBeat);
+	}
 }
 
 void BeatMarkerManager::Render(HDC hdc)
@@ -67,6 +88,11 @@ void BeatMarkerManager::Render(HDC hdc)
 		{
 			marker->Render(hdc);
 		}
+	}
+
+	if (heart)
+	{
+		heart->Render(hdc);
 	}
 }
 

@@ -140,6 +140,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="BattleScene.cpp" />
+    <ClCompile Include="BeatHeart.cpp" />
     <ClCompile Include="BeatManager.cpp" />
     <ClCompile Include="BeatMarkerManager.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -179,6 +180,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="BattleScene.h" />
+    <ClInclude Include="BeatHeart.h" />
     <ClInclude Include="BeatManager.h" />
     <ClInclude Include="BeatMarkerManager.h" />
     <ClInclude Include="Button.h" />

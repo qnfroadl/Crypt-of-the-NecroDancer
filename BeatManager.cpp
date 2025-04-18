@@ -39,7 +39,7 @@ void BeatManager::Update()
 	// 마커 업데이트
 	if (markerManager)
 	{
-		markerManager->Update(curPosition);
+		markerManager->Update(curPosition, checkOnBeat);
 	}
 
 	if (beatDatas.size() > 0)

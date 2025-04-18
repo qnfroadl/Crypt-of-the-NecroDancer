@@ -99,6 +99,9 @@
     <ClCompile Include="BeatMarker.cpp">
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClCompile>
+    <ClCompile Include="BeatHeart.cpp">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -211,6 +214,9 @@
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClInclude>
     <ClInclude Include="BeatMarker.h">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatHeart.h">
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClInclude>
   </ItemGroup>
