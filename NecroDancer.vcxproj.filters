@@ -87,6 +87,15 @@
     <ClCompile Include="TimerManager.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
+    <ClCompile Include="UIBase.cpp">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIBeatMarker.cpp">
+      <Filter>InputSystem &amp; UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -189,6 +198,15 @@
     <ClInclude Include="TimerManager.h">
       <Filter>2D Framework</Filter>
     </ClInclude>
+    <ClInclude Include="UIBase.h">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIBeatMarker.h">
+      <Filter>InputSystem &amp; UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">
@@ -217,6 +235,9 @@
     </Filter>
     <Filter Include="TileSystem">
       <UniqueIdentifier>{174d20bd-4004-4934-8bda-148319679eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputSystem &amp; UI\UI">
+      <UniqueIdentifier>{b9adaf7d-7702-426f-92d4-70aa0cb806df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

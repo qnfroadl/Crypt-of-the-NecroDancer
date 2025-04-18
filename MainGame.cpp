@@ -114,7 +114,7 @@ HRESULT MainGame::Init()
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
 	BeatManager::GetInstance()->Init();
-	BeatManager::GetInstance()->StartBeat();
+	BeatManager::GetInstance()->StartBeat(true);
 
 	playerManager = new PlayerManager();
 	playerManager->Init();
@@ -212,6 +212,8 @@ void MainGame::Render()
 		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
 		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
 	}
+
+	BeatManager::GetInstance()->Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);
