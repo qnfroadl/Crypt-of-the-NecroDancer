@@ -1,6 +1,7 @@
 #include "Tilemap.h"  
 #include "Tile.h"
 #include "Block.h"
+#include <fstream>
 
 HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 {
@@ -110,4 +111,56 @@ POINT Tilemap::GetSpawnIndex()
 		}
 	}
 	return { -1, -1 };
+}
+
+
+void Tilemap::Load(string filePath)
+{
+	ifstream in(filePath);
+	if (!in.is_open()) return;
+
+	string header;
+	in >> header;
+	if (header != "TILEMAP") return;
+
+	// SIZE
+	string sizeLabel;
+	int tileX, tileY;
+	in >> sizeLabel >> tileX >> tileY;
+	if (tileX != TILEMAPSIZE_X || tileY != TILEMAPSIZE_Y) return;
+
+	// FLOOR
+	string section;
+	in >> section;
+	if (section == "FLOOR") {
+		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+			for (int i = 0; i < TILEMAPSIZE_X; i++) {
+				int tileNum;
+				in >> tileNum;
+				tiles[j][i]->SetTileNum(tileNum);
+			}
+		}
+	}
+
+	// WALL
+	in >> section;
+	if (section == "WALL") {
+		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+			for (int i = 0; i < TILEMAPSIZE_X; i++) {
+				int wallNum;
+				in >> wallNum;
+				if (wallNum >= 0) {
+					Block* block = new Block();
+					block->Init();
+					block->SetBlockNum(wallNum);
+					tiles[j][i]->SetBlock(block);
+				}
+				else {
+					tiles[j][i]->SetBlock(nullptr);
+				}
+			}
+		}
+	}
+
+	in.close();
 }

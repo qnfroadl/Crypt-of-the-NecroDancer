@@ -23,5 +23,6 @@ public:
 	bool CanMove(POINT index);
 	void Move(TileActor* actor, POINT index);
 	POINT GetSpawnIndex();
+	void Load(string filePath);
 };
 

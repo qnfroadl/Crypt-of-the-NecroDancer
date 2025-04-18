@@ -20,6 +20,8 @@
 #include "SoundManager.h"
 #include "BeatManager.h"
 
+#include "LobbyScene.h"
+
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
 
@@ -51,6 +53,10 @@ void MainGame::ItemSpawnSimulation()
 	if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LSHIFT))
 	{
 		SceneManager::GetInstance()->ChangeScene("TilemapTool", "Loading");
+	}
+	else if (KeyManager::GetInstance()->IsOnceKeyDown('Q'))
+	{
+		SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
 	}
 	else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RSHIFT))
 	{
@@ -97,6 +103,8 @@ HRESULT MainGame::Init()
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
+	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
+	SceneManager::GetInstance()->AddScene("LobbyScene", new LobbyScene());
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 
 	SceneManager::GetInstance()->ChangeScene("AstarScene");
