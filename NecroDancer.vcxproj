@@ -141,6 +141,7 @@
     </ClCompile>
     <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="BeatManager.cpp" />
+    <ClCompile Include="IPlayerObserver.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="TilemapTool.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
+    <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActorDef.h" />
@@ -178,6 +180,8 @@
     <ClInclude Include="BeatManager.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="IPlayerObserver.h" />
+    <ClInclude Include="ObservableValue.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Monster.h" />
@@ -206,6 +210,8 @@
     <ClInclude Include="TilemapTool.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
+    <ClInclude Include="Weapon.h" />
+    <ClInclude Include="WeaponData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

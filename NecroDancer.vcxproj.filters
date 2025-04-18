@@ -87,6 +87,8 @@
     <ClCompile Include="TimerManager.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
+    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="IPlayerObserver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -189,6 +191,12 @@
     <ClInclude Include="TimerManager.h">
       <Filter>2D Framework</Filter>
     </ClInclude>
+    <ClInclude Include="Weapon.h" />
+    <ClInclude Include="WeaponData.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="IPlayerObserver.h" />
+    <ClInclude Include="ObservableValue.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">
@@ -217,6 +225,9 @@
     </Filter>
     <Filter Include="TileSystem">
       <UniqueIdentifier>{174d20bd-4004-4934-8bda-148319679eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item">
+      <UniqueIdentifier>{13233eb5-16f7-44f1-9133-946380d77cd9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
