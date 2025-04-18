@@ -48,13 +48,17 @@ HRESULT TilemapTool::Init()
 
 void TilemapTool::Release()
 {
-	for (int j = 0; j < TILEMAPSIZE_Y; j++) {
-		for (int i = 0; i < TILEMAPSIZE_X; i++) {
-			delete tiles[j][i];
-			tiles[j][i] = nullptr;
+	if(!tiles.empty())
+	{
+		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+			for (int i = 0; i < TILEMAPSIZE_X; i++) {
+				delete tiles[j][i];
+				tiles[j][i] = nullptr;
+			}
 		}
+		tiles.clear();
+
 	}
-	tiles.clear();
 }
 
 void TilemapTool::Update()
