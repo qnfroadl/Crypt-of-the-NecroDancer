@@ -226,8 +226,8 @@ void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, f
 {
     if (isCenter)
     {
-        destX = destX - imageInfo->frameWidth/2;
-        destY = destY - imageInfo->frameHeight/2;
+        destX = destX - imageInfo->frameWidth * sizeX / 2.f;
+        destY = destY - imageInfo->frameHeight * sizeY / 2.f;
     }
     
     if (isFlip && isTransparent)
