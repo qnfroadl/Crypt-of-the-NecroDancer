@@ -9,13 +9,15 @@ private:
 	queue<unsigned int> beatDatas;
 	unsigned int beatBefore;
 
-	bool start;
+	bool checkBeat;
 
 public:
 	void Init();
 	void Release();
 	void Update();
 
-	void StartBeat();
+	void StartBeat(); // zone 들어갈 때 호출
+
+	bool IsHit();
 };
 

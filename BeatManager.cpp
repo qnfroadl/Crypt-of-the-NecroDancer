@@ -6,7 +6,7 @@
 
 void BeatManager::Init()
 {
-	start = false;
+	checkBeat = false;
 }
 
 void BeatManager::Release()
@@ -16,25 +16,23 @@ void BeatManager::Release()
 
 void BeatManager::Update()
 {
-	if (!start) return;
-	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
+	// IsHit 함수는 InputManager에서 사용합니다
+	if (KeyManager::GetInstance()->IsOnceKeyDown(VK_SPACE)) // inputManager에서 처리
+	{
+		if (IsHit())
+		{
+			SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL); // hit일 때 수행할 코드
+		}
+	}
 
 	if (beatDatas.size() > 0)
 	{
+		unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
 		unsigned int beat = beatDatas.front();
 		unsigned int beatInterval = beat - beatBefore;
-		// 플레이어 입력 반 박자 빠르거나 느리게까지 성공
-		if (abs((int)curPosition - (int)beat) <= beatInterval / 2.f)
-		{
-			if (KeyManager::GetInstance()->IsOnceKeyDown(VK_SPACE))
-			{
-				SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
-				beatDatas.pop();
-				beatBefore = beat;
-			}
-		}
+		
 		// 반 박자보다 더 느림
-		else if (curPosition > beat + beatInterval / 2.f)
+		if (curPosition > beat + beatInterval / 2.f)
 		{
 			beatDatas.pop();
 			beatBefore = beat;
@@ -42,7 +40,7 @@ void BeatManager::Update()
 	}
 	else
 	{
-		start = false;
+		checkBeat = false;
 	}
 }
 
@@ -65,5 +63,25 @@ void BeatManager::StartBeat()
 	}
 
 	beatBefore = 0;
-	start = true;
+	checkBeat = true;
+}
+
+bool BeatManager::IsHit()
+{
+	if (!checkBeat) return true; // 로비에서는 박자 체크 안하고 키 누르는 대로 움직일 수 있음
+
+	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
+	if (beatDatas.size() > 0)
+	{
+		unsigned int beat = beatDatas.front();
+		unsigned int beatInterval = beat - beatBefore;
+		// 반 박자 빠르거나 느리게까지 성공
+		if (abs((int)curPosition - (int)beat) <= beatInterval / 2.f)
+		{
+			beatDatas.pop();
+			beatBefore = beat;
+			return true;
+		}
+	}
+	return false;
 }
