@@ -54,9 +54,9 @@ void Tile::Render(HDC hdc, bool useCamera)
 		tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
 		false, true);
 
-	//// Æ®·¦
-	//if (trap)
-	//	trap->Render(hdc, center);
+	// Æ®·¦
+	if (trap)
+		trap->Render(hdc, center);
 
 	// º®
 	if (block)
@@ -65,8 +65,8 @@ void Tile::Render(HDC hdc, bool useCamera)
 
 void Tile::OnTile(TileActor* actor)
 {
-	//if (trap)
-	//	trap->ontriggered(actor);
+	if (trap)
+		trap->OnTriggered(actor);
 }
 
 TileType Tile::GetTypeByTileNum(int tileNum)

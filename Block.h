@@ -33,12 +33,9 @@ public:
 	bool Destroy(Item* item);     // 아이템 기준 파괴 가능 여부
 	bool Destroy(int strength);   // 정수로 강도 비교
 
-	void SetBlockNum(int _blockNum) { 
-		blockNum = _blockNum;
-		
-	}
+	void SetBlockNum(int _blockNum);
 	int GetTileNum() { return blockNum; }
 
-	BlockType GetTypeByBlockNum(int WallNum);
+	void SetBlockByBlockNum(int WallNum);
 	BlockType GetType() { return type; }
 };

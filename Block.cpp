@@ -25,6 +25,7 @@ void Block::Render(HDC hdc, FPOINT center)
 
 bool Block::Destroy(Item* item)
 {
+	// 아직
     return false;
 }
 
@@ -32,13 +33,48 @@ bool Block::Destroy(int strength)
 {
 	if (strength >= hp)
 	{
-		// TODO. 부수기
+		return true;
 	}
     return false;
 }
 
-BlockType Block::GetTypeByBlockNum(int WallNum)
+void Block::SetBlockNum(int _blockNum)
 {
-	//수정 예정
-	if (blockNum >= 0 && blockNum <= 15) return BlockType::NORMAL;
+	blockNum = _blockNum;
+	SetBlockByBlockNum(blockNum);
+}
+
+void Block::SetBlockByBlockNum(int _blockNum)
+{
+	if (_blockNum >= 0 && _blockNum <= 49)
+	{
+		type =BlockType::NORMAL;
+		hp = 1;
+	}
+	else if (_blockNum >= 50 && _blockNum <= 53)
+	{
+		type = BlockType::STONE;
+		hp = 2;
+	}
+	else if (_blockNum >= 54 && _blockNum <= 55)
+	{
+		type = BlockType::CATACOMB;
+		hp = 3;
+	}
+	else if (_blockNum >= 56 && _blockNum <= 57)
+	{
+		type = BlockType::SHOP;
+		hp = 4;
+	}
+	else if (_blockNum >= 58 && _blockNum <= 60)
+	{
+		type = BlockType::UNBREAKABLE;
+		hp = INT_MAX;
+	}
+	else if (_blockNum >= 61 && _blockNum <= 62)
+	{
+		type = BlockType::DOOR;
+		hp = 1;
+	}
+	else type = BlockType::NONE;
 }

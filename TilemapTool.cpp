@@ -37,7 +37,7 @@ HRESULT TilemapTool::Init()
 		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
 			tiles[j][i] = new Tile();
 			tiles[j][i]->Init();
-			tiles[j][i]->SetTileNum(0);
+			tiles[j][i]->SetTileNum(-1);
 
 			RECT rc = { i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE + TILE_SIZE, j * TILE_SIZE + TILE_SIZE };
 			tiles[j][i]->SetRcTile(rc);
@@ -131,7 +131,23 @@ void TilemapTool::Update()
 void TilemapTool::Render(HDC hdc)
 {
 	PatBlt(hdc, 0, 0, TILEMAPTOOL_X, TILEMAPTOOL_Y, WHITENESS);
+	// 격자 그리기 (가로줄)
+	HPEN gridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200)); // 연한 회색 선
+	HPEN oldPen = (HPEN)SelectObject(hdc, gridPen);
 
+	for (int y = 0; y <= TILEMAPSIZE_Y; ++y) {
+		MoveToEx(hdc, 0, y * TILE_SIZE, NULL);
+		LineTo(hdc, TILEMAPSIZE_X * TILE_SIZE, y * TILE_SIZE);
+	}
+
+	// 격자 그리기 (세로줄)
+	for (int x = 0; x <= TILEMAPSIZE_X; ++x) {
+		MoveToEx(hdc, x * TILE_SIZE, 0, NULL);
+		LineTo(hdc, x * TILE_SIZE, TILEMAPSIZE_Y * TILE_SIZE);
+	}
+
+	SelectObject(hdc, oldPen);
+	DeleteObject(gridPen);
 	for (int i = 0; i < TILEMAPSIZE_X; i++)
 		for (int j = 0; j < TILEMAPSIZE_Y; j++)
 			tiles[j][i]->Render(hdc, false);
@@ -146,8 +162,8 @@ void TilemapTool::Render(HDC hdc)
 	Rectangle(hdc, rcWallEraser.left, rcWallEraser.top, rcWallEraser.right, rcWallEraser.bottom);
 	DrawText(hdc, TEXT("벽지우개"), -1, &rcWallEraser, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-	int previewLX = TILEMAPTOOL_X - sampleTile->GetWidth() + TILE_SIZE / 2;
-	int previewLY = rcWallEraser.bottom + 60;
+	int previewLX = TILEMAPTOOL_X - sampleTile->GetWidth() - 100;
+	int previewLY = rcSampleWall.top;
 
 	if (currentTool == ToolType::FLOOR_TILE)
 		sampleTile->FrameRender(hdc, previewLX, previewLY, selectedTileLX, selectedTileLY, false, true);
