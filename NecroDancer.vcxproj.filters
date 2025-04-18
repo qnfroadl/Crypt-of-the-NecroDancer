@@ -68,6 +68,10 @@
     <ClCompile Include="TileCharacter.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Monster.cpp" />
+    <ClCompile Include="BeatManager.cpp" />
+    <ClCompile Include="PlayerManager.cpp" />
+    <ClCompile Include="PositionManager.cpp" />
+    <ClCompile Include="Trap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -146,6 +150,13 @@
     <ClInclude Include="TileCharacter.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Monster.h" />
+    <ClInclude Include="ActorDef.h" />
+    <ClInclude Include="BeatManager.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="PlayerManager.h" />
+    <ClInclude Include="PositionManager.h" />
+    <ClInclude Include="Trap.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="헤더파일">
