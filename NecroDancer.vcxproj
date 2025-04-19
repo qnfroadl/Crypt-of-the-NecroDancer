@@ -168,6 +168,7 @@
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileCharacter.cpp" />
     <ClCompile Include="Tilemap.cpp" />
+    <ClCompile Include="TilemapGenerator.cpp" />
     <ClCompile Include="TilemapTool.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="TileCharacter.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Tilemap.h" />
+    <ClInclude Include="TilemapGenerator.h" />
     <ClInclude Include="TilemapTool.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />

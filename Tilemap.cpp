@@ -113,50 +113,74 @@ POINT Tilemap::GetSpawnIndex()
 	return { -1, -1 };
 }
 
-
 void Tilemap::Load(string filePath)
 {
 	ifstream in(filePath);
-	if (!in.is_open()) return;
+	if (!in.is_open()) {
+		MessageBoxA(nullptr, ("맵 파일 열기 실패: " + filePath).c_str(), "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
 
 	string header;
 	in >> header;
-	if (header != "TILEMAP") return;
+	if (header != "TILEMAP") {
+		MessageBoxA(nullptr, "맵 파일 헤더가 'TILEMAP'이 아님", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
 
-	// SIZE
 	string sizeLabel;
-	int tileX, tileY;
-	in >> sizeLabel >> tileX >> tileY;
-	if (tileX != TILEMAPSIZE_X || tileY != TILEMAPSIZE_Y) return;
+	int fileCols, fileRows;
+	in >> sizeLabel >> fileCols >> fileRows;
+	if (fileCols != mapColumns || fileRows != mapRows) {
+		MessageBoxA(nullptr, "맵 크기가 현재 설정과 다릅니다", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
 
-	// FLOOR
+	// FLOOR 섹션
 	string section;
 	in >> section;
-	if (section == "FLOOR") {
-		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
-			for (int i = 0; i < TILEMAPSIZE_X; i++) {
-				int tileNum;
-				in >> tileNum;
-				tiles[j][i]->SetTileNum(tileNum);
+	if (section != "FLOOR") {
+		MessageBoxA(nullptr, "FLOOR 섹션 누락", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	for (int i = 0; i < mapRows; i++) {
+		for (int j = 0; j < mapColumns; j++) {
+			int tileNum;
+			in >> tileNum;
+			if (tiles[i][j]) {
+				tiles[i][j]->SetTileNum(tileNum);
+				RECT rc = {
+					j * TILE_SIZE,
+					i * TILE_SIZE,
+					j * TILE_SIZE + TILE_SIZE,
+					i * TILE_SIZE + TILE_SIZE
+				};
+				tiles[i][j]->SetRcTile(rc);
 			}
 		}
 	}
 
-	// WALL
+	// WALL 섹션
 	in >> section;
-	if (section == "WALL") {
-		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
-			for (int i = 0; i < TILEMAPSIZE_X; i++) {
-				int wallNum;
-				in >> wallNum;
+	if (section != "WALL") {
+		MessageBoxA(nullptr, "WALL 섹션 누락", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	for (int i = 0; i < mapRows; i++) {
+		for (int j = 0; j < mapColumns; j++) {
+			int wallNum;
+			in >> wallNum;
+			if (tiles[i][j]) {
 				if (wallNum >= 0) {
 					Block* block = new Block();
 					block->Init();
 					block->SetBlockNum(wallNum);
-					tiles[j][i]->SetBlock(block);
+					tiles[i][j]->SetBlock(block);
 				}
 				else {
-					tiles[j][i]->SetBlock(nullptr);
+					tiles[i][j]->SetBlock(nullptr);
 				}
 			}
 		}

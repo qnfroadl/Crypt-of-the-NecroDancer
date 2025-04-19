@@ -222,39 +222,39 @@ void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, b
 
 }
 
-void Image::RenderScaledImage(HDC hdc, Image* image, int destX, int destY, int frameX, int frameY, float scaleX, float scaleY, bool isCenter)
+void Image::RenderScaledImage(HDC hdc, int destX, int destY, int frameX, int frameY, float scaleX, float scaleY, bool isCenter)
 {
-    if (isCenter)
-    {
-        destX = destX - imageInfo->frameWidth / 2;
-        destY = destY - imageInfo->frameHeight / 2;
-    }
-    int frameW = image->GetFrameWidth();
-    int frameH = image->GetFrameHeight();
-    int scaledW = static_cast<int>(round(frameW * scaleX));
-    int scaledH = static_cast<int>(round(frameH * scaleY));
+   if (isCenter)
+   {
+       destX = destX - imageInfo->frameWidth / 2;
+       destY = destY - imageInfo->frameHeight / 2;
+   }
+   int frameW = imageInfo->frameWidth;
+   int frameH = imageInfo->frameHeight;
+   int scaledW = static_cast<int>(round(frameW * scaleX));
+   int scaledH = static_cast<int>(round(frameH * scaleY));
 
-    HDC tempDC = CreateCompatibleDC(hdc);
-    HBITMAP tempBitmap = CreateCompatibleBitmap(hdc, scaledW, scaledH);
-    HBITMAP oldBitmap = (HBITMAP)SelectObject(tempDC, tempBitmap);
+   HDC tempDC = CreateCompatibleDC(hdc);
+   HBITMAP tempBitmap = CreateCompatibleBitmap(hdc, scaledW, scaledH);
+   HBITMAP oldBitmap = (HBITMAP)SelectObject(tempDC, tempBitmap);
 
-    SetStretchBltMode(tempDC, COLORONCOLOR);
+   SetStretchBltMode(tempDC, COLORONCOLOR);
 
-    GdiTransparentBlt(
-        tempDC, 0, 0, scaledW, scaledH,
-        image->GetMemDC(),
-        frameX * frameW,
-        frameY * frameH,
-        frameW,
-        frameH,
-        RGB(255, 0, 255)
-    );
+   GdiTransparentBlt(
+       tempDC, 0, 0, scaledW, scaledH,
+       imageInfo->hMemDC,
+       frameX * frameW,
+       frameY * frameH,
+       frameW,
+       frameH,
+       transColor
+   );
 
-    BitBlt(hdc, destX, destY, scaledW, scaledH, tempDC, 0, 0, SRCCOPY);
+   BitBlt(hdc, destX, destY, scaledW, scaledH, tempDC, 0, 0, SRCCOPY);
 
-    SelectObject(tempDC, oldBitmap);
-    DeleteObject(tempBitmap);
-    DeleteDC(tempDC);
+   SelectObject(tempDC, oldBitmap);
+   DeleteObject(tempBitmap);
+   DeleteDC(tempDC);
 }
 
 void Image::RenderHeight(HDC hdc, int destX, int destY, int frameIndex, int totalFrame)

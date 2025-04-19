@@ -6,6 +6,9 @@
 #include "Block.h"
 #include "Trap.h"
 
+#define TILE_SCALE 4
+#define TILE_SIZE_SCALED (TILE_SIZE * TILE_SCALE)
+
 HRESULT Tile::Init()
 {
 	tileImage = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"), 234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
@@ -36,31 +39,51 @@ void Tile::Render(HDC hdc, bool useCamera)
 {
 	if (!tileImage) return;
 
-	FPOINT center = {
-		rcTile.left + TILE_SIZE / 2.0f,
-		rcTile.top + TILE_SIZE / 2.0f
-	};
-
-	// 게임일 경우 카메라 좌표 보정
+	RECT rc = rcTile;
 	if (useCamera)
+{
+	rc.left *= TILE_SCALE;
+	rc.top *= TILE_SCALE;
+	rc.left -= static_cast<int>(Camera::GetInstance()->GetPos().x);
+	rc.top -= static_cast<int>(Camera::GetInstance()->GetPos().y);
+
+	// 중심 좌표로 보정
+	int centerX = rc.left + TILE_SIZE_SCALED / 2;
+	int centerY = rc.top + TILE_SIZE_SCALED / 2;
+
+	// 바닥 (확대 렌더링, 중심 기준)
+	tileImage->RenderScaledImage(hdc,
+		centerX, centerY,
+		tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
+		static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE), true);
+}
+	else
 	{
-		center.x -= Camera::GetInstance()->GetPos().x;
-		center.y -= Camera::GetInstance()->GetPos().y;
+		// 바닥 (원본 크기)
+		FPOINT center = {
+			rc.left + TILE_SIZE / 2.0f,
+			rc.top + TILE_SIZE / 2.0f
+		};
+
+		tileImage->FrameRender(hdc,
+			static_cast<int>(center.x), static_cast<int>(center.y),
+			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
+			false, true);
 	}
 
-	// 바닥
-	tileImage->FrameRender(hdc,
-		static_cast<int>(center.x), static_cast<int>(center.y),
-		tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
-		false, true);
+	// 중심 좌표 계산 (트랩, 블록용)
+	FPOINT center = {
+		static_cast<float>(rc.left + (useCamera ? TILE_SIZE_SCALED : TILE_SIZE) / 2),
+		static_cast<float>(rc.top + (useCamera ? TILE_SIZE_SCALED : TILE_SIZE) / 2)
+	};
 
 	// 트랩
 	if (trap)
-		trap->Render(hdc, center);
+		trap->Render(hdc, center, useCamera);
 
 	// 벽
 	if (block)
-		block->Render(hdc, center);
+		block->Render(hdc, center, useCamera);
 }
 
 void Tile::OnTile(TileActor* actor)

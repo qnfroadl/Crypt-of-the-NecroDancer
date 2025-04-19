@@ -89,6 +89,18 @@
     </ClCompile>
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="IPlayerObserver.cpp" />
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Tilemap.cpp">
+      <Filter>TileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Trap.cpp">
+      <Filter>TileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="TilemapGenerator.cpp">
+      <Filter>TileSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -197,6 +209,18 @@
     </ClInclude>
     <ClInclude Include="IPlayerObserver.h" />
     <ClInclude Include="ObservableValue.h" />
+    <ClInclude Include="LobbyScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Tilemap.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Trap.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TilemapGenerator.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">

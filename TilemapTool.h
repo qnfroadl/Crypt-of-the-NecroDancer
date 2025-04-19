@@ -25,10 +25,13 @@ private:
 	RECT rcFloorEraser, rcWallEraser, rcMapTile;
 	RECT rcSaveBtn;
 	RECT rcLoadBtn;
-
+	RECT rcResizeBtn;
 
 	int selectedTileLX, selectedTileLY, selectedTileRX, selectedTileRY;
+	int mapSize;
 
+	RECT rcSizeUpBtn;
+	RECT rcSizeDownBtn;
 	SelectedLayer selectedLayer;
 	ToolType currentTool;
 
@@ -45,8 +48,6 @@ public:
 	void Load(string filePath);
 
 	void LoadDialog();
-	void SaveDialog();
-
-		
+	void SaveDialog();		
 };
 

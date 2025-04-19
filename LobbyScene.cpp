@@ -6,7 +6,7 @@ HRESULT LobbyScene::Init()
 {
     map = new Tilemap();
     map->Init(20, 20);
-    map->Load("Map/ZONE_01.map");
+    map->Load("map/ZONE1_01.map");
 
     return S_OK;
 }
