@@ -102,6 +102,23 @@
     <ClCompile Include="BeatHeart.cpp">
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClCompile>
+    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="IPlayerObserver.cpp" />
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Tilemap.cpp">
+      <Filter>TileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Trap.cpp">
+      <Filter>TileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="TilemapGenerator.cpp">
+      <Filter>TileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterManager.cpp">
+      <Filter>Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -219,6 +236,27 @@
     <ClInclude Include="BeatHeart.h">
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClInclude>
+    <ClInclude Include="Weapon.h" />
+    <ClInclude Include="WeaponData.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="IPlayerObserver.h" />
+    <ClInclude Include="ObservableValue.h" />
+    <ClInclude Include="LobbyScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Tilemap.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Trap.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TilemapGenerator.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterManager.h">
+      <Filter>Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">
@@ -253,6 +291,9 @@
     </Filter>
     <Filter Include="InputSystem &amp; UI\UI\BeatMarker">
       <UniqueIdentifier>{02624fd1-0262-4caf-91ab-f28cf4881a84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item">
+      <UniqueIdentifier>{13233eb5-16f7-44f1-9133-946380d77cd9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -16,9 +16,12 @@
 #include "Camera.h"
 #include "EventManager.h"
 #include "PlayerManager.h"
+#include "MonsterManager.h"
 
 #include "SoundManager.h"
 #include "BeatManager.h"
+
+#include "LobbyScene.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -51,6 +54,10 @@ void MainGame::ItemSpawnSimulation()
 	if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LSHIFT))
 	{
 		SceneManager::GetInstance()->ChangeScene("TilemapTool", "Loading");
+	}
+	else if (KeyManager::GetInstance()->IsOnceKeyDown('Q'))
+	{
+		SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
 	}
 	else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RSHIFT))
 	{
@@ -111,6 +118,8 @@ HRESULT MainGame::Init()
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
+	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
+	SceneManager::GetInstance()->AddScene("LobbyScene", new LobbyScene());
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 
 	SceneManager::GetInstance()->ChangeScene("AstarScene");
@@ -133,6 +142,8 @@ HRESULT MainGame::Init()
 	playerManager = new PlayerManager();
 	playerManager->Init();
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
+	/*monsterManager = new MonsterManager();
+	monsterManager->Init();*/
 
 
 	FPS = 144;
@@ -194,7 +205,7 @@ void MainGame::Update()
 	//btn->Update();
 	
 	playerManager->Update();
-
+	//monsterManager->Update();
 	Camera::GetInstance()->Update();
 
 	UpdateCollisionInfo();
@@ -218,9 +229,9 @@ void MainGame::Render()
 	HDC hBackBufferDC = backBuffer->GetMemDC();
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
-
+	
 	playerManager->Render(hBackBufferDC);
-
+	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
