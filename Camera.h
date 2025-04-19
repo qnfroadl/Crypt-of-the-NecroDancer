@@ -1,5 +1,5 @@
 ﻿#pragma once
-
+#include <random>
 #include "Singleton.h"
 #include "GameActor.h"
 #include "config.h"
@@ -10,6 +10,12 @@ class Camera : public Singleton<Camera>, public GameActor
 private:
     weak_ptr<Player> wptTarget;    // 추적할 대상의 좌표 (ex. 플레이어 위치 포인터)
     SIZE  viewSize;                     // 화면 크기 (보이는 영역)
+
+	float shakeDuration; // 흔들림 지속 시간
+	int shakeIntensity; // 흔들림 강도
+
+    default_random_engine randEngine;
+    uniform_real_distribution<float> randOffset{ -1.0f, 1.0f };
 
 public:
     Camera();

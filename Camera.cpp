@@ -2,6 +2,7 @@
 
 #include "CommonFunction.h"
 #include "Player.h"
+#include "TimerManager.h"
 
 Camera::Camera()
 {
@@ -33,14 +34,31 @@ SIZE Camera::GetSize()
     return viewSize;
 }
 
+void Camera::Shake(float duration, int intensity)
+{
+   shakeDuration = duration;
+   shakeIntensity = intensity;
+}
+
 void Camera::Update()
 {
     // 이걸 매 프레임 하는것 보단, 타겟의 위치가 변할때만 따라가는게 좋긴해. Observer.
     if (auto lockedTarget = wptTarget.lock())
     {
         // 타겟이 항상 카메라의 중앙에 오도록.
-        const float x = lockedTarget->GetPos().x - viewSize.cx / 2;
-        const float y = lockedTarget->GetPos().y - viewSize.cy / 2;
+        float x = lockedTarget->GetPos().x - viewSize.cx / 2;
+        float y = lockedTarget->GetPos().y - viewSize.cy / 2;
+
+        if (shakeDuration > 0.0f)
+        {
+            shakeDuration -= TimerManager::GetInstance()->GetDeltaTime();
+
+            float offsetX = randOffset(randEngine) * shakeIntensity;
+            float offsetY = randOffset(randEngine) * shakeIntensity;
+
+            x += offsetX;
+            y += offsetY;
+        }
 
         SetPos(x,y);
     }

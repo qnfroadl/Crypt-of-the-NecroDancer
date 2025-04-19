@@ -99,9 +99,23 @@ void MainGame::InitResource()
 
 }
 
+void MainGame::InitKeyMapping()
+{
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::UP }, VK_UP });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::DOWN }, VK_DOWN });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::LEFT }, VK_LEFT });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::RIGHT }, VK_RIGHT });
+
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::UP }, 'W' });
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::DOWN }, 'S'});
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::LEFT }, 'A'});
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::RIGHT }, 'D'});
+}
+
 HRESULT MainGame::Init()
 {
 	InitResource();
+	InitKeyMapping();
 
 	CollisionManager::GetInstance()->Init();
 	KeyManager::GetInstance()->Init();
@@ -130,7 +144,7 @@ HRESULT MainGame::Init()
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
 	BeatManager::GetInstance()->Init();
-	BeatManager::GetInstance()->StartBeat();
+	BeatManager::GetInstance()->StartBeat(true);
 
 	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
@@ -190,6 +204,8 @@ void MainGame::Release()
 
 void MainGame::Update()
 {
+	KeyManager::GetInstance()->Update();
+
 	CollisionManager::GetInstance()->Update();
 	SceneManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
@@ -230,6 +246,8 @@ void MainGame::Render()
 		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
 		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
 	}
+
+	BeatManager::GetInstance()->Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);

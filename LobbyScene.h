@@ -9,6 +9,7 @@ class LobbyScene : public GameObject
 private:
     shared_ptr<Tilemap> map;
 	weak_ptr<PlayerManager> playerManager;
+    
 
     // 검정 배경
     HBRUSH blackBrush;

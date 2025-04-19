@@ -22,6 +22,7 @@ HRESULT PlayerManager::Init()
 		if (players[i] == nullptr)
 		{
 			players[i] = make_shared<Player>();
+			players[i]->SetPlayerIndex(PlayerIndex(i));
 		}
 
 		players[i]->Init();

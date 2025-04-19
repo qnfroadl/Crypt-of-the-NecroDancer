@@ -140,8 +140,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="BattleScene.cpp" />
+    <ClCompile Include="BeatHeart.cpp" />
     <ClCompile Include="BeatManager.cpp" />
+    <ClCompile Include="BeatMarkerManager.cpp" />
     <ClCompile Include="IPlayerObserver.cpp" />
+    <ClCompile Include="ItemBomb.cpp" />
+    <ClCompile Include="ItemGold.cpp" />
+    <ClCompile Include="ItemSpawner.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -174,6 +179,9 @@
     <ClCompile Include="TilemapTool.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
+    <ClCompile Include="UIBase.cpp" />
+    <ClCompile Include="BeatMarker.cpp" />
+    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Trap.cpp" />
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="WeaponMaterial.cpp" />
@@ -184,10 +192,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="BattleScene.h" />
+    <ClInclude Include="BeatHeart.h" />
     <ClInclude Include="BeatManager.h" />
+    <ClInclude Include="BeatMarkerManager.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="IPlayerObserver.h" />
+    <ClInclude Include="ItemBomb.h" />
+    <ClInclude Include="ItemGold.h" />
+    <ClInclude Include="ItemSpawner.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="MonsterManager.h" />
     <ClInclude Include="ObservableValue.h" />
@@ -222,6 +235,9 @@
     <ClInclude Include="TilemapTool.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
+    <ClInclude Include="UIBase.h" />
+    <ClInclude Include="BeatMarker.h" />
+    <ClInclude Include="UIManager.h" />
     <ClInclude Include="Trap.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="WeaponMaterial.h" />

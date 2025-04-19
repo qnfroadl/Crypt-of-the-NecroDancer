@@ -86,8 +86,21 @@
     <ClCompile Include="TimerManager.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Weapon.cpp" />
-    <ClCompile Include="IPlayerObserver.cpp" />
+    <ClCompile Include="UIBase.cpp">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatMarkerManager.cpp">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatMarker.cpp">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatHeart.cpp">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClCompile>
     <ClCompile Include="LobbyScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -102,6 +115,28 @@
     </ClCompile>
     <ClCompile Include="MonsterManager.cpp">
       <Filter>Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="TileItem.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponMaterial.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="IPlayerObserver.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemGold.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemBomb.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemSpawner.cpp">
+      <Filter>Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +240,21 @@
     <ClInclude Include="TimerManager.h">
       <Filter>2D Framework</Filter>
     </ClInclude>
+    <ClInclude Include="UIBase.h">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatMarkerManager.h">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatMarker.h">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatHeart.h">
+      <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
+    </ClInclude>
     <ClInclude Include="IPlayerObserver.h">
       <Filter>Player</Filter>
     </ClInclude>
@@ -230,6 +280,24 @@
     </ClInclude>
     <ClInclude Include="MonsterManager.h">
       <Filter>Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="TileItem.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponMaterial.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemGold.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemBomb.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemSpawner.h">
+      <Filter>Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +327,12 @@
     </Filter>
     <Filter Include="TileSystem">
       <UniqueIdentifier>{174d20bd-4004-4934-8bda-148319679eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputSystem &amp; UI\UI">
+      <UniqueIdentifier>{b9adaf7d-7702-426f-92d4-70aa0cb806df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputSystem &amp; UI\UI\BeatMarker">
+      <UniqueIdentifier>{02624fd1-0262-4caf-91ab-f28cf4881a84}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item">
       <UniqueIdentifier>{13233eb5-16f7-44f1-9133-946380d77cd9}</UniqueIdentifier>

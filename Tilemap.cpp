@@ -1,4 +1,4 @@
-#include "Tilemap.h"  
+Ôªø#include "Tilemap.h"  
 #include "Tile.h"
 #include "Block.h"
 #include <fstream>
@@ -13,7 +13,7 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 		for (int j = 0; j < mapColumns; ++j)
 		{
 			tiles[i][j] = new Tile();
-			tiles[i][j]->Init();
+			tiles[i][j]->Init(i, j);
 		}
 	}
 	return S_OK;
@@ -73,6 +73,11 @@ Tile* Tilemap::GetTile(int row, int column)
 	return nullptr;
 }
 
+FPOINT Tilemap::GetTilePos(POINT index)
+{
+	return { tiles[index.y][index.x]->GetPos().x, tiles[index.y][index.x]->GetPos().y };
+}
+
 bool Tilemap::Destory(Item* item) 
 {
 	return false;
@@ -94,7 +99,7 @@ void Tilemap::Move(TileActor* actor, POINT index)
 {
 	if (CanMove(index)) 
 	{
-		// æ◊≈Õ ¿Ãµø
+		// Ïï°ÌÑ∞ Ïù¥Îèô
 	}
 }
 
@@ -117,14 +122,14 @@ void Tilemap::Load(string filePath)
 {
 	ifstream in(filePath);
 	if (!in.is_open()) {
-		MessageBoxA(nullptr, ("∏  ∆ƒ¿œ ø≠±‚ Ω«∆–: " + filePath).c_str(), "ø°∑Ø", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, ("Îßµ ÌååÏùº Ïó¥Í∏∞ Ïã§Ìå®: " + filePath).c_str(), "ÏóêÎü¨", MB_OK | MB_ICONERROR);
 		return;
 	}
 
 	string header;
 	in >> header;
 	if (header != "TILEMAP") {
-		MessageBoxA(nullptr, "∏  ∆ƒ¿œ «Ï¥ı∞° 'TILEMAP'¿Ã æ∆¥‘", "ø°∑Ø", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "Îßµ ÌååÏùº Ìó§ÎçîÍ∞Ä 'TILEMAP'Ïù¥ ÏïÑÎãò", "ÏóêÎü¨", MB_OK | MB_ICONERROR);
 		return;
 	}
 
@@ -132,15 +137,15 @@ void Tilemap::Load(string filePath)
 	int fileCols, fileRows;
 	in >> sizeLabel >> fileCols >> fileRows;
 	if (fileCols != mapColumns || fileRows != mapRows) {
-		MessageBoxA(nullptr, "∏  ≈©±‚∞° «ˆ¿Á º≥¡§∞˙ ¥Ÿ∏®¥œ¥Ÿ", "ø°∑Ø", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "Îßµ ÌÅ¨Í∏∞Í∞Ä ÌòÑÏû¨ ÏÑ§Ï†ïÍ≥º Îã§Î¶ÖÎãàÎã§", "ÏóêÎü¨", MB_OK | MB_ICONERROR);
 		return;
 	}
 
-	// FLOOR ºΩº«
+	// FLOOR ÏÑπÏÖò
 	string section;
 	in >> section;
 	if (section != "FLOOR") {
-		MessageBoxA(nullptr, "FLOOR ºΩº« ¥©∂Ù", "ø°∑Ø", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "FLOOR ÏÑπÏÖò ÎàÑÎùΩ", "ÏóêÎü¨", MB_OK | MB_ICONERROR);
 		return;
 	}
 
@@ -148,23 +153,18 @@ void Tilemap::Load(string filePath)
 		for (int j = 0; j < mapColumns; j++) {
 			int tileNum;
 			in >> tileNum;
-			if (tiles[i][j]) {
+			if (tiles[i][j]) 
+			{
 				tiles[i][j]->SetTileNum(tileNum);
-				RECT rc = {
-					j * TILE_SIZE,
-					i * TILE_SIZE,
-					j * TILE_SIZE + TILE_SIZE,
-					i * TILE_SIZE + TILE_SIZE
-				};
-				tiles[i][j]->SetRcTile(rc);
+				tiles[i][j]->Init(i, j);
 			}
 		}
 	}
 
-	// WALL ºΩº«
+	// WALL ÏÑπÏÖò
 	in >> section;
 	if (section != "WALL") {
-		MessageBoxA(nullptr, "WALL ºΩº« ¥©∂Ù", "ø°∑Ø", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "WALL ÏÑπÏÖò ÎàÑÎùΩ", "ÏóêÎü¨", MB_OK | MB_ICONERROR);
 		return;
 	}
 
@@ -175,7 +175,7 @@ void Tilemap::Load(string filePath)
 			if (tiles[i][j]) {
 				if (wallNum >= 0) {
 					Block* block = new Block();
-					block->Init();
+					block->Init(tiles[i][j]->GetPos(), tiles[i][j]->GetTileIndex());
 					block->SetBlockNum(wallNum);
 					tiles[i][j]->SetBlock(block);
 				}
@@ -187,4 +187,17 @@ void Tilemap::Load(string filePath)
 	}
 
 	in.close();
+}
+
+void Tilemap::SetTile(int row, int col, Tile* tile)
+{
+	if (row < 0 || row >= mapRows || col < 0 || col >= mapColumns) return;
+
+	if (tiles[row][col])
+	{
+		tiles[row][col]->Release();
+		delete tiles[row][col];
+	}
+
+	tiles[row][col] = tile;
 }

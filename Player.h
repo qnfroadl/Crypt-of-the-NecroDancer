@@ -31,6 +31,7 @@ private:
     ObservableValue<float> hp;
     ObservableValue<float> maxHP;
     ObservableValue<int> diamond;
+	ObservableValue<int> bomb;
 
 	float attack;
     float speed;
@@ -85,6 +86,6 @@ public:
 	int GetDiamond() { return this->diamond.Get(); }
 	
 	void AddWeapon(Weapon* weapon);
-   
+	void AddBomb(int bomb) { this->bomb.Set(this->bomb.Get() + bomb); }
     
 };
