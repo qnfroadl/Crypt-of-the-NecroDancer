@@ -1,6 +1,10 @@
 #include "BeatManager.h"
+
 #include "SoundManager.h"
 #include "KeyManager.h"
+#include "EventManager.h"
+#include "EventData.h"
+
 #include "BeatMarkerManager.h"
 
 #include <fstream>
@@ -94,6 +98,8 @@ void BeatManager::UpdateBeat()
 			if (abs((int)curPosition - (int)beat) <= 30.f)
 			{
 				checkOnBeat = true;
+				EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
+				// beat일 때만 beat을 보내야 함 beathit일 때도 보내면 안됨
 			}
 		}
 
@@ -108,6 +114,7 @@ void BeatManager::UpdateBeat()
 			beatDatas.pop();
 			beatBefore = beat;
 			checkOnBeat = false;
+			EventManager::GetInstance()->AddEvent(EventType::BEATMISS, nullptr);
 		}
 	}
 }
@@ -137,6 +144,16 @@ void BeatManager::ProcessInput()
 	}
 
 	// event 전달
+	if (pressedKeyP1 != InputKey::NONE)
+	{
+		BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER1, pressedKeyP1);
+		EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
+	}
+	if (pressedKeyP2 != InputKey::NONE)
+	{
+		BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER2, pressedKeyP2);
+		EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
+	}
 }
 
 bool BeatManager::IsHit()
