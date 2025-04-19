@@ -9,15 +9,33 @@
 #include "CommonFunction.h"
 #include "TimerManager.h"
 #include "Tilemap.h"
+#include "EventData.h"
+#include "EventManager.h"
 
 void Player::OnBeatHit(EventData* data)
 {
+	cout << "on beat hit" << endl;
 
+	if (data)
+	{
+		BeatHitEventData* beatData = static_cast<BeatHitEventData*>(data);
+		if (beatData->playerIndex == playerIndex)
+		{
+
+			SetJumpData(beatData->inputKey);
+			cout << "beat hit" << endl;
+
+		}
+		else
+		{
+			// 다른 플레이어의 비트 성공 시
+		}
+	}
 }
 
 void Player::OnBeatMiss(EventData* data)
 {
-
+	cout << "beat failed" << endl;	
 }
 
 bool Player::JumpAnim()
@@ -90,6 +108,9 @@ HRESULT Player::Init()
 	{
 		return E_FAIL;
 	}
+
+	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
 
 	#pragma region Bind
 

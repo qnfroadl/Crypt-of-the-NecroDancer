@@ -20,7 +20,7 @@ public:
 
 	void Init(queue<unsigned int> beatQueue);
 	void Release();
-	void Update(unsigned int curPosition, bool checkOnBeat);
+	void Update(unsigned int curPosition);
 	void Render(HDC hdc);
 
 	void AddMarker();

@@ -99,14 +99,6 @@ void Weapon::Interact(GameActor* actor)
 	}
 }
 
-void Weapon::Drop()
-{
-	// 무기를 떨어뜨리기
-	POINT tileIndex = owner->GetTileIndex();
-	owner = nullptr;
-	// ItemManager::SpawnItem(tileIndex, this);
-
-}
 
 void Weapon::Attack()
 {
