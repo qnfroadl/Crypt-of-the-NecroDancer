@@ -1,27 +1,27 @@
-﻿#include "ItemMoney.h"
+﻿#include "ItemGold.h"
 #include "Player.h"
 #include "ImageManager.h"
 
-ItemMoney::ItemMoney(int gold)
+ItemGold::ItemGold(int gold)
 	: gold(gold)
 {
 	SetItemType(ItemType::GOLD);
 }
 
-ItemMoney::~ItemMoney()
+ItemGold::~ItemGold()
 {
 
 }
 
-HRESULT ItemMoney::Init()
+HRESULT ItemGold::Init()
 {
-	image;
+	image = ImageManager::GetInstance()->FindImage(EImageKey::CADENCE);
 
 
 	return S_OK;
 }
 
-void ItemMoney::Render(HDC hdc)
+void ItemGold::Render(HDC hdc)
 {
 	if (image)
 	{
@@ -29,7 +29,7 @@ void ItemMoney::Render(HDC hdc)
 	}
 }
 
-void ItemMoney::Interact(GameActor* actor)
+void ItemGold::Interact(GameActor* actor)
 {
 	if (actor->GetType() == ActorType::PLAYER)
 	{

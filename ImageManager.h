@@ -18,6 +18,10 @@ enum class EImageKey
 	CADENCE = 0, 
 	CADENCE_HEAD = CADENCE + 1,
 	CADENCE_BODY = CADENCE + 2,
+
+
+
+	GOLD, 
 	
 };
 

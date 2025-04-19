@@ -144,7 +144,8 @@
     <ClCompile Include="BeatManager.cpp" />
     <ClCompile Include="BeatMarkerManager.cpp" />
     <ClCompile Include="IPlayerObserver.cpp" />
-    <ClCompile Include="ItemMoney.cpp" />
+    <ClCompile Include="ItemBomb.cpp" />
+    <ClCompile Include="ItemGold.cpp" />
     <ClCompile Include="ItemSpawner.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
@@ -197,7 +198,8 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="IPlayerObserver.h" />
-    <ClInclude Include="ItemMoney.h" />
+    <ClInclude Include="ItemBomb.h" />
+    <ClInclude Include="ItemGold.h" />
     <ClInclude Include="ItemSpawner.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="MonsterManager.h" />

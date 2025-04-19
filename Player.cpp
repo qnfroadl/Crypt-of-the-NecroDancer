@@ -3,9 +3,6 @@
 #include "ImageManager.h"
 #include "Camera.h"
 #include "Weapon.h"
-
-//test
-#include "KeyManager.h"
 #include "CommonFunction.h"
 #include "TimerManager.h"
 #include "Tilemap.h"
@@ -21,7 +18,6 @@ void Player::OnBeatHit(EventData* data)
 		BeatHitEventData* beatData = static_cast<BeatHitEventData*>(data);
 		if (beatData->playerIndex == playerIndex)
 		{
-
 			SetJumpData(beatData->inputKey);
 			cout << "beat hit" << endl;
 
@@ -35,7 +31,9 @@ void Player::OnBeatHit(EventData* data)
 
 void Player::OnBeatMiss(EventData* data)
 {
-	cout << "beat failed" << endl;	
+	cout << "on beat miss" << endl;
+	// 카메라 흔들기.	
+	Camera::GetInstance()->Shake(0.5f, 10);
 }
 
 bool Player::JumpAnim()
@@ -160,6 +158,14 @@ HRESULT Player::Init()
 				observer->OnPlayerDiamondChanged(value);
 			}
 		});
+
+	bomb.Bind([&](const int& preValue, const int& value)
+		{
+			for (auto observer : observers)
+			{
+				observer->OnPlayerBombChanged(value);
+			}
+		});
 	
 #pragma endregion
 
@@ -183,30 +189,9 @@ void Player::Update()
 	switch (state)
 	{
 	case PlayerState::IDLE:
-		// 키 입력에 따라 플레이어의 위치를 업데이트
-		// 지금은 이렇게 분기하지만, 나중에는 Event에 넘어온 InputKey를 그냥 넣어주기만 하면 될일.
-		if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LEFT))
-		{
-			isLeft = true;
-			SetJumpData(InputKey::LEFT);
-		}
-		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RIGHT))
-		{
-			isLeft = false;
-			SetJumpData(InputKey::RIGHT);
-		}
-		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_UP))
-		{
-			SetJumpData(InputKey::UP);
-		}
-		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_DOWN))
-		{
-			SetJumpData(InputKey::UP);
-		}
 		break;
 	case PlayerState::JUMP:
 		JumpAnim();
-		
 		break;
 
 	}
