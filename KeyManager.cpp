@@ -1,9 +1,13 @@
 #include "KeyManager.h"
+#include "conio.h"
+#include "TimerManager.h"
 
 HRESULT KeyManager::Init()
 {
 	keyUp.set();		// true로 세팅.
 	keyDown.reset();	// false로 세팅.
+
+	expireTime = 0.05f;
 
 	return S_OK;
 }
@@ -11,6 +15,25 @@ HRESULT KeyManager::Init()
 void KeyManager::Release()
 {
 	Singleton::ReleaseInstance();
+}
+
+void KeyManager::Update()
+{
+	// 플레이어의 입력키에 대해서만 키버퍼에 저장
+	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
+
+	for (auto key : g_mapKey)
+	{
+		if (IsOnceKeyDown(key.second))
+		{
+			keyBuffer.push_back({ elapsedTime,key.second });
+		}
+	}
+
+	while (!keyBuffer.empty() && (elapsedTime > keyBuffer.front().first + expireTime * 2.f))
+	{
+		keyBuffer.pop_front();
+	}
 }
 
 bool KeyManager::IsOnceKeyDown(int key)
@@ -71,4 +94,53 @@ bool KeyManager::IsStayKeyDown(int key)
 	}
 	
 	return false;
+}
+
+InputKey KeyManager::GetInputKey(int up, int down, int left, int right)
+{
+	if (keyBuffer.empty()) return InputKey::NONE;
+	if (keyBuffer.back().first + expireTime >= elapsedTime) return InputKey::NONE;
+
+	InputKey keys[4]{};
+	int index[4]{ -1,-1,-1,-1 };
+	int cnt{};
+
+	for (int i = 0; i < keyBuffer.size(); ++i)
+	{
+		if (keyBuffer[i].second == up)
+		{
+			keys[cnt] = InputKey::UP;
+			index[cnt] = i;
+			cnt++;
+		}
+		else if (keyBuffer[i].second == down)
+		{
+			keys[cnt] = InputKey::DOWN;
+			index[cnt] = i;
+			cnt++;
+		}
+		else if (keyBuffer[i].second == left)
+		{
+			keys[cnt] = InputKey::LEFT;
+			index[cnt] = i;
+			cnt++;
+		}
+		else if (keyBuffer[i].second == right)
+		{
+			keys[cnt] = InputKey::RIGHT;
+			index[cnt] = i;
+			cnt++;
+		}
+		if (cnt == 4) break;
+	}
+
+	for (int i = 3; i >= 0; --i)
+	{
+		if (index[i] != -1)
+		{
+			keyBuffer.erase(keyBuffer.begin() + index[i]);
+		}
+	}
+	
+	return keys[0] | keys[1];
 }

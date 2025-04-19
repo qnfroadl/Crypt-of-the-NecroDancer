@@ -10,6 +10,7 @@ HWND g_hWnd;
 LPCWSTR g_lpszClassName = (LPCWSTR)TEXT("Crypt of the NecroDancer - 포텐업 2기 김미현, 문경원, 이주현, 차승근");
 MainGame g_mainGame;
 POINT g_ptMouse;	// 마우스 좌표
+unordered_map<pair<PlayerIndex, InputKey>, int, pair_hash> g_mapKey;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
