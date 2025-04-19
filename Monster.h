@@ -2,6 +2,7 @@
 #include "TileCharacter.h"
 
 class Player;
+
 enum class MonsterState
 {
 	IDLE,
@@ -14,6 +15,10 @@ enum class MONSTERTYPE
 	SKELETON,
 	SLIME,
 	ARMERSKELETON,
+};
+enum class Direction
+{
+	UP, DOWM, LEFT, RIGHT
 };
 
 typedef struct MonsterImageInfo {
@@ -40,6 +45,8 @@ private:
 	Player* player;
 	MonsterImageInfo imageInfo;
 	float changeTime;
+	bool isLeft;
+	bool isFront;
 #pragma region Image Box
 	unordered_map<MONSTERTYPE, MonsterImageInfo>MonsterInfoTable =
 	{
@@ -65,6 +72,8 @@ public:
 	void AttackTarget();
 	bool JumpAnim() override;
 	void SetJumpData(int dx, int dy)override;
+	void Patrol();
+	Direction SetDirection();
 	MonsterImageInfo FindImageInfo(MONSTERTYPE _m);
 	
 	Monster();

@@ -15,7 +15,7 @@ void Monster::Init(MONSTERTYPE p)
 	beatCount = 0;
 	minFrame = 0;
 	animationFrame = minFrame;
-	
+	isLeft = true;
 	elapsedTime = 0;
 	changeTime = 0;
 	SetActive(true);
@@ -45,7 +45,7 @@ void Monster::Update()
 	case MonsterState::IDLE:
 			changeTime+= TimerManager::GetInstance()->GetDeltaTime();
 
-			if (changeTime >= 2.0f)
+			if (changeTime >= 3.0f)
 			{
 				state = MonsterState::ACTIVE;
 				changeTime = 0;
@@ -62,16 +62,7 @@ void Monster::Update()
 		changeTime += TimerManager::GetInstance()->GetDeltaTime();
 		if(changeTime>=2.0f )//Used for testing; modify before use when connecting to the beat.
 		{
-			if (monsterType == MONSTERTYPE::SLIME)
-			{
-				SetJumpData(GetPos().x, GetPos().y);
-				changeTime = 0;
-			}
-			else
-			{
-				SetJumpData(GetPos().x - 50, GetPos().y);
-				changeTime = 0;
-			}
+			Patrol();
 		}
 		break;
 	case MonsterState::JUMP:
@@ -130,6 +121,35 @@ void Monster::SetJumpData(int dx, int dy)
 {
 	state = MonsterState::JUMP;
 	TileCharacter::SetJumpData(dx, dy);
+}
+
+void Monster::Patrol()
+{
+	int changeX = this->GetPos().x;
+	int changeY = this->GetPos().y;
+	switch (SetDirection())
+	{
+	case Direction::UP:
+		changeY -= 50;
+		break;
+	case Direction::DOWM:
+		changeY += 50;
+		break;
+	case Direction::RIGHT:
+		isLeft = true;
+		changeX += 50;
+		break;
+	case Direction::LEFT:
+		isLeft = false;
+		changeX -= 50;
+		break;
+	}
+	SetJumpData(changeX, changeY);
+}
+
+Direction Monster::SetDirection()
+{
+	return static_cast<Direction>(rand() % 4);
 }
 
 MonsterImageInfo Monster::FindImageInfo(MONSTERTYPE _m)
