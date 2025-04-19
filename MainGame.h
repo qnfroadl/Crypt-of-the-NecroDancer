@@ -37,6 +37,7 @@ private:
 	//void TilemapMenuClicked(WORD id);
 
 	void InitResource();
+	void InitKeyMapping();
 
 	//test
 	PlayerManager* playerManager;

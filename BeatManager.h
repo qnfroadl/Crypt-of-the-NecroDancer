@@ -25,6 +25,8 @@ public:
 	void StartBeat(bool _checkBeat); // zone 들어갈 때 호출
 	void UpdateBeat();
 
+	void ProcessInput();
+
 	bool IsHit();
 };
 

@@ -26,14 +26,7 @@ void BeatManager::Release()
 
 void BeatManager::Update()
 {
-	// IsHit 함수는 InputManager에서 사용합니다
-	if (KeyManager::GetInstance()->IsOnceKeyDown(VK_SPACE)) // inputManager에서 처리
-	{
-		if (IsHit())
-		{
-			SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL); // hit일 때 수행할 코드
-		}
-	}
+	ProcessInput();
 
 	UpdateBeat();
 
@@ -117,6 +110,33 @@ void BeatManager::UpdateBeat()
 			checkOnBeat = false;
 		}
 	}
+}
+
+void BeatManager::ProcessInput()
+{
+	bool hit = IsHit();
+
+	InputKey pressedKeyP1 = InputKey::NONE;
+	InputKey pressedKeyP2 = InputKey::NONE;
+
+	int up = g_mapKey[{PlayerIndex::PLAYER1, InputKey::UP}];
+	int down = g_mapKey[{PlayerIndex::PLAYER1, InputKey::DOWN}];
+	int left = g_mapKey[{PlayerIndex::PLAYER1, InputKey::LEFT}];
+	int right = g_mapKey[{PlayerIndex::PLAYER1, InputKey::RIGHT}];
+	pressedKeyP1 = KeyManager::GetInstance()->GetInputKey(up, down, left, right);
+
+	up = g_mapKey[{PlayerIndex::PLAYER2, InputKey::UP}];
+	down = g_mapKey[{PlayerIndex::PLAYER2, InputKey::DOWN}];
+	left = g_mapKey[{PlayerIndex::PLAYER2, InputKey::LEFT}];
+	right = g_mapKey[{PlayerIndex::PLAYER2, InputKey::RIGHT}];
+	pressedKeyP2 = KeyManager::GetInstance()->GetInputKey(up, down, left, right);
+
+	if ((int)pressedKeyP1 | (int)pressedKeyP2)
+	{
+		cout << (int)pressedKeyP1 << ' ' << (int)pressedKeyP2 << endl;
+	}
+
+	// event 전달
 }
 
 bool BeatManager::IsHit()

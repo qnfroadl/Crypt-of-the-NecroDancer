@@ -85,9 +85,23 @@ void MainGame::InitResource()
 
 }
 
+void MainGame::InitKeyMapping()
+{
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::UP }, VK_UP });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::DOWN }, VK_DOWN });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::LEFT }, VK_LEFT });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::RIGHT }, VK_RIGHT });
+
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::UP }, 'W' });
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::DOWN }, 'S'});
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::LEFT }, 'A'});
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::RIGHT }, 'D'});
+}
+
 HRESULT MainGame::Init()
 {
 	InitResource();
+	InitKeyMapping();
 
 	CollisionManager::GetInstance()->Init();
 	KeyManager::GetInstance()->Init();
@@ -172,6 +186,8 @@ void MainGame::Release()
 
 void MainGame::Update()
 {
+	KeyManager::GetInstance()->Update();
+
 	CollisionManager::GetInstance()->Update();
 	SceneManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
