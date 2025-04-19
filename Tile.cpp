@@ -17,7 +17,7 @@ HRESULT Tile::Init()
 	block = nullptr;
 	trap = nullptr;
 	light = 0.0f;
-//	rcTile = { 0, 0, 0, 0 };
+	//	rcTile = { 0, 0, 0, 0 };
 	return S_OK;
 }
 
@@ -30,12 +30,13 @@ HRESULT Tile::Init(int x, int y)
 	trap = nullptr;
 	light = 0.0f;
 
-	// 타일 위치 설정 (타일 좌표 기준)
-	rcTile.left = x * TILE_SIZE;
-	rcTile.top = y * TILE_SIZE;
-	rcTile.right = rcTile.left + TILE_SIZE;
-	rcTile.bottom = rcTile.top + TILE_SIZE;
-
+	//// 타일 위치 설정 (타일 좌표 기준)
+	//rcTile.left = x * TILE_SIZE;
+	//rcTile.top = y * TILE_SIZE;
+	//rcTile.right = rcTile.left + TILE_SIZE;
+	//rcTile.bottom = rcTile.top + TILE_SIZE;
+	pos = { static_cast<float>(x), static_cast<float>(y) };
+	index = { x, y };
 	return S_OK;
 }
 
@@ -57,30 +58,31 @@ void Tile::Render(HDC hdc, bool useCamera)
 {
 	if (!tileImage) return;
 
-	RECT rc = rcTile;
+	// 위치 계산
+	float drawX = pos.x * TILE_SIZE;
+	float drawY = pos.y * TILE_SIZE;
+
 	if (useCamera)
-{
-	rc.left *= TILE_SCALE;
-	rc.top *= TILE_SCALE;
-	rc.left -= static_cast<int>(Camera::GetInstance()->GetPos().x);
-	rc.top -= static_cast<int>(Camera::GetInstance()->GetPos().y);
+	{
+		drawX *= TILE_SCALE;
+		drawY *= TILE_SCALE;
+		drawX -= Camera::GetInstance()->GetPos().x;
+		drawY -= Camera::GetInstance()->GetPos().y;
 
-	// 중심 좌표로 보정
-	int centerX = rc.left + TILE_SIZE_SCALED / 2;
-	int centerY = rc.top + TILE_SIZE_SCALED / 2;
+		int centerX = static_cast<int>(drawX + TILE_SIZE_SCALED / 2);
+		int centerY = static_cast<int>(drawY + TILE_SIZE_SCALED / 2);
 
-	// 바닥 (확대 렌더링, 중심 기준)
-	tileImage->RenderScaledImage(hdc,
-		centerX, centerY,
-		tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
-		static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE), true);
-}
+		// 바닥 (확대 렌더링, 중심 기준)
+		tileImage->RenderScaledImage(hdc,
+			centerX, centerY,
+			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
+			static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE), true);
+	}
 	else
 	{
-		// 바닥 (원본 크기)
 		FPOINT center = {
-			rc.left + TILE_SIZE / 2.0f,
-			rc.top + TILE_SIZE / 2.0f
+			drawX + TILE_SIZE / 2.0f,
+			drawY + TILE_SIZE / 2.0f
 		};
 
 		tileImage->FrameRender(hdc,
@@ -91,19 +93,18 @@ void Tile::Render(HDC hdc, bool useCamera)
 
 	// 중심 좌표 계산 (트랩, 블록용)
 	FPOINT center = {
-		static_cast<float>(rc.left + (useCamera ? TILE_SIZE_SCALED : TILE_SIZE) / 2),
-		static_cast<float>(rc.top + (useCamera ? TILE_SIZE_SCALED : TILE_SIZE) / 2)
+		drawX + (useCamera ? TILE_SIZE_SCALED : TILE_SIZE) / 2.0f,
+		drawY + (useCamera ? TILE_SIZE_SCALED : TILE_SIZE) / 2.0f
 	};
 
 	// 트랩
 	if (trap)
-		trap->Render(hdc, center, useCamera);
+		trap->Render(hdc, useCamera);
 
 	// 벽
 	if (block)
-		block->Render(hdc, center, useCamera);
+		block->Render(hdc, useCamera);
 }
-
 void Tile::OnTile(TileActor* actor)
 {
 	if (trap)

@@ -3,44 +3,65 @@
 #include "Image.h"
 #include "ImageManager.h"
 
+#define TILE_SIZE_SCALED (TILE_SIZE * TILE_SCALE)
+
 HRESULT Block::Init()
 {
-	blocklImage= ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
+	blocklImage = ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
 	return S_OK;
 }
 
-void Block::Render(HDC hdc, FPOINT center, bool useCamera)
+HRESULT Block::Init(FPOINT _pos, POINT _index)
+{
+	blocklImage= ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
+	pos = _pos;
+	index = _index;
+	return S_OK;
+}
+
+void Block::Render(HDC hdc, bool useCamera)
 {
 	if (!blocklImage) return;
 
+	float drawX = pos.x * TILE_SIZE;
+	float drawY = pos.y * TILE_SIZE;
+
 	if (useCamera)
 	{
-		// 이미 스케일과 카메라 보정 완료된 center를 그대로 사용
+		drawX *= TILE_SCALE;
+		drawY *= TILE_SCALE;
+		drawX -= Camera::GetInstance()->GetPos().x;
+		drawY -= Camera::GetInstance()->GetPos().y;
+
+		int centerX = static_cast<int>(drawX + TILE_SIZE_SCALED / 2);
+		int centerY = static_cast<int>(drawY + TILE_SIZE_SCALED / 2);
+
 		blocklImage->RenderScaledImage(
 			hdc,
-			static_cast<int>(center.x),
-			static_cast<int>(center.y),
+			centerX,
+			centerY,
 			blockNum % SAMPLE_WALL_X,
 			blockNum / SAMPLE_WALL_X,
 			static_cast<float>(TILE_SCALE),
 			static_cast<float>(TILE_SCALE),
-			true  // 중심 기준
+			true
 		);
 	}
 	else
 	{
-		// 툴에서는 원본 크기 기준
+		int centerX = static_cast<int>(drawX + TILE_SIZE / 2);
+		int centerY = static_cast<int>(drawY + TILE_SIZE / 2);
+
 		blocklImage->FrameRender(
 			hdc,
-			static_cast<int>(center.x),
-			static_cast<int>(center.y),
+			centerX,
+			centerY,
 			blockNum % SAMPLE_WALL_X,
 			blockNum / SAMPLE_WALL_X,
 			false, true
 		);
 	}
 }
-
 bool Block::Destroy(Item* item)
 {
 	// 아직

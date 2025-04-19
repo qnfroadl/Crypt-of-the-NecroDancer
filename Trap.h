@@ -22,7 +22,7 @@ public:
 	~Trap();
 
 	HRESULT Init();
-	void Render(HDC hdc, FPOINT center, bool useCamera);
+	void Render(HDC hdc, bool useCamera);
 	void OnTriggered(TileActor* actor);
 
 	void SetTileNum(int num);

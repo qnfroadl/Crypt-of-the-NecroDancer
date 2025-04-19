@@ -41,11 +41,11 @@ HRESULT TilemapTool::Init()
 	for (int i = 0; i < mapSize; i++) {
 		for (int j = 0; j < mapSize; j++) {
 			tiles[j][i] = new Tile();
-			tiles[j][i]->Init();
+			tiles[j][i]->Init(i, j);
 			tiles[j][i]->SetTileNum(-1);
 
-			RECT rc = { i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE + TILE_SIZE, j * TILE_SIZE + TILE_SIZE };
-			tiles[j][i]->SetRcTile(rc);
+			/*RECT rc = { i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE + TILE_SIZE, j * TILE_SIZE + TILE_SIZE };
+			tiles[j][i]->SetRcTile(rc);*/
 		}
 	}
 	return S_OK;
@@ -119,7 +119,8 @@ void TilemapTool::Update()
 			case ToolType::WALL_TILE: {
 				int tileNum = (lStay ? selectedTileLX + selectedTileLY * SAMPLE_WALL_X : selectedTileRX + selectedTileRY * SAMPLE_WALL_X);
 				Block* block = new Block();
-				block->Init();
+				//block->Init();
+				block->Init(tiles[y][x]->GetPos(), tiles[y][x]->GetTileIndex());
 				block->SetBlockNum(tileNum);
 				tiles[y][x]->SetBlock(block);
 				break;
@@ -300,7 +301,7 @@ void TilemapTool::Load(string filePath)
 
 				if (wallNum >= 0) {
 					Block* block = new Block();
-					block->Init();
+					block->Init(tiles[j][i]->GetPos(), tiles[j][i]->GetTileIndex());
 					block->SetBlockNum(wallNum);
 					tiles[j][i]->SetBlock(block);
 				}

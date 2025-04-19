@@ -5,7 +5,7 @@
 class TileActor : public GameActor
 {
 	
-private:
+protected:
 	POINT index;
 
 public:

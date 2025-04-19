@@ -18,7 +18,7 @@ private:
 	Trap* trap;
 	float light;
 	int tileNum;
-	RECT rcTile;
+	//RECT rcTile;
 	Image* tileImage;
 public:
 	Tile() {};
@@ -40,9 +40,9 @@ public:
 	TileType GetType() { return type; }
 	TileType GetTypeByTileNum(int tileNum);
 
-	// 위치
-	RECT GetRcTile() { return rcTile; }
-	void SetRcTile(RECT _rcTile) { rcTile = _rcTile; }
+	//// 위치
+	//RECT GetRcTile() { return rcTile; }
+	//void SetRcTile(RECT _rcTile) { rcTile = _rcTile; }
 
 	// 블록 (벽)
 	Block* GetBlock() { return block; }

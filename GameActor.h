@@ -6,7 +6,7 @@
 class GameActor : public GameObject
 {
 	
-private:
+protected:
 	ActorType type;	
 	FPOINT pos;
 
