@@ -89,8 +89,8 @@ void BeatManager::UpdateBeat()
 	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
 	if (beatDatas.size() > 0)
 	{
-		unsigned int beat = beatDatas.front();
-		unsigned int beatInterval = beat - beatBefore;
+		int beat = beatDatas.front();
+		int beatInterval = beat - beatBefore;
 
 		// 정박
 		if (!checkOnBeat)
@@ -105,7 +105,7 @@ void BeatManager::UpdateBeat()
 
 		if (curPosition > beat + 30.f)
 		{
-			//checkOnBeat = false;
+			checkOnBeat = false;
 		}
 
 		// 반 박자보다 더 느림
@@ -121,8 +121,6 @@ void BeatManager::UpdateBeat()
 
 void BeatManager::ProcessInput()
 {
-	bool hit = IsHit();
-
 	InputKey pressedKeyP1 = InputKey::NONE;
 	InputKey pressedKeyP2 = InputKey::NONE;
 
@@ -144,15 +142,19 @@ void BeatManager::ProcessInput()
 	}
 
 	// event 전달
-	if (pressedKeyP1 != InputKey::NONE)
+	if ((pressedKeyP1 != InputKey::NONE) || (pressedKeyP2 != InputKey::NONE))
 	{
-		BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER1, pressedKeyP1);
-		EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
-	}
-	if (pressedKeyP2 != InputKey::NONE)
-	{
-		BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER2, pressedKeyP2);
-		EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
+		bool hit = IsHit();
+		if (pressedKeyP1 != InputKey::NONE)
+		{
+			BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER1, pressedKeyP1);
+			EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
+		}
+		if (pressedKeyP2 != InputKey::NONE)
+		{
+			BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER2, pressedKeyP2);
+			EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
+		}
 	}
 }
 
