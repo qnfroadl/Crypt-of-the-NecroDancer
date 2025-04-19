@@ -13,7 +13,7 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 		for (int j = 0; j < mapColumns; ++j)
 		{
 			tiles[i][j] = new Tile();
-			tiles[i][j]->Init();
+			tiles[i][j]->Init(i, j);
 		}
 	}
 	return S_OK;
@@ -75,7 +75,7 @@ Tile* Tilemap::GetTile(int row, int column)
 
 FPOINT Tilemap::GetTilePos(POINT index)
 {
-	return FPOINT();
+	return { tiles[index.y][index.x]->GetPos().x, tiles[index.y][index.x]->GetPos().y };
 }
 
 bool Tilemap::Destory(Item* item) 
@@ -153,15 +153,10 @@ void Tilemap::Load(string filePath)
 		for (int j = 0; j < mapColumns; j++) {
 			int tileNum;
 			in >> tileNum;
-			if (tiles[i][j]) {
+			if (tiles[i][j]) 
+			{
 				tiles[i][j]->SetTileNum(tileNum);
-				RECT rc = {
-					j * TILE_SIZE,
-					i * TILE_SIZE,
-					j * TILE_SIZE + TILE_SIZE,
-					i * TILE_SIZE + TILE_SIZE
-				};
-				tiles[i][j]->SetRcTile(rc);
+				tiles[i][j]->Init(i, j);
 			}
 		}
 	}
@@ -180,7 +175,7 @@ void Tilemap::Load(string filePath)
 			if (tiles[i][j]) {
 				if (wallNum >= 0) {
 					Block* block = new Block();
-					block->Init();
+					block->Init(tiles[i][j]->GetPos(), tiles[i][j]->GetTileIndex());
 					block->SetBlockNum(wallNum);
 					tiles[i][j]->SetBlock(block);
 				}
@@ -192,4 +187,17 @@ void Tilemap::Load(string filePath)
 	}
 
 	in.close();
+}
+
+void Tilemap::SetTile(int row, int col, Tile* tile)
+{
+	if (row < 0 || row >= mapRows || col < 0 || col >= mapColumns) return;
+
+	if (tiles[row][col])
+	{
+		tiles[row][col]->Release();
+		delete tiles[row][col];
+	}
+
+	tiles[row][col] = tile;
 }

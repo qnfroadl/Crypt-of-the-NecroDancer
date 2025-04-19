@@ -20,11 +20,14 @@ public:
 	Tile* GetTile(int row, int column);
 	FPOINT GetTilePos(POINT index);
 
+	void SetTile(int row, int col, Tile* tile);
+
 	bool Destory(Item* item);
 	bool Destory(int strong);
 	bool CanMove(POINT index);
 	void Move(TileActor* actor, POINT index);
 	POINT GetSpawnIndex();
 	void Load(string filePath);
+
 };
 

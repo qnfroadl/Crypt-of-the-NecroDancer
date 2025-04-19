@@ -28,7 +28,8 @@ public:
 	~Block() {};
 
 	HRESULT Init();
-	void Render(HDC hdc, FPOINT pos, bool useCamera = true);
+	HRESULT Init(FPOINT _pos, POINT _index);
+	void Render(HDC hdc, bool useCamera = true);
 
 	bool Destroy(Item* item);     // 아이템 기준 파괴 가능 여부
 	bool Destroy(int strength);   // 정수로 강도 비교
