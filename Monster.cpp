@@ -13,14 +13,16 @@ void Monster::Init(MONSTERTYPE p)
 	light = 0;
 	moveDelay = 3;
 	beatCount = 0;
-	minFrame = 0;
-	animationFrame = minFrame;
-	
+	monsterType = p;
+
+	isLeft = true;
 	elapsedTime = 0;
 	changeTime = 0;
+	SettingFrame(p);
 	SetActive(true);
-	maxFrame = image->GetMaxFrameX()/2;
 	player = nullptr;
+	animationFrame = minFrame;
+
 }
 
 void Monster::Release()
@@ -45,7 +47,7 @@ void Monster::Update()
 	case MonsterState::IDLE:
 			changeTime+= TimerManager::GetInstance()->GetDeltaTime();
 
-			if (changeTime >= 2.0f)
+			if (changeTime >= 3.0f)
 			{
 				state = MonsterState::ACTIVE;
 				changeTime = 0;
@@ -62,22 +64,12 @@ void Monster::Update()
 		changeTime += TimerManager::GetInstance()->GetDeltaTime();
 		if(changeTime>=2.0f )//Used for testing; modify before use when connecting to the beat.
 		{
-			if (monsterType == MONSTERTYPE::SLIME)
-			{
-				SetJumpData(GetPos().x, GetPos().y);
-				changeTime = 0;
-			}
-			else
-			{
-				SetJumpData(GetPos().x - 50, GetPos().y);
-				changeTime = 0;
-			}
+			Patrol(50,GetMonsterType());
 		}
 		break;
 	case MonsterState::JUMP:
 		JumpAnim();
-		minFrame = 0;
-		maxFrame = image->GetMaxFrameX() / 2;
+		SettingFrame(GetMonsterType());
 		break;
 	}
 		
@@ -93,6 +85,15 @@ void Monster::Render(HDC hdc)
 
 		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, 0);
 	}
+}
+
+void Monster::SettingFrame(MONSTERTYPE _m)
+{
+	if (_m == MONSTERTYPE::SLIME)
+		maxFrame = image->GetMaxFrameX();
+	else
+		maxFrame = image->GetMaxFrameX() / 2;
+	minFrame = 0;
 }
 
 void Monster::Trace()
@@ -130,6 +131,38 @@ void Monster::SetJumpData(int dx, int dy)
 {
 	state = MonsterState::JUMP;
 	TileCharacter::SetJumpData(dx, dy);
+}
+
+void Monster::Patrol(int _pos, MONSTERTYPE _m)
+{
+	int changeX = this->GetPos().x;
+	int changeY = this->GetPos().y;
+	if (_m != MONSTERTYPE::SLIME)
+	{
+		switch (SetDirection())
+		{
+		case Direction::UP:
+			changeY -= _pos;
+			break;
+		case Direction::DOWM:
+			changeY += _pos;
+			break;
+		case Direction::RIGHT:
+			isLeft = true;
+			changeX += _pos;
+			break;
+		case Direction::LEFT:
+			isLeft = false;
+			changeX -= _pos;
+			break;
+		}
+	}
+	SetJumpData(changeX, changeY);
+}
+
+Direction Monster::SetDirection()
+{
+	return static_cast<Direction>(rand() % 4);
 }
 
 MonsterImageInfo Monster::FindImageInfo(MONSTERTYPE _m)

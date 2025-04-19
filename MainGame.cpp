@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "EventManager.h"
 #include "PlayerManager.h"
+#include "MonsterManager.h"
 
 #include "SoundManager.h"
 #include "BeatManager.h"
@@ -134,8 +135,8 @@ HRESULT MainGame::Init()
 	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
-	testMoster = new Monster();
-	testMoster->Init(MONSTERTYPE::SLIME);
+	/*monsterManager = new MonsterManager();
+	monsterManager->Init();*/
 
 
 	FPS = 144;
@@ -195,7 +196,7 @@ void MainGame::Update()
 	//btn->Update();
 	
 	playerManager->Update();
-	//testMoster->Update();
+	//monsterManager->Update();
 	Camera::GetInstance()->Update();
 
 	UpdateCollisionInfo();
@@ -219,9 +220,9 @@ void MainGame::Render()
 	HDC hBackBufferDC = backBuffer->GetMemDC();
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
-
+	
 	playerManager->Render(hBackBufferDC);
-	//testMoster->Render(hBackBufferDC);
+	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
