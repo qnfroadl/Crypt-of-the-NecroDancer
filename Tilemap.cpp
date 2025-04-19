@@ -13,7 +13,7 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 		for (int j = 0; j < mapColumns; ++j)
 		{
 			tiles[i][j] = new Tile();
-			tiles[i][j]->Init();
+			tiles[i][j]->Init(i, j);
 		}
 	}
 	return S_OK;
@@ -156,7 +156,7 @@ void Tilemap::Load(string filePath)
 			if (tiles[i][j]) 
 			{
 				tiles[i][j]->SetTileNum(tileNum);
-				tiles[i][j]->SetPos(j * TILE_SIZE, i * TILE_SIZE);
+				tiles[i][j]->Init(i, j);
 			}
 		}
 	}

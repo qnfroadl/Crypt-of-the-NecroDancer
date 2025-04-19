@@ -23,42 +23,34 @@ void Block::Render(HDC hdc, bool useCamera)
 {
 	if (!blocklImage) return;
 
-	float drawX = pos.x * TILE_SIZE;
-	float drawY = pos.y * TILE_SIZE;
+	float centerX = pos.x;
+	float centerY = pos.y;
 
 	if (useCamera)
 	{
-		drawX *= TILE_SCALE;
-		drawY *= TILE_SCALE;
-		drawX -= Camera::GetInstance()->GetPos().x;
-		drawY -= Camera::GetInstance()->GetPos().y;
-
-		int centerX = static_cast<int>(drawX + TILE_SIZE_SCALED / 2);
-		int centerY = static_cast<int>(drawY + TILE_SIZE_SCALED / 2);
+		centerX -= Camera::GetInstance()->GetPos().x;
+		centerY -= Camera::GetInstance()->GetPos().y;
 
 		blocklImage->RenderScaledImage(
 			hdc,
-			centerX,
-			centerY,
+			static_cast<int>(centerX),
+			static_cast<int>(centerY),
 			blockNum % SAMPLE_WALL_X,
 			blockNum / SAMPLE_WALL_X,
 			static_cast<float>(TILE_SCALE),
 			static_cast<float>(TILE_SCALE),
-			true
+			true  // 중심 기준
 		);
 	}
 	else
 	{
-		int centerX = static_cast<int>(drawX + TILE_SIZE / 2);
-		int centerY = static_cast<int>(drawY + TILE_SIZE / 2);
-
 		blocklImage->FrameRender(
 			hdc,
-			centerX,
-			centerY,
+			static_cast<int>(centerX / TILE_SCALE),
+			static_cast<int>(centerY / TILE_SCALE),
 			blockNum % SAMPLE_WALL_X,
 			blockNum / SAMPLE_WALL_X,
-			false, true
+			false, true  // 중심 기준
 		);
 	}
 }

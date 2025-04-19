@@ -35,7 +35,10 @@ HRESULT Tile::Init(int x, int y)
 	//rcTile.top = y * TILE_SIZE;
 	//rcTile.right = rcTile.left + TILE_SIZE;
 	//rcTile.bottom = rcTile.top + TILE_SIZE;
-	pos = { static_cast<float>(x), static_cast<float>(y) };
+	pos = {
+		(x + 0.5f) * TILE_SIZE * TILE_SCALE,
+		(y + 0.5f) * TILE_SIZE * TILE_SCALE
+	};
 	index = { x, y };
 	return S_OK;
 }
@@ -58,44 +61,33 @@ void Tile::Render(HDC hdc, bool useCamera)
 {
 	if (!tileImage) return;
 
-	// 위치 계산
-	float drawX = pos.x * TILE_SIZE;
-	float drawY = pos.y * TILE_SIZE;
+	float renderX = pos.x;
+	float renderY = pos.y;
 
 	if (useCamera)
 	{
-		drawX *= TILE_SCALE;
-		drawY *= TILE_SCALE;
-		drawX -= Camera::GetInstance()->GetPos().x;
-		drawY -= Camera::GetInstance()->GetPos().y;
+		renderX -= Camera::GetInstance()->GetPos().x;
+		renderY -= Camera::GetInstance()->GetPos().y;
 
-		int centerX = static_cast<int>(drawX + TILE_SIZE_SCALED / 2);
-		int centerY = static_cast<int>(drawY + TILE_SIZE_SCALED / 2);
-
-		// 바닥 (확대 렌더링, 중심 기준)
-		tileImage->RenderScaledImage(hdc,
-			centerX, centerY,
+		tileImage->RenderScaledImage(
+			hdc,
+			static_cast<int>(renderX),
+			static_cast<int>(renderY),
 			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
-			static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE), true);
+			static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
+			true  // 중심 기준
+		);
 	}
 	else
 	{
-		FPOINT center = {
-			drawX + TILE_SIZE / 2.0f,
-			drawY + TILE_SIZE / 2.0f
-		};
-
-		tileImage->FrameRender(hdc,
-			static_cast<int>(center.x), static_cast<int>(center.y),
+		tileImage->FrameRender(
+			hdc,
+			static_cast<int>(renderX / TILE_SCALE),
+			static_cast<int>(renderY / TILE_SCALE),
 			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
-			false, true);
+			false, true  // 중심 기준 렌더링
+		);
 	}
-
-	// 중심 좌표 계산 (트랩, 블록용)
-	FPOINT center = {
-		drawX + (useCamera ? TILE_SIZE_SCALED : TILE_SIZE) / 2.0f,
-		drawY + (useCamera ? TILE_SIZE_SCALED : TILE_SIZE) / 2.0f
-	};
 
 	// 트랩
 	if (trap)
