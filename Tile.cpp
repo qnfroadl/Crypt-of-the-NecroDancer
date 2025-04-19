@@ -13,7 +13,7 @@ HRESULT Tile::Init()
 {
 	tileImage = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"), 234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
 	type = TileType::NONE;
-	tileNum = 0;
+	tileNum = -1;
 	block = nullptr;
 	trap = nullptr;
 	light = 0.0f;

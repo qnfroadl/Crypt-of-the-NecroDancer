@@ -126,7 +126,7 @@ void TilemapTool::Update()
 				break;
 			}
 			case ToolType::FLOOR_ERASER:
-				tiles[y][x]->SetTileNum(0);
+				tiles[y][x]->SetTileNum(-1);
 				break;
 			case ToolType::WALL_ERASER:
 				tiles[y][x]->SetBlock(nullptr);
