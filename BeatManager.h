@@ -23,6 +23,7 @@ public:
 	void Render(HDC hdc);
 
 	void StartBeat(bool _checkBeat); // zone 들어갈 때 호출
+	void UpdateBeat();
 
 	bool IsHit();
 };

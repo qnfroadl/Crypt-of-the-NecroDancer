@@ -35,34 +35,13 @@ void BeatManager::Update()
 		}
 	}
 
+	UpdateBeat();
+
 	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
 	// 마커 업데이트
 	if (markerManager)
 	{
 		markerManager->Update(curPosition, checkOnBeat);
-	}
-
-	if (beatDatas.size() > 0)
-	{
-		unsigned int beat = beatDatas.front();
-		unsigned int beatInterval = beat - beatBefore;
-
-		// 정박
-		if (!checkOnBeat)
-		{
-			if (abs((int)curPosition - (int)beat) <= 20.f)
-			{
-				checkOnBeat = true;
-			}
-		}
-
-		// 반 박자보다 더 느림
-		if (curPosition > beat + beatInterval / 2.f)
-		{
-			beatDatas.pop();
-			beatBefore = beat;
-			checkOnBeat = false;
-		}
 	}
 }
 
@@ -105,6 +84,38 @@ void BeatManager::StartBeat(bool _checkBeat)
 	if (markerManager)
 	{
 		markerManager->Init(beatQueue);
+	}
+}
+
+void BeatManager::UpdateBeat()
+{
+	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
+	if (beatDatas.size() > 0)
+	{
+		unsigned int beat = beatDatas.front();
+		unsigned int beatInterval = beat - beatBefore;
+
+		// 정박
+		if (!checkOnBeat)
+		{
+			if (abs((int)curPosition - (int)beat) <= 30.f)
+			{
+				checkOnBeat = true;
+			}
+		}
+
+		if (curPosition > beat + 30.f)
+		{
+			checkOnBeat = false;
+		}
+
+		// 반 박자보다 더 느림
+		if (curPosition > beat + beatInterval / 2.f)
+		{
+			beatDatas.pop();
+			beatBefore = beat;
+			checkOnBeat = false;
+		}
 	}
 }
 
