@@ -252,18 +252,37 @@ void TilemapTool::Load(string filePath)
 	in >> header;
 	if (header != "TILEMAP") return;
 
-	// SIZE
+	// SIZE 파싱
 	string sizeLabel;
-	int tileX, tileY;
-	in >> sizeLabel >> tileX >> tileY;
-	if (tileX != mapSize || tileY != mapSize) return;
+	int newWidth, newHeight;
+	in >> sizeLabel >> newWidth >> newHeight;
 
-	// FLOOR
+	// 기존 타일 제거
+	for (int j = 0; j < tiles.size(); j++) {
+		for (int i = 0; i < tiles[j].size(); i++) {
+			delete tiles[j][i];
+		}
+	}
+	tiles.clear();
+
+	// 새 타일 배열 생성
+	tiles.resize(newHeight, vector<Tile*>(newWidth, nullptr));
+	for (int j = 0; j < newHeight; j++) {
+		for (int i = 0; i < newWidth; i++) {
+			tiles[j][i] = new Tile();
+			tiles[j][i]->Init(i, j);  // 좌표 초기화
+		}
+	}
+
+	// mapSize 갱신 (필요 시 mapWidth, mapHeight 따로 관리 권장)
+	mapSize = newWidth;
+
+	// FLOOR 파싱
 	string section;
 	in >> section;
 	if (section == "FLOOR") {
-		for (int j = 0; j < mapSize; j++) {
-			for (int i = 0; i < mapSize; i++) {
+		for (int j = 0; j < newHeight; j++) {
+			for (int i = 0; i < newWidth; i++) {
 				int tileNum;
 				in >> tileNum;
 				tiles[j][i]->SetTileNum(tileNum);
@@ -271,13 +290,14 @@ void TilemapTool::Load(string filePath)
 		}
 	}
 
-	// WALL
+	// WALL 파싱
 	in >> section;
 	if (section == "WALL") {
-		for (int j = 0; j < mapSize; j++) {
-			for (int i = 0; i < mapSize; i++) {
+		for (int j = 0; j < newHeight; j++) {
+			for (int i = 0; i < newWidth; i++) {
 				int wallNum;
 				in >> wallNum;
+
 				if (wallNum >= 0) {
 					Block* block = new Block();
 					block->Init();

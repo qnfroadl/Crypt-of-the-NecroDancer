@@ -40,6 +40,8 @@ using namespace std;
 #define WALL_TILE_WIDTH 24
 #define WALL_TILE_HEIGHT 48
 
+#define TILE_SCALE 3
+
 enum class PlayerIndex
 {
 	PLAYER1 = 0,

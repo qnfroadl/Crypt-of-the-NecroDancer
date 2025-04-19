@@ -157,6 +157,8 @@ void Tilemap::Load(string filePath)
 					i * TILE_SIZE + TILE_SIZE
 				};
 				tiles[i][j]->SetRcTile(rc);
+				// 여기서 타일한테 index부여
+
 			}
 		}
 	}
@@ -187,4 +189,17 @@ void Tilemap::Load(string filePath)
 	}
 
 	in.close();
+}
+
+void Tilemap::SetTile(int row, int col, Tile* tile)
+{
+	if (row < 0 || row >= mapRows || col < 0 || col >= mapColumns) return;
+
+	if (tiles[row][col])
+	{
+		tiles[row][col]->Release();
+		delete tiles[row][col];
+	}
+
+	tiles[row][col] = tile;
 }

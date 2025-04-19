@@ -6,7 +6,7 @@
 #include "Block.h"
 #include "Trap.h"
 
-#define TILE_SCALE 4
+
 #define TILE_SIZE_SCALED (TILE_SIZE * TILE_SCALE)
 
 HRESULT Tile::Init()
@@ -18,6 +18,24 @@ HRESULT Tile::Init()
 	trap = nullptr;
 	light = 0.0f;
 //	rcTile = { 0, 0, 0, 0 };
+	return S_OK;
+}
+
+HRESULT Tile::Init(int x, int y)
+{
+	tileImage = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"), 234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
+	type = TileType::NONE;
+	tileNum = 0;
+	block = nullptr;
+	trap = nullptr;
+	light = 0.0f;
+
+	// 타일 위치 설정 (타일 좌표 기준)
+	rcTile.left = x * TILE_SIZE;
+	rcTile.top = y * TILE_SIZE;
+	rcTile.right = rcTile.left + TILE_SIZE;
+	rcTile.bottom = rcTile.top + TILE_SIZE;
+
 	return S_OK;
 }
 

@@ -3,8 +3,6 @@
 #include "Image.h"
 #include "ImageManager.h"
 
-#define TILE_SCALE 4
-
 HRESULT Block::Init()
 {
 	blocklImage= ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));

@@ -24,6 +24,7 @@ public:
 	Tile() {};
 	~Tile() {};
 	HRESULT Init();
+	HRESULT Init(int x, int y);
 	void Render(HDC hdc, bool useCamera = true);
 	void Release();
 	void OnTile(TileActor* actor);
