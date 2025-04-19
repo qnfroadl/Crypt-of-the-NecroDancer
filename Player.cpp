@@ -52,29 +52,36 @@ void Player::SetJumpData(InputKey key)
 {
 	// 키 입력에 따라 점프 방향을 설정
 	POINT pIndex = GetTileIndex();
-	FPOINT tilePos;
+	FPOINT tilePos = GetPos();
 	switch (key)
 	{	
 	case InputKey::UP:
 		pIndex.y -= 1;
+		SetJumpData(tilePos.x, tilePos.y - 100);
 		break;
 	case InputKey::DOWN:
 		pIndex.y += 1;
+		SetJumpData(tilePos.x, tilePos.y + 100);
+
 		break;
 	case InputKey::LEFT:
 		pIndex.x -= 1;
+		SetJumpData(tilePos.x - 100, tilePos.y);
+
 		break;
 	case InputKey::RIGHT:
 		pIndex.x += 1;
+		SetJumpData(tilePos.x + 100, tilePos.y);
+
 		break;
 	}
 	
-	if (tileMap.lock()->CanMove(pIndex))
-	{
-		tilePos = tileMap.lock()->GetTilePos(pIndex);
-		SetJumpData(tilePos.x, tilePos.y);
-		SetTileIndex(pIndex);
-	}
+	// if (tileMap.lock()->CanMove(pIndex))
+	// {
+	// 	tilePos = tileMap.lock()->GetTilePos(pIndex);
+	// 	SetJumpData(tilePos.x, tilePos.y);
+	// 	SetTileIndex(pIndex);
+	// }
 
 }
 

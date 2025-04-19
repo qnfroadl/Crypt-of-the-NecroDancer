@@ -129,6 +129,10 @@
     <ClCompile Include="IPlayerObserver.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="ItemMoney.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemSpawner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -281,6 +285,10 @@
     <ClInclude Include="WeaponMaterial.h">
       <Filter>Item</Filter>
     </ClInclude>
+    <ClInclude Include="ItemMoney.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemSpawner.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">
