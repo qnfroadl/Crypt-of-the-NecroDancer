@@ -13,14 +13,16 @@ void Monster::Init(MONSTERTYPE p)
 	light = 0;
 	moveDelay = 3;
 	beatCount = 0;
-	minFrame = 0;
-	animationFrame = minFrame;
+	monsterType = p;
+
 	isLeft = true;
 	elapsedTime = 0;
 	changeTime = 0;
+	SettingFrame(p);
 	SetActive(true);
-	maxFrame = image->GetMaxFrameX()/2;
 	player = nullptr;
+	animationFrame = minFrame;
+
 }
 
 void Monster::Release()
@@ -62,13 +64,12 @@ void Monster::Update()
 		changeTime += TimerManager::GetInstance()->GetDeltaTime();
 		if(changeTime>=2.0f )//Used for testing; modify before use when connecting to the beat.
 		{
-			Patrol();
+			Patrol(50,GetMonsterType());
 		}
 		break;
 	case MonsterState::JUMP:
 		JumpAnim();
-		minFrame = 0;
-		maxFrame = image->GetMaxFrameX() / 2;
+		SettingFrame(GetMonsterType());
 		break;
 	}
 		
@@ -84,6 +85,15 @@ void Monster::Render(HDC hdc)
 
 		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, 0);
 	}
+}
+
+void Monster::SettingFrame(MONSTERTYPE _m)
+{
+	if (_m == MONSTERTYPE::SLIME)
+		maxFrame = image->GetMaxFrameX();
+	else
+		maxFrame = image->GetMaxFrameX() / 2;
+	minFrame = 0;
 }
 
 void Monster::Trace()
@@ -123,26 +133,29 @@ void Monster::SetJumpData(int dx, int dy)
 	TileCharacter::SetJumpData(dx, dy);
 }
 
-void Monster::Patrol()
+void Monster::Patrol(int _pos, MONSTERTYPE _m)
 {
 	int changeX = this->GetPos().x;
 	int changeY = this->GetPos().y;
-	switch (SetDirection())
+	if (_m != MONSTERTYPE::SLIME)
 	{
-	case Direction::UP:
-		changeY -= 50;
-		break;
-	case Direction::DOWM:
-		changeY += 50;
-		break;
-	case Direction::RIGHT:
-		isLeft = true;
-		changeX += 50;
-		break;
-	case Direction::LEFT:
-		isLeft = false;
-		changeX -= 50;
-		break;
+		switch (SetDirection())
+		{
+		case Direction::UP:
+			changeY -= _pos;
+			break;
+		case Direction::DOWM:
+			changeY += _pos;
+			break;
+		case Direction::RIGHT:
+			isLeft = true;
+			changeX += _pos;
+			break;
+		case Direction::LEFT:
+			isLeft = false;
+			changeX -= _pos;
+			break;
+		}
 	}
 	SetJumpData(changeX, changeY);
 }
