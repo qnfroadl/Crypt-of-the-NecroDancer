@@ -1,26 +1,17 @@
 #pragma once
 #include "GameObject.h"
 
-// 샘플 타일 정보
-// 640 * 288
-#define SAMPLE_TILE_X 9
-#define SAMPLE_TILE_Y 6
-
-#define SAMPLE_WALL_X 9
-#define SAMPLE_WALL_Y 8
-
-#define TILE_SIZE 26
-#define WALL_TILE_WIDTH 24
-#define WALL_TILE_HEIGHT 48
-
-#define TILE_X 20
-#define TILE_Y 20
-
 enum class SelectedLayer {
 	FLOOR,  // 바닥을 선택
 	WALL    // 벽을 선택
 };
-
+enum class ToolType {
+	NONE,
+	FLOOR_TILE,
+	WALL_TILE,
+	FLOOR_ERASER,
+	WALL_ERASER
+};
 class Image;
 class Tile;
 class TilemapTool : public GameObject
@@ -30,17 +21,17 @@ private:
 	Image* sampleWall;
 	vector<vector<Tile*>> tiles;
 
-	RECT rcSampleTile;
-	RECT rcSampleWall;
-	RECT rcMapTile;
+	RECT rcSampleTile, rcSampleWall, rcLeftClick, rcRightClick;
+	RECT rcFloorEraser, rcWallEraser, rcMapTile;
+	RECT rcSaveBtn;
+	RECT rcLoadBtn;
 
-	int selectedTileLX;
-	int selectedTileLY;
 
-	int selectedTileRX;
-	int selectedTileRY;
+	int selectedTileLX, selectedTileLY, selectedTileRX, selectedTileRY;
 
 	SelectedLayer selectedLayer;
+	ToolType currentTool;
+
 public:
 	TilemapTool();
 	virtual ~TilemapTool();

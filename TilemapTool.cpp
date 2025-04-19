@@ -9,38 +9,35 @@
 #include <fstream>
 
 TilemapTool::TilemapTool()
-	: sampleTile(nullptr),
-	sampleWall(nullptr)
-{
+	: sampleTile(nullptr), sampleWall(nullptr), currentTool(ToolType::NONE) {
 }
 
-TilemapTool::~TilemapTool()
-{
-}
+TilemapTool::~TilemapTool() {}
 
 HRESULT TilemapTool::Init()
 {
 	SetClientRect(g_hWnd, TILEMAPTOOL_X, TILEMAPTOOL_Y);
 
-	selectedLayer = SelectedLayer::FLOOR;
-	selectedTileLX = 0;
-	selectedTileLY = 0;
+	selectedTileLX = selectedTileLY = selectedTileRX = selectedTileRY = 0;
 
 	sampleTile = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"), 234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
-	sampleWall = ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 384, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
+	sampleWall = ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
 
 	rcSampleTile = { TILEMAPTOOL_X - sampleTile->GetWidth(), 0, TILEMAPTOOL_X, sampleTile->GetHeight() };
-	rcSampleWall = { TILEMAPTOOL_X - sampleWall->GetWidth(), sampleTile->GetHeight() + 10, TILEMAPTOOL_X, sampleTile->GetHeight() + 10 + sampleWall->GetHeight() };
-	rcMapTile = { 0, 0, TILE_X * TILE_SIZE, TILE_Y * TILE_SIZE };
+	rcSampleWall = { TILEMAPTOOL_X - sampleWall->GetWidth(), rcSampleTile.bottom + 10, TILEMAPTOOL_X, rcSampleTile.bottom + 10 + sampleWall->GetHeight() };
+	rcFloorEraser = { TILEMAPTOOL_X-300, rcSampleWall.bottom + 80, TILEMAPTOOL_X - 200, rcSampleWall.bottom + 120 };
+	rcWallEraser = { TILEMAPTOOL_X - 150, rcSampleWall.bottom + 80, TILEMAPTOOL_X - 50, rcSampleWall.bottom + 120 };
+	rcSaveBtn = { TILEMAPTOOL_X - 300, rcWallEraser.bottom + 60, TILEMAPTOOL_X - 200, rcWallEraser.bottom + 100 };
+	rcLoadBtn = { TILEMAPTOOL_X - 150, rcWallEraser.bottom + 60, TILEMAPTOOL_X - 50, rcWallEraser.bottom + 100 };
+	rcMapTile = { 0, 0, TILEMAPSIZE_X * TILE_SIZE, TILEMAPSIZE_Y * TILE_SIZE };
 
-	tiles = vector<vector<Tile*>>(TILE_Y, vector<Tile*>(TILE_X, nullptr));
+	tiles = vector<vector<Tile*>>(TILEMAPSIZE_Y, vector<Tile*>(TILEMAPSIZE_X, nullptr));
 
-	for (int i = 0; i < TILE_X; i++)
-	{
-		for (int j = 0; j < TILE_Y; j++)
-		{
+	for (int i = 0; i < TILEMAPSIZE_X; i++) {
+		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
 			tiles[j][i] = new Tile();
-			tiles[j][i]->SetTileNum(0);
+			tiles[j][i]->Init();
+			tiles[j][i]->SetTileNum(-1);
 
 			RECT rc = { i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE + TILE_SIZE, j * TILE_SIZE + TILE_SIZE };
 			tiles[j][i]->SetRcTile(rc);
@@ -51,105 +48,85 @@ HRESULT TilemapTool::Init()
 
 void TilemapTool::Release()
 {
-	if (tiles.empty())	return;
-	for (int j = 0; j < TILE_Y; j++)
+	if(!tiles.empty())
 	{
-		for (int i = 0; i < TILE_X; i++)
-		{
-			delete tiles[j][i];
-			tiles[j][i] = nullptr;
+		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+			for (int i = 0; i < TILEMAPSIZE_X; i++) {
+				delete tiles[j][i];
+				tiles[j][i] = nullptr;
+			}
 		}
+		tiles.clear();
+
 	}
-	tiles.clear();
 }
 
 void TilemapTool::Update()
 {
-	if (KeyManager::GetInstance()->IsOnceKeyDown('S'))
-	{
+	bool leftClick = KeyManager::GetInstance()->IsOnceKeyDown(VK_LBUTTON);
+	bool rightClick = KeyManager::GetInstance()->IsOnceKeyDown(VK_RBUTTON);
+
+	if (PtInRect(&rcSaveBtn, g_ptMouse) && leftClick) {
 		SaveDialog();
 	}
-	if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
-	{
+	else if (PtInRect(&rcLoadBtn, g_ptMouse) && leftClick) {
 		LoadDialog();
 	}
-	// 바닥 타일 샘플 선택
-	if (PtInRect(&rcSampleTile, g_ptMouse))
-	{
-		bool leftClick = KeyManager::GetInstance()->IsOnceKeyDown(VK_LBUTTON);
-		bool rightClick = KeyManager::GetInstance()->IsOnceKeyDown(VK_RBUTTON);
 
+	if (PtInRect(&rcSampleTile, g_ptMouse)) {
 		if (leftClick || rightClick) {
+		currentTool = ToolType::FLOOR_TILE;
 			int x = g_ptMouse.x - rcSampleTile.left;
 			int y = g_ptMouse.y - rcSampleTile.top;
-
 			int tileX = x / TILE_SIZE;
 			int tileY = y / TILE_SIZE;
-
-			selectedLayer = SelectedLayer::FLOOR;
-
-			if (leftClick) {
-				selectedTileLX = tileX;
-				selectedTileLY = tileY;
-			}
-			else if (rightClick) {
-				selectedTileRX = tileX;
-				selectedTileRY = tileY;
-			}
+			if (leftClick) selectedTileLX = tileX, selectedTileLY = tileY;
+			else selectedTileRX = tileX, selectedTileRY = tileY;
 		}
 	}
-	// 벽 타일 샘플 선택
-	else if (PtInRect(&rcSampleWall, g_ptMouse))
-	{
-		bool leftClick = KeyManager::GetInstance()->IsOnceKeyDown(VK_LBUTTON);
-		bool rightClick = KeyManager::GetInstance()->IsOnceKeyDown(VK_RBUTTON);
-
+	else if (PtInRect(&rcSampleWall, g_ptMouse)) {
 		if (leftClick || rightClick) {
+		currentTool = ToolType::WALL_TILE;
 			int x = g_ptMouse.x - rcSampleWall.left;
 			int y = g_ptMouse.y - rcSampleWall.top;
-
 			int tileX = x / WALL_TILE_WIDTH;
 			int tileY = y / WALL_TILE_HEIGHT;
-
-			selectedLayer = SelectedLayer::WALL;
-
-			if (leftClick) {
-				selectedTileLX = tileX;
-				selectedTileLY = tileY;
-			}
-			else if (rightClick) {
-				selectedTileRX = tileX;
-				selectedTileRY = tileY;
-			}
+			if (leftClick) selectedTileLX = tileX, selectedTileLY = tileY;
+			else selectedTileRX = tileX, selectedTileRY = tileY;
 		}
 	}
-	// 맵에 배치
-	else if (PtInRect(&rcMapTile, g_ptMouse)) {
-		bool leftClick = KeyManager::GetInstance()->IsStayKeyDown(VK_LBUTTON);
-		bool rightClick = KeyManager::GetInstance()->IsStayKeyDown(VK_RBUTTON);
+	else if (PtInRect(&rcFloorEraser, g_ptMouse) && leftClick) currentTool = ToolType::FLOOR_ERASER;
+	else if (PtInRect(&rcWallEraser, g_ptMouse) && leftClick) currentTool = ToolType::WALL_ERASER;
 
-		if (leftClick || rightClick) {
+	else if (PtInRect(&rcMapTile, g_ptMouse)) {
+		bool lStay = KeyManager::GetInstance()->IsStayKeyDown(VK_LBUTTON);
+		bool rStay = KeyManager::GetInstance()->IsStayKeyDown(VK_RBUTTON);
+		if (lStay || rStay) {
 			int x = g_ptMouse.x / TILE_SIZE;
 			int y = g_ptMouse.y / TILE_SIZE;
-
-			if (x >= TILE_X || y >= TILE_Y) return;
-
-			Tile* tile = tiles[y][x];
-
-			if (selectedLayer == SelectedLayer::FLOOR) {
-				int tileNum = (leftClick ?
-					selectedTileLX + selectedTileLY * SAMPLE_TILE_X :
-					selectedTileRX + selectedTileRY * SAMPLE_TILE_X);
-				tile->SetTileNum(tileNum);
-				tile->SetType(TileType::NORMAL);
+			if (x >= TILEMAPSIZE_X || y >= TILEMAPSIZE_Y) return;
+			switch (currentTool) {
+			case ToolType::FLOOR_TILE: {
+				int tileNum = (lStay ? selectedTileLX + selectedTileLY * SAMPLE_TILE_X : selectedTileRX + selectedTileRY * SAMPLE_TILE_X);
+				tiles[y][x]->SetTileNum(tileNum);
+				break;
 			}
-			else if (selectedLayer == SelectedLayer::WALL) {
-				int tileNum = (leftClick ?
-					selectedTileLX + selectedTileLY * SAMPLE_WALL_X :
-					selectedTileRX + selectedTileRY * SAMPLE_WALL_X);
+			case ToolType::WALL_TILE: {
+				int tileNum = (lStay ? selectedTileLX + selectedTileLY * SAMPLE_WALL_X : selectedTileRX + selectedTileRY * SAMPLE_WALL_X);
 				Block* block = new Block();
-				block->SetTileNum(tileNum);
-				tile->SetBlock(block);
+				block->Init();
+				block->SetBlockNum(tileNum);
+				tiles[y][x]->SetBlock(block);
+				break;
+			}
+			case ToolType::FLOOR_ERASER:
+				tiles[y][x]->SetTileNum(0);
+				break;
+			case ToolType::WALL_ERASER:
+				tiles[y][x]->SetBlock(nullptr);
+				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -158,55 +135,55 @@ void TilemapTool::Update()
 void TilemapTool::Render(HDC hdc)
 {
 	PatBlt(hdc, 0, 0, TILEMAPTOOL_X, TILEMAPTOOL_Y, WHITENESS);
+	// 격자 그리기 (가로줄)
+	HPEN gridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200)); // 연한 회색 선
+	HPEN oldPen = (HPEN)SelectObject(hdc, gridPen);
 
-	// 바닥 먼저
-	for (int i = 0; i < TILE_X; i++) {
-		for (int j = 0; j < TILE_Y; j++) {
-			Tile* tile = tiles[j][i];
-			RECT rc = tile->GetRcTile();
-
-			int centerX = rc.left + TILE_SIZE / 2;
-			int centerY = rc.top + TILE_SIZE / 2;
-
-			int tileNum = tile->GetTileNum();
-			sampleTile->FrameRender(hdc, centerX, centerY,
-				tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
-				false, true);
-		}
+	for (int y = 0; y <= TILEMAPSIZE_Y; ++y) {
+		MoveToEx(hdc, 0, y * TILE_SIZE, NULL);
+		LineTo(hdc, TILEMAPSIZE_X * TILE_SIZE, y * TILE_SIZE);
 	}
 
-	// 그 다음 벽
-	for (int i = 0; i < TILE_X; i++) {
-		for (int j = 0; j < TILE_Y; j++) {
-			Tile* tile = tiles[j][i];
-			RECT rc = tile->GetRcTile();
-
-			int centerX = rc.left + TILE_SIZE / 2;
-			int centerY = rc.top + TILE_SIZE / 2;
-
-			Block* block = tile->GetBlock();
-			if (block) {
-				int wallNum = block->GetTileNum();
-				sampleWall->FrameRender(hdc, centerX, centerY,
-					wallNum % SAMPLE_WALL_X, wallNum / SAMPLE_WALL_X,
-					false, true);
-			}
-		}
+	// 격자 그리기 (세로줄)
+	for (int x = 0; x <= TILEMAPSIZE_X; ++x) {
+		MoveToEx(hdc, x * TILE_SIZE, 0, NULL);
+		LineTo(hdc, x * TILE_SIZE, TILEMAPSIZE_Y * TILE_SIZE);
 	}
 
-	// 샘플 이미지 그리기
+	SelectObject(hdc, oldPen);
+	DeleteObject(gridPen);
+	for (int i = 0; i < TILEMAPSIZE_X; i++)
+		for (int j = 0; j < TILEMAPSIZE_Y; j++)
+			tiles[j][i]->Render(hdc, false);
+
 	sampleTile->Render(hdc, rcSampleTile.left, rcSampleTile.top);
 	sampleWall->Render(hdc, rcSampleWall.left, rcSampleWall.top);
 
-	// 선택된 미리보기
-	int previewX = TILEMAPTOOL_X - sampleTile->GetWidth() + TILE_SIZE / 2;
-	int previewY = rcSampleWall.bottom + 50;
+	// 지우개 버튼
+	Rectangle(hdc, rcFloorEraser.left, rcFloorEraser.top, rcFloorEraser.right, rcFloorEraser.bottom);
+	DrawText(hdc, TEXT("타일지우개"), -1, &rcFloorEraser, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-	if (selectedLayer == SelectedLayer::FLOOR)
-		sampleTile->FrameRender(hdc, previewX, previewY, selectedTileLX, selectedTileLY, false, true);
-	else if (selectedLayer == SelectedLayer::WALL)
-		sampleWall->FrameRender(hdc, previewX, previewY, selectedTileLX, selectedTileLY, false, true);
+	Rectangle(hdc, rcWallEraser.left, rcWallEraser.top, rcWallEraser.right, rcWallEraser.bottom);
+	DrawText(hdc, TEXT("벽지우개"), -1, &rcWallEraser, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	int previewLX = TILEMAPTOOL_X - sampleTile->GetWidth() - 100;
+	int previewLY = rcSampleWall.top;
+
+	if (currentTool == ToolType::FLOOR_TILE)
+		sampleTile->FrameRender(hdc, previewLX, previewLY, selectedTileLX, selectedTileLY, false, true);
+	else if (currentTool == ToolType::WALL_TILE)
+		sampleWall->FrameRender(hdc, previewLX, previewLY, selectedTileLX, selectedTileLY, false, true);
+
+	// 저장 버튼
+	Rectangle(hdc, rcSaveBtn.left, rcSaveBtn.top, rcSaveBtn.right, rcSaveBtn.bottom);
+	DrawText(hdc, TEXT("저장"), -1, &rcSaveBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	// 불러오기 버튼
+	Rectangle(hdc, rcLoadBtn.left, rcLoadBtn.top, rcLoadBtn.right, rcLoadBtn.bottom);
+	DrawText(hdc, TEXT("불러오기"), -1, &rcLoadBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
+
+
 
 void TilemapTool::Save(string filePath)
 {
@@ -214,12 +191,12 @@ void TilemapTool::Save(string filePath)
 	if (!out.is_open()) return;
 
 	out << "TILEMAP" << endl;
-	out << "SIZE " << TILE_X << " " << TILE_Y << endl;
+	out << "SIZE " << TILEMAPSIZE_X << " " << TILEMAPSIZE_Y << endl;
 
 	// FLOOR
 	out << "FLOOR" << endl;
-	for (int j = 0; j < TILE_Y; j++) {
-		for (int i = 0; i < TILE_X; i++) {
+	for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+		for (int i = 0; i < TILEMAPSIZE_X; i++) {
 			out << tiles[j][i]->GetTileNum() << " ";
 		}
 		out << endl;
@@ -227,8 +204,8 @@ void TilemapTool::Save(string filePath)
 
 	// WALL (Block 번호 or -1)
 	out << "WALL" << endl;
-	for (int j = 0; j < TILE_Y; j++) {
-		for (int i = 0; i < TILE_X; i++) {
+	for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+		for (int i = 0; i < TILEMAPSIZE_X; i++) {
 			Block* block = tiles[j][i]->GetBlock();
 			if (block) out << block->GetTileNum() << " ";
 			else out << -1 << " ";
@@ -237,7 +214,6 @@ void TilemapTool::Save(string filePath)
 	}
 
 	out.close();
-
 }
 
 void TilemapTool::Load(string filePath)
@@ -249,41 +225,36 @@ void TilemapTool::Load(string filePath)
 	in >> header;
 	if (header != "TILEMAP") return;
 
-	// 사이즈 읽기
+	// SIZE
 	string sizeLabel;
 	int tileX, tileY;
 	in >> sizeLabel >> tileX >> tileY;
+	if (tileX != TILEMAPSIZE_X || tileY != TILEMAPSIZE_Y) return;
 
-	if (tileX != TILE_X || tileY != TILE_Y) {
-		// 현재 툴 구조는 고정 크기이므로 size mismatch 시 로드 취소
-		return;
-	}
-
-	// FLOOR 로딩
+	// FLOOR
 	string section;
 	in >> section;
 	if (section == "FLOOR") {
-		for (int j = 0; j < TILE_Y; j++) {
-			for (int i = 0; i < TILE_X; i++) {
+		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+			for (int i = 0; i < TILEMAPSIZE_X; i++) {
 				int tileNum;
 				in >> tileNum;
 				tiles[j][i]->SetTileNum(tileNum);
-				tiles[j][i]->SetType(TileType::NORMAL);
 			}
 		}
 	}
 
-	// WALL 로딩
+	// WALL
 	in >> section;
 	if (section == "WALL") {
-		for (int j = 0; j < TILE_Y; j++) {
-			for (int i = 0; i < TILE_X; i++) {
+		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+			for (int i = 0; i < TILEMAPSIZE_X; i++) {
 				int wallNum;
 				in >> wallNum;
-
 				if (wallNum >= 0) {
 					Block* block = new Block();
-					block->SetTileNum(wallNum);
+					block->Init();
+					block->SetBlockNum(wallNum);
 					tiles[j][i]->SetBlock(block);
 				}
 				else {
