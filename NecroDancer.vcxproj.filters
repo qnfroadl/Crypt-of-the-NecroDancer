@@ -101,6 +101,9 @@
     <ClCompile Include="TilemapGenerator.cpp">
       <Filter>TileSystem</Filter>
     </ClCompile>
+    <ClCompile Include="MonsterManager.cpp">
+      <Filter>Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="TilemapGenerator.h">
       <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterManager.h">
+      <Filter>Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

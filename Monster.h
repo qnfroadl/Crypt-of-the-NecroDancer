@@ -2,6 +2,7 @@
 #include "TileCharacter.h"
 
 class Player;
+
 enum class MonsterState
 {
 	IDLE,
@@ -14,6 +15,10 @@ enum class MONSTERTYPE
 	SKELETON,
 	SLIME,
 	ARMERSKELETON,
+};
+enum class Direction
+{
+	UP, DOWM, LEFT, RIGHT
 };
 
 typedef struct MonsterImageInfo {
@@ -40,6 +45,8 @@ private:
 	Player* player;
 	MonsterImageInfo imageInfo;
 	float changeTime;
+	bool isLeft;
+	bool isFront;
 #pragma region Image Box
 	unordered_map<MONSTERTYPE, MonsterImageInfo>MonsterInfoTable =
 	{
@@ -58,6 +65,7 @@ public:
 
 
 	//void BindMovePatten 
+	void SettingFrame(MONSTERTYPE _m);
 	void SetRange(vector<POINT>_range) { range= _range; }
 	void Trace();
 	void Dead();
@@ -65,8 +73,12 @@ public:
 	void AttackTarget();
 	bool JumpAnim() override;
 	void SetJumpData(int dx, int dy)override;
-	MonsterImageInfo FindImageInfo(MONSTERTYPE _m);
+	void Patrol(int _pos, MONSTERTYPE _m);
 	
+	Direction SetDirection();
+	MonsterImageInfo FindImageInfo(MONSTERTYPE _m);
+	MONSTERTYPE GetMonsterType() const { return monsterType; }
+
 	Monster();
 	virtual ~Monster();
 
