@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "TileActor.h"
+#include "TileItem.h"
 #include "ImageManager.h"
 #include "Player.h"
 #include "WeaponMaterial.h"
@@ -16,12 +16,11 @@ enum class WeaponType
 	DAGGER, BROADSWORD,
 };
 
-class Weapon : public TileActor
+class Weapon : public TileItem
 {
 private:
 	int curFrame;
 	
-	Player* owner;
     Image* image;
     DamageType damageType; 
 	WeaponType weaponType;
@@ -45,7 +44,6 @@ public:
 	void SetMaterial(std::unique_ptr<WeaponMaterial> material);
 
 	void Interact(GameActor* actor) override;
-	void Drop();	// 무기 떨어뜨리기
 
 	void Attack();
 	
