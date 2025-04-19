@@ -1,4 +1,4 @@
-#include "Tilemap.h"  
+ï»¿#include "Tilemap.h"  
 #include "Tile.h"
 #include "Block.h"
 #include <fstream>
@@ -73,6 +73,11 @@ Tile* Tilemap::GetTile(int row, int column)
 	return nullptr;
 }
 
+FPOINT Tilemap::GetTilePos(POINT index)
+{
+	return FPOINT();
+}
+
 bool Tilemap::Destory(Item* item) 
 {
 	return false;
@@ -94,7 +99,7 @@ void Tilemap::Move(TileActor* actor, POINT index)
 {
 	if (CanMove(index)) 
 	{
-		// ¾×ÅÍ ÀÌµ¿
+		// ì•¡í„° ì´ë™
 	}
 }
 
@@ -117,14 +122,14 @@ void Tilemap::Load(string filePath)
 {
 	ifstream in(filePath);
 	if (!in.is_open()) {
-		MessageBoxA(nullptr, ("¸Ê ÆÄÀÏ ¿­±â ½ÇÆĞ: " + filePath).c_str(), "¿¡·¯", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, ("ë§µ íŒŒì¼ ì—´ê¸° ì‹¤íŒ¨: " + filePath).c_str(), "ì—ëŸ¬", MB_OK | MB_ICONERROR);
 		return;
 	}
 
 	string header;
 	in >> header;
 	if (header != "TILEMAP") {
-		MessageBoxA(nullptr, "¸Ê ÆÄÀÏ Çì´õ°¡ 'TILEMAP'ÀÌ ¾Æ´Ô", "¿¡·¯", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "ë§µ íŒŒì¼ í—¤ë”ê°€ 'TILEMAP'ì´ ì•„ë‹˜", "ì—ëŸ¬", MB_OK | MB_ICONERROR);
 		return;
 	}
 
@@ -132,15 +137,15 @@ void Tilemap::Load(string filePath)
 	int fileCols, fileRows;
 	in >> sizeLabel >> fileCols >> fileRows;
 	if (fileCols != mapColumns || fileRows != mapRows) {
-		MessageBoxA(nullptr, "¸Ê Å©±â°¡ ÇöÀç ¼³Á¤°ú ´Ù¸¨´Ï´Ù", "¿¡·¯", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "ë§µ í¬ê¸°ê°€ í˜„ì¬ ì„¤ì •ê³¼ ë‹¤ë¦…ë‹ˆë‹¤", "ì—ëŸ¬", MB_OK | MB_ICONERROR);
 		return;
 	}
 
-	// FLOOR ¼½¼Ç
+	// FLOOR ì„¹ì…˜
 	string section;
 	in >> section;
 	if (section != "FLOOR") {
-		MessageBoxA(nullptr, "FLOOR ¼½¼Ç ´©¶ô", "¿¡·¯", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "FLOOR ì„¹ì…˜ ëˆ„ë½", "ì—ëŸ¬", MB_OK | MB_ICONERROR);
 		return;
 	}
 
@@ -161,10 +166,10 @@ void Tilemap::Load(string filePath)
 		}
 	}
 
-	// WALL ¼½¼Ç
+	// WALL ì„¹ì…˜
 	in >> section;
 	if (section != "WALL") {
-		MessageBoxA(nullptr, "WALL ¼½¼Ç ´©¶ô", "¿¡·¯", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "WALL ì„¹ì…˜ ëˆ„ë½", "ì—ëŸ¬", MB_OK | MB_ICONERROR);
 		return;
 	}
 

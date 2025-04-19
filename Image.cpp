@@ -1,4 +1,4 @@
-#include "Image.h"
+﻿#include "Image.h"
 
 HRESULT Image::Init(int width, int height)
 {
@@ -273,6 +273,7 @@ void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, f
             SRCCOPY
         );
     }
+ }   
 
 
 void Image::RenderScaledImage(HDC hdc, int destX, int destY, int frameX, int frameY, float scaleX, float scaleY, bool isCenter)
