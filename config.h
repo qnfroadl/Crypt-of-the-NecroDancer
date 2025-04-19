@@ -30,6 +30,16 @@ using namespace std;
 
 #define ANIM_FRAME_MS 0.1f
 
+#define SAMPLE_TILE_X 9
+#define SAMPLE_TILE_Y 6
+
+#define SAMPLE_WALL_X 9
+#define SAMPLE_WALL_Y 7
+
+#define TILE_SIZE 26
+#define WALL_TILE_WIDTH 24
+#define WALL_TILE_HEIGHT 48
+
 enum class PlayerIndex
 {
 	PLAYER1 = 0,

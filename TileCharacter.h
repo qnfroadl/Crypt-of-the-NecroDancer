@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "TileActor.h"
+#include "ObservableValue.h"
+
 class Image;
 class TileMap;
 class PositionManager;
@@ -20,13 +22,14 @@ typedef struct _stJump
 	float dy;
 }stJump;
 
+
 class TileCharacter : public TileActor
 {
 
 protected:
 	string name;
 	POINT dir;
-	int gold;
+	ObservableValue<int> gold;
 	Image* image;
 	vector<POINT> range;
 	float attack;
@@ -45,9 +48,9 @@ public:
 	inline POINT GetDir() { return dir; }
 	inline void SetDir(POINT _dir) { dir = _dir; }
 
-	inline int GetGold() { return gold; }
-	inline void SetGold(int _gold) { gold = _gold; }
-	inline void AddGold(int _gold) { gold += _gold; }
+	inline int GetGold() { return gold.Get();}
+	inline void SetGold(int _gold) { gold.Set(_gold);}
+	inline void AddGold(int _gold) { gold.Set(gold.Get() + _gold);}
 
 	inline float GetAttack() { return attack; }
 	inline void SetAttack(float _attack) { attack = _attack; }

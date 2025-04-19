@@ -1,15 +1,16 @@
 #pragma once
 #include "config.h"
-
+#include "TileActor.h"
 enum class TileType
 {
 	NONE,
 	NORMAL,
 };
+
 class Block;
 class Trap;
-class GameActor;
-class Tile
+class Image;
+class Tile : public TileActor
 {
 private:
 	TileType type;
@@ -18,15 +19,25 @@ private:
 	float light;
 	int tileNum;
 	RECT rcTile;
-
+	Image* tileImage;
 public:
-	void Init();
-	void Render(HDC hdc);
-	void OnTile(GameActor* actor);
+	Tile() {};
+	~Tile() {};
+	HRESULT Init();
+	void Render(HDC hdc, bool useCamera = true);
+	void Release();
+	void OnTile(TileActor* actor);
 
 	// 바닥
 	int GetTileNum() { return tileNum; }
-	void SetTileNum(int _tileNum) { tileNum = _tileNum; }
+	void SetTileNum(int _tileNum) { 
+		tileNum = _tileNum; 
+		type = GetTypeByTileNum(_tileNum);
+	}
+
+	// 타일 타입
+	TileType GetType() { return type; }
+	TileType GetTypeByTileNum(int tileNum);
 
 	// 위치
 	RECT GetRcTile() { return rcTile; }
@@ -35,9 +46,5 @@ public:
 	// 블록 (벽)
 	Block* GetBlock() { return block; }
 	void SetBlock(Block* _block) { block = _block; }
-
-	// 바닥 타입
-	TileType GetType() { return type; }
-	void SetType(TileType _type) { type = _type; }
 };
 
