@@ -68,3 +68,13 @@ RECT Camera::GetViewRect()
 {
 	return GetRectAtCenter(GetPos().x, GetPos().y, viewSize.cx, viewSize.cy);
 }
+
+FPOINT Camera::GetScreenPos(const FPOINT& worldPos)
+{
+    FPOINT screenPos;
+
+    screenPos.x = worldPos.x - GetPos().x;
+    screenPos.y = worldPos.y - GetPos().y;
+
+    return screenPos;
+}
