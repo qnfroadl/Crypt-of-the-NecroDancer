@@ -12,6 +12,7 @@ enum class PlayerState
 };
 
 class EventData;
+class Tilemap;
 class Player : public TileCharacter
 {
 
@@ -37,10 +38,15 @@ private:
 
     Image* body;    
 
+    // 참조
+    weak_ptr<Tilemap> tileMap;
+
     void OnBeatHit(EventData* data);             // 비트 성공 시
     void OnBeatMiss(EventData* data);            // 비트 실패 시
 
     bool JumpAnim() override;
+    void SetJumpData(InputKey key);
+    void SetJumpData(int dx, int dy) override;
 
 public:
     Player();
@@ -51,7 +57,8 @@ public:
     void Render(HDC hdc) override;
     void Release() override;
 
-    void SetJumpData(int dx, int dy) override;
+    void SetTileMap(weak_ptr<Tilemap> _tileMap);
+	void Teleport(POINT index);
 
 	void AddObserver(IPlayerObserver* observer) { if (observer) {observers.push_back(observer); }}
     void SetPlayerIndex(PlayerIndex index) { playerIndex = index;}

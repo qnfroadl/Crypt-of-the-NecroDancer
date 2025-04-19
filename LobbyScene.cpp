@@ -9,13 +9,12 @@ HRESULT LobbyScene::Init()
 {
     // InitMap
 	SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
-    map = new Tilemap();
+    map = make_shared<Tilemap>();
     map->Init(20, 20);
     map->Load("map/ZONE1_01.map");
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
-    
-
+    playerManager.lock()->SetTileMap(map);
 
     return S_OK;
 }
@@ -24,7 +23,6 @@ void LobbyScene::Release()
 {
     if (map) {
         map->Release();
-        delete map;
         map = nullptr;
     }
 

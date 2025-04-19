@@ -7,7 +7,7 @@ class PlayerManager;
 class LobbyScene : public GameObject
 {
 private:
-    Tilemap* map;
+    shared_ptr<Tilemap> map;
 	weak_ptr<PlayerManager> playerManager;
 
     // 검정 배경

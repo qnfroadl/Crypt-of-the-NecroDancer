@@ -8,6 +8,7 @@
 #include "KeyManager.h"
 #include "CommonFunction.h"
 #include "TimerManager.h"
+#include "Tilemap.h"
 
 void Player::OnBeatHit(EventData* data)
 {
@@ -29,6 +30,41 @@ bool Player::JumpAnim()
 	return false;
 }
 
+void Player::SetJumpData(InputKey key)
+{
+	// 키 입력에 따라 점프 방향을 설정
+	POINT pIndex = GetTileIndex();
+	FPOINT tilePos;
+	switch (key)
+	{	
+	case InputKey::UP:
+		pIndex.y -= 1;
+		break;
+	case InputKey::DOWN:
+		pIndex.y += 1;
+		break;
+	case InputKey::LEFT:
+		pIndex.x -= 1;
+		break;
+	case InputKey::RIGHT:
+		pIndex.x += 1;
+		break;
+	}
+	
+	if (tileMap.lock()->CanMove(pIndex))
+	{
+		tilePos = tileMap.lock()->GetTilePos(pIndex);
+		SetJumpData(tilePos.x, tilePos.y);
+		SetTileIndex(pIndex);
+	}
+
+}
+
+void Player::SetJumpData(int dx, int dy)
+{
+	state = PlayerState::JUMP;
+	TileCharacter::SetJumpData(dx, dy);
+}
 
 Player::Player()
 	: state{}, attack(1), name("Cadence"), curFrame(0), speed(20), isLeft(false), elapsedTime(0)
@@ -120,23 +156,24 @@ void Player::Update()
 	{
 	case PlayerState::IDLE:
 		// 키 입력에 따라 플레이어의 위치를 업데이트
+		// 지금은 이렇게 분기하지만, 나중에는 Event에 넘어온 InputKey를 그냥 넣어주기만 하면 될일.
 		if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LEFT))
 		{
 			isLeft = true;
-			SetJumpData(GetPos().x - 100, GetPos().y);
+			SetJumpData(InputKey::LEFT);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RIGHT))
 		{
 			isLeft = false;
-			SetJumpData(GetPos().x + 100, GetPos().y);
+			SetJumpData(InputKey::RIGHT);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_UP))
 		{
-			SetJumpData(GetPos().x, GetPos().y - 100);
+			SetJumpData(InputKey::UP);
 		}
 		else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_DOWN))
 		{
-			SetJumpData(GetPos().x, GetPos().y + 100);
+			SetJumpData(InputKey::UP);
 		}
 		break;
 	case PlayerState::JUMP:
@@ -156,7 +193,6 @@ void Player::Render(HDC hdc)
 
 	RenderRectAtCenter(hdc, pos.x, pos.y, 50,50);
 
-
 	// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
 	// 캐릭터 몸통
 	body->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
@@ -169,14 +205,25 @@ void Player::Release()
 {
 }
 
-void Player::SetJumpData(int dx, int dy)
+void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)
 {
-	state = PlayerState::JUMP;
-	TileCharacter::SetJumpData(dx, dy);
+	tileMap = _tileMap;
+	
+	// 시작위치 지정.
+	Teleport(POINT{ 5,4 });
+}
+
+void Player::Teleport(POINT index)
+{
+	// 플레이어의 위치를 타일맵의 타일에 맞춰서 이동
+	FPOINT tilePos = tileMap.lock()->GetTilePos(index);
+	SetPos(tilePos.x, tilePos.y);
+	SetTileIndex(index);
 }
 
 void Player::Attack()
 {
+
 }
 
 void Player::UseItem()
