@@ -170,6 +170,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileCharacter.cpp" />
+    <ClCompile Include="TileItem.cpp" />
     <ClCompile Include="Tilemap.cpp" />
     <ClCompile Include="TilemapGenerator.cpp" />
     <ClCompile Include="TilemapTool.cpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Trap.cpp" />
     <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="WeaponMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActorDef.h" />
@@ -221,6 +223,7 @@
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="TileCharacter.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="TileItem.h" />
     <ClInclude Include="Tilemap.h" />
     <ClInclude Include="TilemapGenerator.h" />
     <ClInclude Include="TilemapTool.h" />
@@ -231,7 +234,7 @@
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="Trap.h" />
     <ClInclude Include="Weapon.h" />
-    <ClInclude Include="WeaponData.h" />
+    <ClInclude Include="WeaponMaterial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

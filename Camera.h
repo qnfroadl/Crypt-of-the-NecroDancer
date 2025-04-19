@@ -18,6 +18,7 @@ public:
 
     void SetTarget(weak_ptr<Player> _target);     // 타겟 설정
     void SetSize(SIZE size);
+    SIZE GetSize();
     void Update();                      // 타겟 위치 따라 카메라 갱신
     RECT GetViewRect();          // 현재 뷰 영역 (카메라 기준 사각형)
 };
