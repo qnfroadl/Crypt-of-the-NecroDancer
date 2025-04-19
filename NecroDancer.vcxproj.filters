@@ -86,19 +86,20 @@
     <ClCompile Include="TimerManager.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
-    <ClCompile Include="IPlayerObserver.cpp">
-      <Filter>Player</Filter>
+    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="IPlayerObserver.cpp" />
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Weapon.cpp">
-      <Filter>Item</Filter>
+    <ClCompile Include="Tilemap.cpp">
+      <Filter>TileSystem</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame.cpp">
-      <Filter>2D Framework</Filter>
+    <ClCompile Include="Trap.cpp">
+      <Filter>TileSystem</Filter>
     </ClCompile>
-    <ClCompile Include="WeaponMaterial.cpp">
-      <Filter>Item</Filter>
+    <ClCompile Include="TilemapGenerator.cpp">
+      <Filter>TileSystem</Filter>
     </ClCompile>
-    <ClCompile Include="TileItem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -210,10 +211,20 @@
     <ClInclude Include="Weapon.h">
       <Filter>Item</Filter>
     </ClInclude>
-    <ClInclude Include="WeaponMaterial.h">
-      <Filter>Item</Filter>
+    <ClInclude Include="IPlayerObserver.h" />
+    <ClInclude Include="ObservableValue.h" />
+    <ClInclude Include="LobbyScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="TileItem.h" />
+    <ClInclude Include="Tilemap.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Trap.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TilemapGenerator.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">

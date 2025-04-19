@@ -18,7 +18,7 @@ HRESULT Trap::Init()
 	return S_OK;
 }
 
-void Trap::Render(HDC hdc, FPOINT center)
+void Trap::Render(HDC hdc, FPOINT center, bool useCamera = true)
 {
 	if (!trapImage) return;
 

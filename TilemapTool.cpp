@@ -9,7 +9,8 @@
 #include <fstream>
 
 TilemapTool::TilemapTool()
-	: sampleTile(nullptr), sampleWall(nullptr), currentTool(ToolType::NONE) {
+	: sampleTile(nullptr), sampleWall(nullptr), currentTool(ToolType::NONE),
+	mapSize(20){
 }
 
 TilemapTool::~TilemapTool() {}
@@ -25,16 +26,20 @@ HRESULT TilemapTool::Init()
 
 	rcSampleTile = { TILEMAPTOOL_X - sampleTile->GetWidth(), 0, TILEMAPTOOL_X, sampleTile->GetHeight() };
 	rcSampleWall = { TILEMAPTOOL_X - sampleWall->GetWidth(), rcSampleTile.bottom + 10, TILEMAPTOOL_X, rcSampleTile.bottom + 10 + sampleWall->GetHeight() };
+
+	// 버튼
 	rcFloorEraser = { TILEMAPTOOL_X-300, rcSampleWall.bottom + 80, TILEMAPTOOL_X - 200, rcSampleWall.bottom + 120 };
 	rcWallEraser = { TILEMAPTOOL_X - 150, rcSampleWall.bottom + 80, TILEMAPTOOL_X - 50, rcSampleWall.bottom + 120 };
 	rcSaveBtn = { TILEMAPTOOL_X - 300, rcWallEraser.bottom + 60, TILEMAPTOOL_X - 200, rcWallEraser.bottom + 100 };
 	rcLoadBtn = { TILEMAPTOOL_X - 150, rcWallEraser.bottom + 60, TILEMAPTOOL_X - 50, rcWallEraser.bottom + 100 };
-	rcMapTile = { 0, 0, TILEMAPSIZE_X * TILE_SIZE, TILEMAPSIZE_Y * TILE_SIZE };
+	rcSizeUpBtn = { 200, rcFloorEraser.top, 300, rcFloorEraser.bottom };
+	rcSizeDownBtn = { 50, rcFloorEraser.top, 150, rcFloorEraser.bottom };
+	rcMapTile = { 0, 0, mapSize * TILE_SIZE, mapSize * TILE_SIZE };
 
-	tiles = vector<vector<Tile*>>(TILEMAPSIZE_Y, vector<Tile*>(TILEMAPSIZE_X, nullptr));
+	tiles = vector<vector<Tile*>>(mapSize, vector<Tile*>(mapSize, nullptr));
 
-	for (int i = 0; i < TILEMAPSIZE_X; i++) {
-		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
+	for (int i = 0; i < mapSize; i++) {
+		for (int j = 0; j < mapSize; j++) {
 			tiles[j][i] = new Tile();
 			tiles[j][i]->Init();
 			tiles[j][i]->SetTileNum(-1);
@@ -50,8 +55,8 @@ void TilemapTool::Release()
 {
 	if(!tiles.empty())
 	{
-		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
-			for (int i = 0; i < TILEMAPSIZE_X; i++) {
+		for (int j = 0; j < mapSize; j++) {
+			for (int i = 0; i < mapSize; i++) {
 				delete tiles[j][i];
 				tiles[j][i] = nullptr;
 			}
@@ -104,7 +109,7 @@ void TilemapTool::Update()
 		if (lStay || rStay) {
 			int x = g_ptMouse.x / TILE_SIZE;
 			int y = g_ptMouse.y / TILE_SIZE;
-			if (x >= TILEMAPSIZE_X || y >= TILEMAPSIZE_Y) return;
+			if (x >= mapSize || y >= mapSize) return;
 			switch (currentTool) {
 			case ToolType::FLOOR_TILE: {
 				int tileNum = (lStay ? selectedTileLX + selectedTileLY * SAMPLE_TILE_X : selectedTileRX + selectedTileRY * SAMPLE_TILE_X);
@@ -130,6 +135,20 @@ void TilemapTool::Update()
 			}
 		}
 	}
+	else if (PtInRect(&rcSizeUpBtn, g_ptMouse) && leftClick) {
+		if (mapSize < 20) {
+			Release();
+			mapSize++;
+			Init();
+		}
+	}
+	else if (PtInRect(&rcSizeDownBtn, g_ptMouse) && leftClick) {
+		if (mapSize > 3) {
+			Release();
+			mapSize--;
+			Init();
+		}
+	}
 }
 
 void TilemapTool::Render(HDC hdc)
@@ -139,33 +158,40 @@ void TilemapTool::Render(HDC hdc)
 	HPEN gridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200)); // 연한 회색 선
 	HPEN oldPen = (HPEN)SelectObject(hdc, gridPen);
 
-	for (int y = 0; y <= TILEMAPSIZE_Y; ++y) {
+	for (int y = 0; y <= mapSize; ++y) {
 		MoveToEx(hdc, 0, y * TILE_SIZE, NULL);
-		LineTo(hdc, TILEMAPSIZE_X * TILE_SIZE, y * TILE_SIZE);
+		LineTo(hdc, mapSize * TILE_SIZE, y * TILE_SIZE);
 	}
 
 	// 격자 그리기 (세로줄)
-	for (int x = 0; x <= TILEMAPSIZE_X; ++x) {
+	for (int x = 0; x <= mapSize; ++x) {
 		MoveToEx(hdc, x * TILE_SIZE, 0, NULL);
-		LineTo(hdc, x * TILE_SIZE, TILEMAPSIZE_Y * TILE_SIZE);
+		LineTo(hdc, x * TILE_SIZE, mapSize * TILE_SIZE);
 	}
 
 	SelectObject(hdc, oldPen);
 	DeleteObject(gridPen);
-	for (int i = 0; i < TILEMAPSIZE_X; i++)
-		for (int j = 0; j < TILEMAPSIZE_Y; j++)
+	for (int i = 0; i < mapSize; i++)
+		for (int j = 0; j < mapSize; j++)
 			tiles[j][i]->Render(hdc, false);
 
 	sampleTile->Render(hdc, rcSampleTile.left, rcSampleTile.top);
 	sampleWall->Render(hdc, rcSampleWall.left, rcSampleWall.top);
 
-	// 지우개 버튼
+	// 버튼
 	Rectangle(hdc, rcFloorEraser.left, rcFloorEraser.top, rcFloorEraser.right, rcFloorEraser.bottom);
 	DrawText(hdc, TEXT("타일지우개"), -1, &rcFloorEraser, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	Rectangle(hdc, rcWallEraser.left, rcWallEraser.top, rcWallEraser.right, rcWallEraser.bottom);
 	DrawText(hdc, TEXT("벽지우개"), -1, &rcWallEraser, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
+	Rectangle(hdc, rcSizeUpBtn.left, rcSizeUpBtn.top, rcSizeUpBtn.right, rcSizeUpBtn.bottom);
+	DrawText(hdc, TEXT("크기 +"), -1, &rcSizeUpBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	Rectangle(hdc, rcSizeDownBtn.left, rcSizeDownBtn.top, rcSizeDownBtn.right, rcSizeDownBtn.bottom);
+	DrawText(hdc, TEXT("크기 -"), -1, &rcSizeDownBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	// 샘플 타일
 	int previewLX = TILEMAPTOOL_X - sampleTile->GetWidth() - 100;
 	int previewLY = rcSampleWall.top;
 
@@ -181,6 +207,7 @@ void TilemapTool::Render(HDC hdc)
 	// 불러오기 버튼
 	Rectangle(hdc, rcLoadBtn.left, rcLoadBtn.top, rcLoadBtn.right, rcLoadBtn.bottom);
 	DrawText(hdc, TEXT("불러오기"), -1, &rcLoadBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
 }
 
 
@@ -191,12 +218,12 @@ void TilemapTool::Save(string filePath)
 	if (!out.is_open()) return;
 
 	out << "TILEMAP" << endl;
-	out << "SIZE " << TILEMAPSIZE_X << " " << TILEMAPSIZE_Y << endl;
+	out << "SIZE " << mapSize << " " << mapSize << endl;
 
 	// FLOOR
 	out << "FLOOR" << endl;
-	for (int j = 0; j < TILEMAPSIZE_Y; j++) {
-		for (int i = 0; i < TILEMAPSIZE_X; i++) {
+	for (int j = 0; j < mapSize; j++) {
+		for (int i = 0; i < mapSize; i++) {
 			out << tiles[j][i]->GetTileNum() << " ";
 		}
 		out << endl;
@@ -204,8 +231,8 @@ void TilemapTool::Save(string filePath)
 
 	// WALL (Block 번호 or -1)
 	out << "WALL" << endl;
-	for (int j = 0; j < TILEMAPSIZE_Y; j++) {
-		for (int i = 0; i < TILEMAPSIZE_X; i++) {
+	for (int j = 0; j < mapSize; j++) {
+		for (int i = 0; i < mapSize; i++) {
 			Block* block = tiles[j][i]->GetBlock();
 			if (block) out << block->GetTileNum() << " ";
 			else out << -1 << " ";
@@ -229,14 +256,14 @@ void TilemapTool::Load(string filePath)
 	string sizeLabel;
 	int tileX, tileY;
 	in >> sizeLabel >> tileX >> tileY;
-	if (tileX != TILEMAPSIZE_X || tileY != TILEMAPSIZE_Y) return;
+	if (tileX != mapSize || tileY != mapSize) return;
 
 	// FLOOR
 	string section;
 	in >> section;
 	if (section == "FLOOR") {
-		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
-			for (int i = 0; i < TILEMAPSIZE_X; i++) {
+		for (int j = 0; j < mapSize; j++) {
+			for (int i = 0; i < mapSize; i++) {
 				int tileNum;
 				in >> tileNum;
 				tiles[j][i]->SetTileNum(tileNum);
@@ -247,8 +274,8 @@ void TilemapTool::Load(string filePath)
 	// WALL
 	in >> section;
 	if (section == "WALL") {
-		for (int j = 0; j < TILEMAPSIZE_Y; j++) {
-			for (int i = 0; i < TILEMAPSIZE_X; i++) {
+		for (int j = 0; j < mapSize; j++) {
+			for (int i = 0; i < mapSize; i++) {
 				int wallNum;
 				in >> wallNum;
 				if (wallNum >= 0) {

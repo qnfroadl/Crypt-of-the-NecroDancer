@@ -3,24 +3,44 @@
 #include "Image.h"
 #include "ImageManager.h"
 
+#define TILE_SCALE 4
+
 HRESULT Block::Init()
 {
 	blocklImage= ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
 	return S_OK;
 }
 
-void Block::Render(HDC hdc, FPOINT center)
+void Block::Render(HDC hdc, FPOINT center, bool useCamera)
 {
 	if (!blocklImage) return;
 
-	blocklImage->FrameRender(
-		hdc,
-		center.x,
-		center.y,
-		blockNum % SAMPLE_WALL_X,
-		blockNum / SAMPLE_WALL_X,
-		false, true // 중심 기준
-	);
+	if (useCamera)
+	{
+		// 이미 스케일과 카메라 보정 완료된 center를 그대로 사용
+		blocklImage->RenderScaledImage(
+			hdc,
+			static_cast<int>(center.x),
+			static_cast<int>(center.y),
+			blockNum % SAMPLE_WALL_X,
+			blockNum / SAMPLE_WALL_X,
+			static_cast<float>(TILE_SCALE),
+			static_cast<float>(TILE_SCALE),
+			true  // 중심 기준
+		);
+	}
+	else
+	{
+		// 툴에서는 원본 크기 기준
+		blocklImage->FrameRender(
+			hdc,
+			static_cast<int>(center.x),
+			static_cast<int>(center.y),
+			blockNum % SAMPLE_WALL_X,
+			blockNum / SAMPLE_WALL_X,
+			false, true
+		);
+	}
 }
 
 bool Block::Destroy(Item* item)
