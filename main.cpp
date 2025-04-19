@@ -10,6 +10,7 @@ HWND g_hWnd;
 LPCWSTR g_lpszClassName = (LPCWSTR)TEXT("Crypt of the NecroDancer - 포텐업 2기 김미현, 문경원, 이주현, 차승근");
 MainGame g_mainGame;
 POINT g_ptMouse;	// 마우스 좌표
+unordered_map<pair<PlayerIndex, InputKey>, int, pair_hash> g_mapKey;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
@@ -53,7 +54,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//	WS_OVERLAPPEDWINDOW, 50, 50, WINSIZE_X, WINSIZE_Y,
 	//	NULL, NULL, g_hInstance, NULL);
 
-	RECT rcWindowSize = { 0, 0, WINSIZE_X, WINSIZE_Y };
+	RECT rcWindowSize = { 0, 0, SCENE_WIDTH, SCENE_HEIGHT };
 	AdjustWindowRect(&rcWindowSize, WS_OVERLAPPEDWINDOW, FALSE);
 	int width = rcWindowSize.right - rcWindowSize.left;
 	int height = rcWindowSize.bottom - rcWindowSize.top;

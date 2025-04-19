@@ -140,9 +140,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="BattleScene.cpp" />
+    <ClCompile Include="BeatHeart.cpp" />
     <ClCompile Include="BeatManager.cpp" />
+    <ClCompile Include="BeatMarkerManager.cpp" />
     <ClCompile Include="IPlayerObserver.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
+    <ClCompile Include="MonsterManager.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -167,13 +170,18 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileCharacter.cpp" />
+    <ClCompile Include="TileItem.cpp" />
     <ClCompile Include="Tilemap.cpp" />
     <ClCompile Include="TilemapGenerator.cpp" />
     <ClCompile Include="TilemapTool.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
+    <ClCompile Include="UIBase.cpp" />
+    <ClCompile Include="BeatMarker.cpp" />
+    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Trap.cpp" />
     <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="WeaponMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActorDef.h" />
@@ -181,11 +189,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="BattleScene.h" />
+    <ClInclude Include="BeatHeart.h" />
     <ClInclude Include="BeatManager.h" />
+    <ClInclude Include="BeatMarkerManager.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="IPlayerObserver.h" />
     <ClInclude Include="LobbyScene.h" />
+    <ClInclude Include="MonsterManager.h" />
     <ClInclude Include="ObservableValue.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Block.h" />
@@ -212,14 +223,18 @@
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="TileCharacter.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="TileItem.h" />
     <ClInclude Include="Tilemap.h" />
     <ClInclude Include="TilemapGenerator.h" />
     <ClInclude Include="TilemapTool.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
+    <ClInclude Include="UIBase.h" />
+    <ClInclude Include="BeatMarker.h" />
+    <ClInclude Include="UIManager.h" />
     <ClInclude Include="Trap.h" />
     <ClInclude Include="Weapon.h" />
-    <ClInclude Include="WeaponData.h" />
+    <ClInclude Include="WeaponMaterial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

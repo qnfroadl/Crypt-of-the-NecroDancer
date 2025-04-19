@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "EventManager.h"
 #include "PlayerManager.h"
+#include "MonsterManager.h"
 
 #include "SoundManager.h"
 #include "BeatManager.h"
@@ -56,7 +57,14 @@ void MainGame::ItemSpawnSimulation()
 	}
 	else if (KeyManager::GetInstance()->IsOnceKeyDown('Q'))
 	{
-		SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
+		LobbyScene* scene = static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene("LobbyScene"));
+		if (scene)
+		{
+			scene->SetPlayerManager(playerManager);
+			SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
+		}
+		
+
 	}
 	else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RSHIFT))
 	{
@@ -91,9 +99,23 @@ void MainGame::InitResource()
 
 }
 
+void MainGame::InitKeyMapping()
+{
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::UP }, VK_UP });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::DOWN }, VK_DOWN });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::LEFT }, VK_LEFT });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::RIGHT }, VK_RIGHT });
+
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::UP }, 'W' });
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::DOWN }, 'S'});
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::LEFT }, 'A'});
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::RIGHT }, 'D'});
+}
+
 HRESULT MainGame::Init()
 {
 	InitResource();
+	InitKeyMapping();
 
 	CollisionManager::GetInstance()->Init();
 	KeyManager::GetInstance()->Init();
@@ -110,7 +132,7 @@ HRESULT MainGame::Init()
 	SceneManager::GetInstance()->ChangeScene("AstarScene");
 
 	//Init Camera
-	Camera::GetInstance()->SetSize(SIZE{600, 600});
+	Camera::GetInstance()->SetSize(SIZE{SCENE_WIDTH, SCENE_HEIGHT});
 
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
@@ -122,13 +144,13 @@ HRESULT MainGame::Init()
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
 	BeatManager::GetInstance()->Init();
-	BeatManager::GetInstance()->StartBeat();
+	BeatManager::GetInstance()->StartBeat(true);
 
-	playerManager = new PlayerManager();
+	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
-	testMoster = new Monster();
-	testMoster->Init(MONSTERTYPE::SLIME);
+	/*monsterManager = new MonsterManager();
+	monsterManager->Init();*/
 
 
 	FPS = 144;
@@ -142,7 +164,7 @@ HRESULT MainGame::Init()
 	
 
 	backBuffer = new Image();
-	if (FAILED(backBuffer->Init(WINSIZE_X, WINSIZE_Y)))
+	if (FAILED(backBuffer->Init(SCENE_WIDTH, SCENE_HEIGHT)))
 	{
 		MessageBox(g_hWnd, TEXT("백버퍼 생성 실패"), TEXT("경고"), MB_OK);
 
@@ -182,13 +204,15 @@ void MainGame::Release()
 
 void MainGame::Update()
 {
+	KeyManager::GetInstance()->Update();
+
 	CollisionManager::GetInstance()->Update();
 	SceneManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
 	//btn->Update();
 	
 	playerManager->Update();
-	//testMoster->Update();
+	//monsterManager->Update();
 	Camera::GetInstance()->Update();
 
 	UpdateCollisionInfo();
@@ -212,9 +236,9 @@ void MainGame::Render()
 	HDC hBackBufferDC = backBuffer->GetMemDC();
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
-
+	
 	playerManager->Render(hBackBufferDC);
-	//testMoster->Render(hBackBufferDC);
+	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
@@ -222,6 +246,8 @@ void MainGame::Render()
 		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
 		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
 	}
+
+	BeatManager::GetInstance()->Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);

@@ -15,6 +15,9 @@ using namespace std;
 	컴파일러에서 해당 코드를 뒤에 정의된 코드로 변경한다. 
 */
 
+#define SCENE_WIDTH 1920
+#define SCENE_HEIGHT 1080
+
 #define TILEMAPTOOL_X 1200
 #define TILEMAPTOOL_Y 800
 #define WINSIZE_X	TILEMAPTOOL_X
@@ -50,6 +53,8 @@ enum class PlayerIndex
 
 enum class InputKey
 {
+	NONE = 0,
+
 	UP = 1 , 
 	DOWN = 2,  //1 << 1, 
 	LEFT = 4,  //1 << 2, 
@@ -57,8 +62,10 @@ enum class InputKey
 	
 	UPDOWN = UP | DOWN,			//3
 	DOWNLEFT = DOWN | LEFT,		//6
+	DOWNRIGHT = DOWN | RIGHT,	//10
 	UPLEFT = UP | LEFT,			//5	
 	UPRIGHT = UP | RIGHT,		//9
+	LEFTRIGHT = LEFT | RIGHT,	//12
 };
 inline InputKey operator|(InputKey a, InputKey b)
 {
@@ -103,3 +110,19 @@ typedef struct tagFPOINT
 extern HWND g_hWnd;
 extern HINSTANCE g_hInstance;
 extern POINT g_ptMouse;
+
+struct pair_hash {
+	template <class T1, class T2>
+	std::size_t operator () (std::pair<T1, T2> const& v) const {
+		auto h1 = std::hash<T1>{}(v.first);
+		auto h2 = std::hash<T2>{}(v.second);
+		return h1 ^ h2;
+	}
+};
+extern unordered_map<pair<PlayerIndex, InputKey>, int, pair_hash> g_mapKey; // 플레이어의 인풋키 매핑
+
+//
+// 테스트용 콘솔창 띄우기
+#ifdef _DEBUG
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif
