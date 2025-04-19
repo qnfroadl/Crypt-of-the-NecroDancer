@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "config.h"
 #include "TileActor.h"
 
 class Tile;
 class Item;
-//ÀÌ°Ô ÀüÃ¼¸Ê Å¸ÀÏ Á¦³Ê·¹ÀÌÅÍ°¡ ¹æ Á¶ÇÕÇØ¼­ ¿©±â ³Ö¾îÁà¾ß ÇÔ
+//ì´ê²Œ ì „ì²´ë§µ íƒ€ì¼ ì œë„ˆë ˆì´í„°ê°€ ë°© ì¡°í•©í•´ì„œ ì—¬ê¸° ë„£ì–´ì¤˜ì•¼ í•¨
 class Tilemap : public TileActor
 {
 private:
@@ -18,6 +18,8 @@ public:
 	void Render(HDC hdc);
 
 	Tile* GetTile(int row, int column);
+	FPOINT GetTilePos(POINT index);
+
 	void SetTile(int row, int col, Tile* tile);
 
 	bool Destory(Item* item);

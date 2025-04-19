@@ -73,6 +73,7 @@ public:
 	void RenderCenter(HDC hdc, int destX = 0, int destY = 0);
 
 	void FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, bool isFlip = false, bool isCenter = true);
+	void FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter);
 
 	//void RenderAtCenter(HDC hdc, int destX, int destY, int frameIndex, bool isFlip = false);
 	void RenderHeight(HDC hdc, int destX, int destY, int frameIndex, int totalFrame);
