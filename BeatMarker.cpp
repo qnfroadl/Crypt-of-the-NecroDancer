@@ -45,9 +45,11 @@ void BeatMarker::Update(unsigned int curPosition)
 
 	RECT client;
 	GetClientRect(g_hWnd, &client);
-	float width = (client.right - client.left);
+	float width = client.right - client.left;
+	float height = client.bottom - client.top;
 
 	position.x = width * diff;
+	position.y = height - image->GetHeight();
 }
 
 void BeatMarker::Render(HDC hdc)

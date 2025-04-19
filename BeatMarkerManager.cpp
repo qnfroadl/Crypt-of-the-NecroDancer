@@ -34,7 +34,7 @@ void BeatMarkerManager::Init(queue<unsigned int> beatQueue)
 	{
 		heart = new BeatHeart();
 	}
-	heart->Init();
+	heart->Init(beatQueue);
 }
 
 void BeatMarkerManager::Release()
@@ -57,7 +57,7 @@ void BeatMarkerManager::Release()
 	}
 }
 
-void BeatMarkerManager::Update(unsigned int curPosition, bool checkOnBeat)
+void BeatMarkerManager::Update(unsigned int curPosition)
 {
 	int activeMarkerNum{};
 	for (auto marker : markers)
@@ -76,7 +76,7 @@ void BeatMarkerManager::Update(unsigned int curPosition, bool checkOnBeat)
 
 	if (heart)
 	{
-		heart->Update(checkOnBeat);
+		heart->Update(curPosition);
 	}
 }
 
