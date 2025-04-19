@@ -38,7 +38,7 @@ void BeatManager::Update()
 	// 마커 업데이트
 	if (markerManager)
 	{
-		markerManager->Update(curPosition, checkOnBeat);
+		markerManager->Update(curPosition);
 	}
 }
 
@@ -105,7 +105,7 @@ void BeatManager::UpdateBeat()
 
 		if (curPosition > beat + 30.f)
 		{
-			checkOnBeat = false;
+			//checkOnBeat = false;
 		}
 
 		// 반 박자보다 더 느림
@@ -140,7 +140,7 @@ void BeatManager::ProcessInput()
 
 	if ((int)pressedKeyP1 | (int)pressedKeyP2)
 	{
-		cout << (int)pressedKeyP1 << ' ' << (int)pressedKeyP2 << endl;
+		//cout << (int)pressedKeyP1 << ' ' << (int)pressedKeyP2 << endl;
 	}
 
 	// event 전달
