@@ -53,7 +53,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//	WS_OVERLAPPEDWINDOW, 50, 50, WINSIZE_X, WINSIZE_Y,
 	//	NULL, NULL, g_hInstance, NULL);
 
-	RECT rcWindowSize = { 0, 0, WINSIZE_X, WINSIZE_Y };
+	RECT rcWindowSize = { 0, 0, SCENE_WIDTH, SCENE_HEIGHT };
 	AdjustWindowRect(&rcWindowSize, WS_OVERLAPPEDWINDOW, FALSE);
 	int width = rcWindowSize.right - rcWindowSize.left;
 	int height = rcWindowSize.bottom - rcWindowSize.top;

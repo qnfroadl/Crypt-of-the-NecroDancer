@@ -1,8 +1,0 @@
-﻿#pragma once
-
-struct WeaponData 
-{
-
-};
-
-

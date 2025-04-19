@@ -1,12 +1,11 @@
 ﻿#include "PlayerManager.h"
 
 #include "Player.h"
+#include "Tilemap.h"
 
 PlayerManager::PlayerManager()
 	:playerCount(1)
 {
-	
-
 	
 }
 
@@ -65,9 +64,17 @@ void PlayerManager::Release()
 	}
 }
 
-void PlayerManager::SetTileMap(weak_ptr<TileMap> _tileMap)
+void PlayerManager::SetTileMap(weak_ptr<Tilemap> _tileMap)
 {
-    tileMap = tileMap;
+    tileMap = _tileMap;
+	for (int i = 0; i < playerCount; i++)
+	{
+		if (players[i] != nullptr)
+		{
+			players[i]->SetTileMap(tileMap);
+		}
+	}
+
 }
 
 void PlayerManager::SetPositionManager(weak_ptr<PositionManager> _positionManager)
@@ -78,4 +85,12 @@ void PlayerManager::SetPositionManager(weak_ptr<PositionManager> _positionManage
 weak_ptr<Player> PlayerManager::GetPlayer(PlayerIndex index)
 {
     return players[int(index)];
+}
+
+void PlayerManager::BindPlayerObserver(PlayerIndex index, IPlayerObserver* observer)
+{
+	if (players[int(index)] != nullptr)
+	{
+		players[int(index)]->AddObserver(observer);
+	}
 }

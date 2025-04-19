@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Block.cpp">
       <Filter>TileSystem</Filter>
     </ClCompile>
@@ -206,8 +205,13 @@
     <ClInclude Include="TimerManager.h">
       <Filter>2D Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Weapon.h" />
-    <ClInclude Include="WeaponData.h">
+    <ClInclude Include="IPlayerObserver.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ObservableValue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
       <Filter>Item</Filter>
     </ClInclude>
     <ClInclude Include="IPlayerObserver.h" />

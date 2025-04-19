@@ -28,6 +28,11 @@ void Camera::SetSize(SIZE size)
     viewSize = size;
 }
 
+SIZE Camera::GetSize()
+{
+    return viewSize;
+}
+
 void Camera::Update()
 {
     // 이걸 매 프레임 하는것 보단, 타겟의 위치가 변할때만 따라가는게 좋긴해. Observer.
