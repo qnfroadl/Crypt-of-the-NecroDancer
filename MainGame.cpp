@@ -56,7 +56,14 @@ void MainGame::ItemSpawnSimulation()
 	}
 	else if (KeyManager::GetInstance()->IsOnceKeyDown('Q'))
 	{
-		SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
+		LobbyScene* scene = static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene("LobbyScene"));
+		if (scene)
+		{
+			scene->SetPlayerManager(playerManager);
+			SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
+		}
+		
+
 	}
 	else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RSHIFT))
 	{
@@ -110,7 +117,7 @@ HRESULT MainGame::Init()
 	SceneManager::GetInstance()->ChangeScene("AstarScene");
 
 	//Init Camera
-	Camera::GetInstance()->SetSize(SIZE{600, 600});
+	Camera::GetInstance()->SetSize(SIZE{SCENE_WIDTH, SCENE_HEIGHT});
 
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
@@ -124,7 +131,7 @@ HRESULT MainGame::Init()
 	BeatManager::GetInstance()->Init();
 	BeatManager::GetInstance()->StartBeat();
 
-	playerManager = new PlayerManager();
+	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 	testMoster = new Monster();
@@ -142,7 +149,7 @@ HRESULT MainGame::Init()
 	
 
 	backBuffer = new Image();
-	if (FAILED(backBuffer->Init(WINSIZE_X, WINSIZE_Y)))
+	if (FAILED(backBuffer->Init(SCENE_WIDTH, SCENE_HEIGHT)))
 	{
 		MessageBox(g_hWnd, TEXT("백버퍼 생성 실패"), TEXT("경고"), MB_OK);
 

@@ -3,10 +3,9 @@
 #include "TileActor.h"
 #include "ImageManager.h"
 #include "Player.h"
-
+#include "WeaponMaterial.h"
 class Monster;
 class Player;
-class WeaponMaterial;
 
 enum class DamageType
 {

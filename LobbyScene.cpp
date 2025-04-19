@@ -1,12 +1,21 @@
-#include "LobbyScene.h"
+ï»¿#include "LobbyScene.h"
 #include "Tilemap.h"
 #include "Camera.h"
+#include "CommonFunction.h"
+#include "PlayerManager.h"
+#include "Player.h"
 
 HRESULT LobbyScene::Init()
 {
+    // InitMap
+	SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
     map = new Tilemap();
     map->Init(20, 20);
     map->Load("map/ZONE1_01.map");
+    blackBrush = CreateSolidBrush(RGB(0, 0, 0));
+
+    
+
 
     return S_OK;
 }
@@ -18,6 +27,9 @@ void LobbyScene::Release()
         delete map;
         map = nullptr;
     }
+
+    DeleteObject(blackBrush);
+
 }
 
 void LobbyScene::Update()
@@ -27,13 +39,22 @@ void LobbyScene::Update()
 
 void LobbyScene::Render(HDC hdc)
 {
-    // °ËÀº»ö ¹è°æÀ¸·Î ÃÊ±âÈ­
-    HBRUSH blackBrush = CreateSolidBrush(RGB(0, 0, 0));
-    RECT clientRect = { 0, 0, TILEMAPTOOL_X, TILEMAPTOOL_Y };
-    FillRect(hdc, &clientRect, blackBrush);
-    DeleteObject(blackBrush);
+    FPOINT pos = playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1).lock()->GetPos();
+    FPOINT cPos = Camera::GetInstance()->GetPos();
+    // ê²€ì€ìƒ‰ ë°°ê²½ìœ¼ë¡œ ì´ˆê¸°í™”    
+    RenderFillRectAtCenter(hdc, blackBrush,
+        pos.x - cPos.x, pos.y - cPos.y,
+        SCENE_WIDTH, SCENE_HEIGHT);
 
     if (map)
+    {
         map->Render(hdc);
+    }
+    
+}
+
+void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
+{
+    this->playerManager = playerManager;
 }
 

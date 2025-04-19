@@ -39,7 +39,7 @@ private:
 	void InitResource();
 
 	//test
-	PlayerManager* playerManager;
+	shared_ptr<PlayerManager> playerManager;
 	Monster* testMoster;
 public:
 	HRESULT Init();	// override (부모클래스와 같은 함수이름, 로직을 다르게 구현하고 싶을 때)
