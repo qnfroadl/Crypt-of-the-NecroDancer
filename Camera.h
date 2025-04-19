@@ -21,4 +21,8 @@ public:
     SIZE GetSize();
     void Update();                      // 타겟 위치 따라 카메라 갱신
     RECT GetViewRect();          // 현재 뷰 영역 (카메라 기준 사각형)
+
+	FPOINT GetScreenPos(const FPOINT& worldPos); // 카메라 기준 좌표
+
+	void Shake(float duration, int intensity); // 시간, 강도 카메라 흔들기
 };

@@ -190,7 +190,6 @@ void Player::Render(HDC hdc)
 	pos.x -= Camera::GetInstance()->GetPos().x;
 	pos.y -= Camera::GetInstance()->GetPos().y;
 
-
 	RenderRectAtCenter(hdc, pos.x, pos.y, 50,50);
 
 	// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
