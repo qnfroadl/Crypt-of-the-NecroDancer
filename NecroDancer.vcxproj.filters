@@ -101,8 +101,6 @@
     <ClCompile Include="BeatHeart.cpp">
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClCompile>
-    <ClCompile Include="Weapon.cpp" />
-    <ClCompile Include="IPlayerObserver.cpp" />
     <ClCompile Include="LobbyScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -117,6 +115,19 @@
     </ClCompile>
     <ClCompile Include="MonsterManager.cpp">
       <Filter>Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="TileItem.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponMaterial.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="IPlayerObserver.cpp">
+      <Filter>Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -235,9 +246,6 @@
     <ClInclude Include="BeatHeart.h">
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClInclude>
-    <ClInclude Include="Weapon.h" />
-    <ClInclude Include="WeaponData.h">
-    </ClInclude>  
     <ClInclude Include="IPlayerObserver.h">
       <Filter>Player</Filter>
     </ClInclude>
@@ -263,6 +271,15 @@
     </ClInclude>
     <ClInclude Include="MonsterManager.h">
       <Filter>Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="TileItem.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponMaterial.h">
+      <Filter>Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

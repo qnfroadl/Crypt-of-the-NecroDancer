@@ -50,6 +50,8 @@ void EventManager::Update()
 		while (it != funcs[event->type].end() && count < maxCount)
 		{
 			(*it)(event->data);
+			
+			it++;
 			count++;
 		}
 		
