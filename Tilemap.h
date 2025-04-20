@@ -35,6 +35,7 @@ public:
 	void OnBeat(bool isCombo);
 	POINT GetPlayerStartIndex() { return startIndex; }
 	POINT GetNextStageIndex() { return endIndex; }
-
+	void SetPlayerStartIndex(POINT p) { startIndex = p; }
+	void SetNextStageIndex(POINT p) { endIndex = p; }
 };
 
