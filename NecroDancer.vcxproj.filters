@@ -138,7 +138,7 @@
     <ClCompile Include="ItemSpawner.cpp">
       <Filter>Item</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerCoin.cpp">
+    <ClCompile Include="PlayerWallet.cpp">
       <Filter>InputSystem &amp; UI\UI\PlayerCoin</Filter>
     </ClCompile>
     <ClCompile Include="ItemNumUI.cpp" />
@@ -303,7 +303,7 @@
     <ClInclude Include="ItemSpawner.h">
       <Filter>Item</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerCoin.h">
+    <ClInclude Include="PlayerWallet.h">
       <Filter>InputSystem &amp; UI\UI\PlayerCoin</Filter>
     </ClInclude>
     <ClInclude Include="ItemNumUI.h" />

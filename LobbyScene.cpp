@@ -5,7 +5,7 @@
 #include "PlayerManager.h"
 #include "Player.h"
 #include "UIManager.h"
-#include "PlayerCoin.h"
+#include "PlayerWallet.h"
 
 HRESULT LobbyScene::Init()
 {
@@ -21,7 +21,7 @@ HRESULT LobbyScene::Init()
     uiManager = new UIManager();
 	uiManager->Init();
 
-	PlayerCoin* playerCoin = new PlayerCoin();
+	PlayerWallet* playerCoin = new PlayerWallet();
 	playerCoin->Init();
 	playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
 	uiManager->AddUI(playerCoin);
