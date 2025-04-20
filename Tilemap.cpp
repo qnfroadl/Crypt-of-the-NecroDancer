@@ -2,6 +2,7 @@
 #include "Tile.h"
 #include "Block.h"
 #include <fstream>
+#include "EventManager.h"
 
 HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 {
@@ -16,6 +17,7 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 			tiles[i][j]->Init(i, j);
 		}
 	}
+	EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
 	return S_OK;
 }
 
@@ -155,8 +157,10 @@ void Tilemap::Load(string filePath)
 			in >> tileNum;
 			if (tiles[i][j]) 
 			{
-				tiles[i][j]->SetTileNum(tileNum);
 				tiles[i][j]->Init(i, j);
+				tiles[i][j]->SetTileNum(tileNum);
+				if (tileNum == 1 && (tiles[i][j]->GetTileIndex().x + tiles[i][j]->GetTileIndex().y) % 2 == 1)
+					tiles[i][j]->SetTileNum(0);
 			}
 		}
 	}
@@ -187,6 +191,20 @@ void Tilemap::Load(string filePath)
 	}
 
 	in.close();
+}
+
+void Tilemap::OnBeat(bool isCombo)
+{
+	for (auto& row : tiles)
+	{
+		for (auto& tile : row)
+		{
+			if (tile)
+			{
+				tile->OnBeat(isCombo);
+			}
+		}
+	}
 }
 
 void Tilemap::SetTile(int row, int col, Tile* tile)

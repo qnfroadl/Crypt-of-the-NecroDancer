@@ -43,7 +43,6 @@ HRESULT TilemapTool::Init()
 			tiles[j][i] = new Tile();
 			tiles[j][i]->Init(i, j);
 			tiles[j][i]->SetTileNum(-1);
-
 			/*RECT rc = { i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE + TILE_SIZE, j * TILE_SIZE + TILE_SIZE };
 			tiles[j][i]->SetRcTile(rc);*/
 		}
