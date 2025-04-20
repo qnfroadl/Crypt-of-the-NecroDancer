@@ -125,12 +125,10 @@ void Tile::OnBeat(bool isCombo)
 		case TileType::DARK_DIRT:
 			if ((index.x + index.y) % 2 == 0)
 			{
-				// 짝수일 때
 				SetTileNum(10); // 콤보1로 변경
 			}
 			else
 			{
-				// 홀수일 때
 				SetTileNum(11); // 콤보2로 변경
 			}
 			break;

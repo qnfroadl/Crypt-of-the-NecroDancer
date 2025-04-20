@@ -35,6 +35,8 @@ HRESULT TilemapTool::Init()
 	rcSizeUpBtn = { 200, rcFloorEraser.top, 300, rcFloorEraser.bottom };
 	rcSizeDownBtn = { 50, rcFloorEraser.top, 150, rcFloorEraser.bottom };
 	rcMapTile = { 0, 0, mapSize * TILE_SIZE, mapSize * TILE_SIZE };
+	rcPlayerStartBtn = { 50, rcSizeDownBtn.bottom + 40, 150, rcSizeDownBtn.bottom + 80 };
+	rcNextStageBtn = { 200, rcSizeDownBtn.bottom + 40, 300, rcSizeDownBtn.bottom + 80 };
 
 	tiles = vector<vector<Tile*>>(mapSize, vector<Tile*>(mapSize, nullptr));
 
@@ -130,6 +132,15 @@ void TilemapTool::Update()
 			case ToolType::WALL_ERASER:
 				tiles[y][x]->SetBlock(nullptr);
 				break;
+			case ToolType::SET_PLAYER_START:
+				playerStartX = x;
+				playerStartY = y;
+				break;
+
+			case ToolType::SET_NEXT_STAGE:
+				nextStageX = x;
+				nextStageY = y;
+				break;
 			default:
 				break;
 			}
@@ -148,6 +159,12 @@ void TilemapTool::Update()
 			mapSize--;
 			Init();
 		}
+	}
+	else if (PtInRect(&rcPlayerStartBtn, g_ptMouse) && leftClick) {
+		currentTool = ToolType::SET_PLAYER_START;
+	}
+	else if (PtInRect(&rcNextStageBtn, g_ptMouse) && leftClick) {
+		currentTool = ToolType::SET_NEXT_STAGE;
 	}
 }
 
@@ -172,8 +189,25 @@ void TilemapTool::Render(HDC hdc)
 	SelectObject(hdc, oldPen);
 	DeleteObject(gridPen);
 	for (int i = 0; i < mapSize; i++)
+	{
 		for (int j = 0; j < mapSize; j++)
+		{
 			tiles[j][i]->Render(hdc, false);
+			int cx = i * TILE_SIZE + TILE_SIZE / 2;
+			int cy = j * TILE_SIZE + TILE_SIZE / 2;
+
+			if (i == playerStartX && j == playerStartY) {
+				HBRUSH old = (HBRUSH)SelectObject(hdc, CreateSolidBrush(RGB(0, 255, 0)));
+				Ellipse(hdc, cx - 6, cy - 6, cx + 6, cy + 6);
+				DeleteObject(SelectObject(hdc, old));
+			}
+			if (i == nextStageX && j == nextStageY) {
+				HBRUSH old = (HBRUSH)SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 255)));
+				Rectangle(hdc, cx - 6, cy - 6, cx + 6, cy + 6);
+				DeleteObject(SelectObject(hdc, old));
+			}
+		}
+	}
 
 	sampleTile->Render(hdc, rcSampleTile.left, rcSampleTile.top);
 	sampleWall->Render(hdc, rcSampleWall.left, rcSampleWall.top);
@@ -190,6 +224,11 @@ void TilemapTool::Render(HDC hdc)
 
 	Rectangle(hdc, rcSizeDownBtn.left, rcSizeDownBtn.top, rcSizeDownBtn.right, rcSizeDownBtn.bottom);
 	DrawText(hdc, TEXT("크기 -"), -1, &rcSizeDownBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	Rectangle(hdc, rcPlayerStartBtn.left, rcPlayerStartBtn.top, rcPlayerStartBtn.right, rcPlayerStartBtn.bottom);
+	DrawText(hdc, TEXT("플레이어위치"), -1, &rcPlayerStartBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	Rectangle(hdc, rcNextStageBtn.left, rcNextStageBtn.top, rcNextStageBtn.right, rcNextStageBtn.bottom);
+	DrawText(hdc, TEXT("다음스테이지"), -1, &rcNextStageBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	// 샘플 타일
 	int previewLX = TILEMAPTOOL_X - sampleTile->GetWidth() - 100;
@@ -220,7 +259,13 @@ void TilemapTool::Save(string filePath)
 	out << "TILEMAP" << endl;
 	out << "SIZE " << mapSize << " " << mapSize << endl;
 
-	// FLOOR
+	// 플레이어 시작 위치 저장
+	out << "PLAYER_START " << playerStartX << " " << playerStartY << endl;
+
+	// 다음 스테이지 위치 저장
+	out << "NEXT_STAGE " << nextStageX << " " << nextStageY << endl;
+
+	// FLOOR 저장
 	out << "FLOOR" << endl;
 	for (int j = 0; j < mapSize; j++) {
 		for (int i = 0; i < mapSize; i++) {
@@ -229,7 +274,7 @@ void TilemapTool::Save(string filePath)
 		out << endl;
 	}
 
-	// WALL (Block 번호 or -1)
+	// WALL 저장
 	out << "WALL" << endl;
 	for (int j = 0; j < mapSize; j++) {
 		for (int i = 0; i < mapSize; i++) {
@@ -257,6 +302,19 @@ void TilemapTool::Load(string filePath)
 	int newWidth, newHeight;
 	in >> sizeLabel >> newWidth >> newHeight;
 
+	// 플레이어 시작 위치 파싱
+	string section;
+	in >> section;
+	if (section == "PLAYER_START") {
+		in >> playerStartX >> playerStartY;
+	}
+
+	// 다음 스테이지 위치 파싱
+	in >> section;
+	if (section == "NEXT_STAGE") {
+		in >> nextStageX >> nextStageY;
+	}
+
 	// 기존 타일 제거
 	for (int j = 0; j < tiles.size(); j++) {
 		for (int i = 0; i < tiles[j].size(); i++) {
@@ -274,11 +332,9 @@ void TilemapTool::Load(string filePath)
 		}
 	}
 
-	// mapSize 갱신 (필요 시 mapWidth, mapHeight 따로 관리 권장)
 	mapSize = newWidth;
 
 	// FLOOR 파싱
-	string section;
 	in >> section;
 	if (section == "FLOOR") {
 		for (int j = 0; j < newHeight; j++) {
@@ -297,7 +353,6 @@ void TilemapTool::Load(string filePath)
 			for (int i = 0; i < newWidth; i++) {
 				int wallNum;
 				in >> wallNum;
-
 				if (wallNum >= 0) {
 					Block* block = new Block();
 					block->Init(tiles[j][i]->GetPos(), tiles[j][i]->GetTileIndex());

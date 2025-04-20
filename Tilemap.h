@@ -12,6 +12,8 @@ private:
 	int mapRows;
 	int mapColumns;
 	bool isCombo;
+	POINT startIndex;
+	POINT endIndex;
 
 public:
 	HRESULT Init(int _mapRows, int _mapColumns);
@@ -31,6 +33,8 @@ public:
 	POINT GetSpawnIndex();
 	void Load(string filePath);
 	void OnBeat(bool isCombo);
+	POINT GetPlayerStartIndex() { return startIndex; }
+	POINT GetNextStageIndex() { return endIndex; }
 
 };
 

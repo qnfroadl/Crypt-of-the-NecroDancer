@@ -143,8 +143,23 @@ void Tilemap::Load(string filePath)
 		return;
 	}
 
-	// FLOOR 섹션
 	string section;
+	int playerStartX, playerStartY;
+	int nextStageX, nextStageY;
+	in >> section;
+	if (section != "PLAYER_START") {
+		MessageBoxA(nullptr, "PLAYER_START 섹션 누락", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+	in >> playerStartX >> playerStartY;
+	startIndex = { playerStartX, playerStartY };
+	in >> section;
+	if (section != "NEXT_STAGE") {
+		MessageBoxA(nullptr, "NEXT_STAGE 섹션 누락", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+	in >> nextStageX >> nextStageY;
+	endIndex = { nextStageX, nextStageY };
 	in >> section;
 	if (section != "FLOOR") {
 		MessageBoxA(nullptr, "FLOOR 섹션 누락", "에러", MB_OK | MB_ICONERROR);
@@ -155,8 +170,7 @@ void Tilemap::Load(string filePath)
 		for (int j = 0; j < mapColumns; j++) {
 			int tileNum;
 			in >> tileNum;
-			if (tiles[i][j]) 
-			{
+			if (tiles[i][j]) {
 				tiles[i][j]->Init(i, j);
 				tiles[i][j]->SetTileNum(tileNum);
 				if (tileNum == 1 && (tiles[i][j]->GetTileIndex().x + tiles[i][j]->GetTileIndex().y) % 2 == 1)
@@ -165,7 +179,6 @@ void Tilemap::Load(string filePath)
 		}
 	}
 
-	// WALL 섹션
 	in >> section;
 	if (section != "WALL") {
 		MessageBoxA(nullptr, "WALL 섹션 누락", "에러", MB_OK | MB_ICONERROR);
@@ -192,7 +205,6 @@ void Tilemap::Load(string filePath)
 
 	in.close();
 }
-
 void Tilemap::OnBeat(bool isCombo)
 {
 	for (auto& row : tiles)

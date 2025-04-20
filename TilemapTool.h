@@ -10,7 +10,9 @@ enum class ToolType {
 	FLOOR_TILE,
 	WALL_TILE,
 	FLOOR_ERASER,
-	WALL_ERASER
+	WALL_ERASER,
+	SET_PLAYER_START,     // 추가
+	SET_NEXT_STAGE        // 추가
 };
 class Image;
 class Tile;
@@ -34,6 +36,10 @@ private:
 	RECT rcSizeDownBtn;
 	SelectedLayer selectedLayer;
 	ToolType currentTool;
+	int playerStartX = 0, playerStartY = 0;
+	int nextStageX = 0, nextStageY = 0;
+	RECT rcPlayerStartBtn;
+	RECT rcNextStageBtn;
 
 public:
 	TilemapTool();
