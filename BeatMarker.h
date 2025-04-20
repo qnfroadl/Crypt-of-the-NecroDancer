@@ -20,5 +20,7 @@ public:
 
 	void SetDead(bool _dead) { dead = _dead; }
 	bool IsDead() { return dead; }
+
+	void LocateMarker(unsigned int curPosition);
 };
 
