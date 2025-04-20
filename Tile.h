@@ -4,7 +4,10 @@
 enum class TileType
 {
 	NONE,
-	NORMAL,
+	BRIGHT_DIRT,
+	DARK_DIRT,
+	COMBO1_DIRT,
+	COMBO2_DIRT,
 };
 
 class Block;
@@ -18,8 +21,8 @@ private:
 	Trap* trap;
 	float light;
 	int tileNum;
-	//RECT rcTile;
 	Image* tileImage;
+
 public:
 	Tile() {};
 	~Tile() {};
@@ -40,12 +43,12 @@ public:
 	TileType GetType() { return type; }
 	TileType GetTypeByTileNum(int tileNum);
 
-	//// 위치
-	//RECT GetRcTile() { return rcTile; }
-	//void SetRcTile(RECT _rcTile) { rcTile = _rcTile; }
-
 	// 블록 (벽)
 	Block* GetBlock() { return block; }
 	void SetBlock(Block* _block) { block = _block; }
+
+	POINT GetTileIndex() { return index; }
+
+	void OnBeat(bool isCombo);
 };
 

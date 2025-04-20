@@ -11,6 +11,10 @@ private:
 	vector<vector<Tile*>> tiles;
 	int mapRows;
 	int mapColumns;
+	bool isCombo;
+	POINT startIndex;
+	POINT endIndex;
+
 public:
 	HRESULT Init(int _mapRows, int _mapColumns);
 	void Release();
@@ -28,6 +32,10 @@ public:
 	void Move(TileActor* actor, POINT index);
 	POINT GetSpawnIndex();
 	void Load(string filePath);
-
+	void OnBeat(bool isCombo);
+	POINT GetPlayerStartIndex() { return startIndex; }
+	POINT GetNextStageIndex() { return endIndex; }
+	void SetPlayerStartIndex(POINT p) { startIndex = p; }
+	void SetNextStageIndex(POINT p) { endIndex = p; }
 };
 

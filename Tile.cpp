@@ -17,7 +17,6 @@ HRESULT Tile::Init()
 	block = nullptr;
 	trap = nullptr;
 	light = 0.0f;
-	//	rcTile = { 0, 0, 0, 0 };
 	return S_OK;
 }
 
@@ -30,11 +29,6 @@ HRESULT Tile::Init(int x, int y)
 	trap = nullptr;
 	light = 0.0f;
 
-	//// 타일 위치 설정 (타일 좌표 기준)
-	//rcTile.left = x * TILE_SIZE;
-	//rcTile.top = y * TILE_SIZE;
-	//rcTile.right = rcTile.left + TILE_SIZE;
-	//rcTile.bottom = rcTile.top + TILE_SIZE;
 	pos = {
 		(x + 0.5f) * TILE_SIZE * TILE_SCALE,
 		(y + 0.5f) * TILE_SIZE * TILE_SCALE
@@ -106,7 +100,66 @@ void Tile::OnTile(TileActor* actor)
 TileType Tile::GetTypeByTileNum(int tileNum)
 {
 	// 수정해야 함
-	if (tileNum >= 0 && tileNum <= 15) return TileType::NORMAL;
+	/*if (tileNum >= 0 && tileNum <= 15) return TileType::NORMAL;
 	else if (tileNum >= 16 && tileNum <= 31) return TileType::NONE;
+	else return TileType::NONE;*/
+	if (tileNum == 0) return TileType::DARK_DIRT;
+	else if (tileNum == 1) return TileType::BRIGHT_DIRT;
+	//else if (tileNum == 2) return TileType::COMBO1_DIRT;
+	//else if (tileNum == 3) return TileType::COMBO2_DIRT;
+	else if (tileNum == 10) return TileType::COMBO1_DIRT;
+	else if (tileNum == 11) return TileType::COMBO2_DIRT;
 	else return TileType::NONE;
+}
+
+void Tile::OnBeat(bool isCombo)
+{
+	if (isCombo)
+	{
+		// 밝은 -> 어두운 -> 콤보(짝수 초록, 홀수 핑크)
+		switch (type)
+		{
+		case TileType::BRIGHT_DIRT:
+			SetTileNum(0); // 어두운 것으로 변경
+			break;
+		case TileType::DARK_DIRT:
+			if ((index.x + index.y) % 2 == 0)
+			{
+				SetTileNum(10); // 콤보1로 변경
+			}
+			else
+			{
+				SetTileNum(11); // 콤보2로 변경
+			}
+			break;
+		case TileType::COMBO1_DIRT:
+		case TileType::COMBO2_DIRT:
+			SetTileNum(1); // 밝은 것으로 변경
+			break;
+		case TileType::NONE:
+		default:
+			break;
+		}
+	}
+	else
+	{
+		switch (type)
+		{
+		case TileType::BRIGHT_DIRT:
+			SetTileNum(0); //어두운거로 바꿔야함
+			break;
+		case TileType::DARK_DIRT:
+			SetTileNum(1); //밝은거로 바꿔야함
+			break;
+		case TileType::COMBO1_DIRT:
+			SetTileNum(0);
+			break;
+		case TileType::COMBO2_DIRT:
+			SetTileNum(1);
+			break;
+		case TileType::NONE:
+		default:
+			break;
+		}
+	}
 }
