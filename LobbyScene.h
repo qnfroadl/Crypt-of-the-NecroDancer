@@ -4,12 +4,13 @@
 
 class Tilemap;
 class PlayerManager;
+class UIManager;
 class LobbyScene : public GameObject
 {
 private:
     shared_ptr<Tilemap> map;
 	weak_ptr<PlayerManager> playerManager;
-    
+    UIManager* uiManager;
 
     // 검정 배경
     HBRUSH blackBrush;

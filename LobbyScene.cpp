@@ -4,6 +4,8 @@
 #include "CommonFunction.h"
 #include "PlayerManager.h"
 #include "Player.h"
+#include "UIManager.h"
+#include "PlayerCoin.h"
 
 HRESULT LobbyScene::Init()
 {
@@ -16,11 +18,26 @@ HRESULT LobbyScene::Init()
 
     playerManager.lock()->SetTileMap(map);
 
+    uiManager = new UIManager();
+	uiManager->Init();
+
+	PlayerCoin* playerCoin = new PlayerCoin();
+	playerCoin->Init();
+	playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+	uiManager->AddUI(playerCoin);
+
     return S_OK;
 }
 
 void LobbyScene::Release()
 {
+	if (uiManager)
+	{
+		uiManager->Release();
+		delete uiManager;
+		uiManager = nullptr;
+	}
+
     if (map) {
         map->Release();
         map = nullptr;
@@ -33,6 +50,11 @@ void LobbyScene::Release()
 void LobbyScene::Update()
 {
     Camera::GetInstance()->Update();
+
+	if (uiManager)
+	{
+		uiManager->Update();
+	}
 }
 
 void LobbyScene::Render(HDC hdc)
@@ -49,6 +71,10 @@ void LobbyScene::Render(HDC hdc)
         map->Render(hdc);
     }
     
+	if (uiManager)
+	{
+		uiManager->Render(hdc);
+	}
 }
 
 void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)

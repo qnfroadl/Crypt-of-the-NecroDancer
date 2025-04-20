@@ -138,6 +138,10 @@
     <ClCompile Include="ItemSpawner.cpp">
       <Filter>Item</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerCoin.cpp">
+      <Filter>InputSystem &amp; UI\UI\PlayerCoin</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemNumUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -299,6 +303,10 @@
     <ClInclude Include="ItemSpawner.h">
       <Filter>Item</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerCoin.h">
+      <Filter>InputSystem &amp; UI\UI\PlayerCoin</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemNumUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">
@@ -336,6 +344,9 @@
     </Filter>
     <Filter Include="Item">
       <UniqueIdentifier>{13233eb5-16f7-44f1-9133-946380d77cd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputSystem &amp; UI\UI\PlayerCoin">
+      <UniqueIdentifier>{7523363a-f3c5-4c1a-9dcb-8464fe0e3bd4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
