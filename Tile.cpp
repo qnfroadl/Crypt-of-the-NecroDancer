@@ -5,7 +5,7 @@
 #include "ImageManager.h"
 #include "Block.h"
 #include "Trap.h"
-
+#include "CommonFunction.h"
 
 #define TILE_SIZE_SCALED (TILE_SIZE * TILE_SCALE)
 
@@ -71,6 +71,7 @@ void Tile::Render(HDC hdc, bool useCamera)
 			static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
 			true  // 중심 기준
 		);
+
 	}
 	else
 	{

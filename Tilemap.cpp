@@ -9,16 +9,15 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	mapRows = _mapRows;
 	mapColumns = _mapColumns;
 	tiles = vector<vector<Tile*>>(_mapRows, vector<Tile*>(_mapColumns, nullptr));
-	//for (int i = 0; i < mapRows; ++i)
-	//{
-	//	for (int j = 0; j < mapColumns; ++j)
-	//	{
-	//		tiles[i][j] = new Tile();
-	//		tiles[i][j]->Init(i, j);
-	//	}
-	//}
-    EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Tilemap::OnBeat, this, false));
-	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Tilemap::OnBeat, this, false));
+	/*for (int i = 0; i < mapRows; ++i)
+	{
+		for (int j = 0; j < mapColumns; ++j)
+		{
+			tiles[i][j] = new Tile();
+			tiles[i][j]->Init(i, j);
+		}
+	}*/
+	EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
 	return S_OK;
 }
 
@@ -67,27 +66,23 @@ void Tilemap::Render(HDC hdc)
 	}
 }
 
-Tile* Tilemap::GetTile(int row, int column)
+Tile* Tilemap::GetTile(POINT index)
 {
-	if (row >= 0 && row < tiles.size() && column >= 0 && column < tiles[row].size()) 
+	if (index.y >= 0 && index.y < tiles.size() && index.x >= 0 && index.x < tiles[index.y].size())
 	{
-		return tiles[row][column];
+		return tiles[index.x][index.y];
 	}
 	return nullptr;
 }
 
 FPOINT Tilemap::GetTilePos(POINT index)
 {
-	if (tiles[index.y][index.x] == nullptr) {
-		return { 0, 0 };
-	}
-	return { tiles[index.y][index.x]->GetPos().x, tiles[index.y][index.x]->GetPos().y };
+	return tiles[index.y][index.x]->GetPos();
 }
 
 bool Tilemap::Destory(Item* item) 
 {
 	return false;
-
 }
 
 bool Tilemap::Destory(int strong) 
@@ -97,7 +92,7 @@ bool Tilemap::Destory(int strong)
 
 bool Tilemap::CanMove(POINT index) 
 {
-	Tile* tile = GetTile(index.y, index.x);
+	Tile* tile = GetTile(index);
 	return (tile && tile->GetBlock() == nullptr);
 }
 

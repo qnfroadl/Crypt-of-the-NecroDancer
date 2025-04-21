@@ -27,7 +27,7 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
 
     DeleteBSPTree(root);
     POINT end = tilemap->GetNextStageIndex();
-    Tile* endTile = tilemap->GetTile(end.y, end.x);
+    Tile* endTile = tilemap->GetTile(end);
     if (endTile)
         endTile->SetTileNum(24);
     return tilemap;
@@ -80,8 +80,8 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
         }
     }
 
-    tilemap->SetPlayerStartIndex(room.playerStart);
-    tilemap->SetNextStageIndex(room.nextStage);
+    tilemap->SetPlayerStartIndex({ room.playerStart.y, room.playerStart.x });
+    tilemap->SetNextStageIndex({ room.nextStage.y, room.nextStage.x });
     return tilemap;
 }
 void TilemapGenerator::LoadMapFiles(const string& folderPath)
@@ -185,7 +185,7 @@ void TilemapGenerator::SplitSpace(BSPNode* node, int depth)
     int width = node->area.right - node->area.left;
     int height = node->area.bottom - node->area.top;
 
-    if (width < minRoomSize || height < minRoomSize) return; // ✅ 방 불가
+    if (width < minRoomSize || height < minRoomSize) return; //  방 불가
 
     bool horizontal = (width < height);
     if ((horizontal && height < minSplitSize * 2) || (!horizontal && width < minSplitSize * 2)) return;
@@ -282,9 +282,11 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
             {
                 Tile* src = room.tiles[y][x];
                 Tile* copy = new Tile();
+
                 int globalX = offsetX + x;
                 int globalY = offsetY + y;
-                copy->Init(globalX, globalY);
+
+                copy->Init(globalX, globalY); //  Init은 (x, y)
                 if (src->GetTileNum() == 1 && (globalX + globalY) % 2 == 1)
                     copy->SetTileNum(0);
                 else if (src->GetTileNum() == 0 && (globalX + globalY) % 2 == 0)
@@ -295,28 +297,28 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
                 if (src->GetBlock())
                 {
                     Block* b = new Block();
-                    b->Init(copy->GetPos(), { globalX, globalY });
+                    b->Init(copy->GetPos(), { globalX, globalY }); //  (x, y)
                     b->SetBlockNum(src->GetBlock()->GetBlockNum());
                     copy->SetBlock(b);
                 }
 
-                tilemap->SetTile(globalY, globalX, copy);
+                tilemap->SetTile(globalY, globalX, copy); //  tilemap은 (y, x)
             }
         }
 
-        // 시작/종료 위치 설정 (상점은 제외, 방 중심 기준)
+        // 시작/종료 위치 설정
         if (!isShopRoom)
         {
             int cx = (tryRect.left + tryRect.right) / 2;
             int cy = (tryRect.top + tryRect.bottom) / 2;
             if (!placedStart)
             {
-                tilemap->SetPlayerStartIndex({ cx, cy });
+                tilemap->SetPlayerStartIndex({ cy, cx });
                 placedStart = true;
             }
             else if (!placedEnd)
             {
-                tilemap->SetNextStageIndex({ cx, cy });
+                tilemap->SetNextStageIndex({ cy, cx });
                 placedEnd = true;
             }
         }
@@ -338,6 +340,7 @@ void TilemapGenerator::ConnectLeafRooms(Tilemap* tilemap, BSPNode* node)
 
     POINT bestA = {}, bestB = {};
     int minDist = INT_MAX;
+
     for (int ay = a.top; ay < a.bottom; ++ay)
     {
         for (int ax = a.left; ax < a.right; ++ax)
@@ -349,8 +352,8 @@ void TilemapGenerator::ConnectLeafRooms(Tilemap* tilemap, BSPNode* node)
                     int dist = abs(ax - bx) + abs(ay - by);
                     if (dist < minDist)
                     {
-                        bestA = { ax, ay };
-                        bestB = { bx, by };
+                        bestA = { ax, ay }; //  (x, y)
+                        bestB = { bx, by }; //  (x, y)
                         minDist = dist;
                     }
                 }
@@ -358,15 +361,15 @@ void TilemapGenerator::ConnectLeafRooms(Tilemap* tilemap, BSPNode* node)
         }
     }
 
-    CreateCorridor(tilemap, bestA, bestB);
+    CreateCorridor(tilemap, bestA, bestB); //  (x, y)
 
-    // 문 방향 계산 및 설치
+    // 문 방향 계산
     POINT dirAtoB = { bestB.x - bestA.x, bestB.y - bestA.y };
     if (dirAtoB.x != 0) dirAtoB.x = (dirAtoB.x > 0) ? 1 : -1;
     if (dirAtoB.y != 0) dirAtoB.y = (dirAtoB.y > 0) ? 1 : -1;
 
-    PlaceDoor(tilemap, bestA, dirAtoB);
-    PlaceDoor(tilemap, bestB, { -dirAtoB.x, -dirAtoB.y });
+    PlaceDoor(tilemap, bestA, dirAtoB);             //  좌표 그대로
+    PlaceDoor(tilemap, bestB, { -dirAtoB.x, -dirAtoB.y }); //  반대 방향
 }
 
 void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
@@ -377,12 +380,12 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
 
     auto carve = [&](int x, int y)
         {
-            Tile* tile = tilemap->GetTile(y, x);
+            Tile* tile = tilemap->GetTile({ y, x }); //  (y, x)
             if (!tile)
             {
                 tile = new Tile();
-                tile->Init(x, y);
-                tilemap->SetTile(y, x, tile);
+                tile->Init(x, y); //  (x, y)
+                tilemap->SetTile(y, x, tile); //  (y, x)
             }
 
             int tileNum = ((x + y) % 2 == 0) ? 1 : 0;
@@ -392,7 +395,7 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
                 tile->SetBlock(nullptr);
             }
 
-            // 좌우(또는 상하) 방향으로만 벽 생성
+            // 양옆 벽 만들기
             POINT sideOffsets[2];
             if (isHorizontal) {
                 sideOffsets[0] = { 0, -1 }; // 위
@@ -400,21 +403,21 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
             }
             else {
                 sideOffsets[0] = { -1, 0 }; // 왼쪽
-                sideOffsets[1] = { 1, 0 }; // 오른쪽
+                sideOffsets[1] = { 1, 0 };  // 오른쪽
             }
 
             for (int i = 0; i < 2; ++i)
             {
                 int nx = x + sideOffsets[i].x;
                 int ny = y + sideOffsets[i].y;
-                Tile* neighbor = tilemap->GetTile(ny, nx);
+                Tile* neighbor = tilemap->GetTile({ ny, nx }); //  (y, x)
                 if (!neighbor)
                 {
                     neighbor = new Tile();
-                    neighbor->Init(nx, ny);
-                    tileNum = ((nx + ny) % 2 == 0) ? 1 : 0;
-                    tile->SetTileNum(tileNum);
-                    tilemap->SetTile(ny, nx, neighbor);
+                    neighbor->Init(nx, ny); //  (x, y)
+                    int tileNum = ((nx + ny) % 2 == 0) ? 1 : 0;
+                    neighbor->SetTileNum(tileNum);
+                    tilemap->SetTile(ny, nx, neighbor); //  (y, x)
                 }
                 if (!neighbor->GetBlock())
                 {
@@ -438,7 +441,7 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
     }
     carve(to.x, to.y);
 
-    // 복도 양 끝 벽 보장 (문 양 옆)
+    // 복도 양 끝 옆 벽 보장
     POINT ends[2] = { from, to };
     for (int i = 0; i < 2; ++i)
     {
@@ -458,14 +461,14 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
         {
             int nx = cx + sideOffsets[j].x;
             int ny = cy + sideOffsets[j].y;
-            Tile* neighbor = tilemap->GetTile(ny, nx);
+            Tile* neighbor = tilemap->GetTile({ ny, nx }); //  (y, x)
             if (!neighbor)
             {
                 neighbor = new Tile();
-                neighbor->Init(nx, ny);
+                neighbor->Init(nx, ny); //  (x, y)
                 int tileNum = ((nx + ny) % 2 == 0) ? 1 : 0;
                 neighbor->SetTileNum(tileNum);
-                tilemap->SetTile(ny, nx, neighbor);
+                tilemap->SetTile(ny, nx, neighbor); //  (y, x)
             }
             if (!neighbor->GetBlock())
             {
@@ -480,30 +483,33 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
 void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT direction)
 {
     // 중심 타일 보장
-    Tile* tile = tilemap->GetTile(doorPos.y, doorPos.x);
+    Tile* tile = tilemap->GetTile({ doorPos.y, doorPos.x }); //  (y, x)
     if (!tile)
     {
         tile = new Tile();
-        tile->Init(doorPos.x, doorPos.y);
-        tilemap->SetTile(doorPos.y, doorPos.x, tile);
+        tile->Init(doorPos.x, doorPos.y); //  (x, y)
+        tilemap->SetTile(doorPos.y, doorPos.x, tile); //  (y, x)
     }
+
     int tileNum = ((doorPos.x + doorPos.y) % 2 == 0) ? 1 : 0;
     tile->SetTileNum(tileNum);
-    if (tile->GetBlock()) {
+
+    if (tile->GetBlock())
+    {
         delete tile->GetBlock();
         tile->SetBlock(nullptr);
     }
 
     // 문 설치
     Block* door = new Block();
-    door->Init(tile->GetPos(), doorPos);
+    door->Init(tile->GetPos(), doorPos); //  (x, y)
     door->SetBlockNum((direction.x != 0) ? 62 : 61);
     tile->SetBlock(door);
 
     // 앞뒤는 반드시 비워야 함
     int backX = doorPos.x + direction.x;
     int backY = doorPos.y + direction.y;
-    Tile* forward = tilemap->GetTile(backY, backX);
+    Tile* forward = tilemap->GetTile({ backY, backX }); //  (y, x)
     if (forward && forward->GetBlock()) {
         delete forward->GetBlock();
         forward->SetBlock(nullptr);
@@ -511,7 +517,7 @@ void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT directio
 
     int frontX = doorPos.x - direction.x;
     int frontY = doorPos.y - direction.y;
-    Tile* backward = tilemap->GetTile(frontY, frontX);
+    Tile* backward = tilemap->GetTile({ frontY, frontX }); //  (y, x)
     if (backward && backward->GetBlock()) {
         delete backward->GetBlock();
         backward->SetBlock(nullptr);
@@ -527,18 +533,21 @@ void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT directio
     for (int i = 0; i < 2; ++i) {
         int wx = wallSpots[i].x;
         int wy = wallSpots[i].y;
-        Tile* wallTile = tilemap->GetTile(wy, wx);
+        Tile* wallTile = tilemap->GetTile({ wy, wx }); //  (y, x)
         if (!wallTile)
         {
             wallTile = new Tile();
-            wallTile->Init(wx, wy);
-            tilemap->SetTile(wy, wx, wallTile);
+            wallTile->Init(wx, wy); //  (x, y)
+            tilemap->SetTile(wy, wx, wallTile); //  (y, x)
         }
+
         int tileNum = ((wx + wy) % 2 == 0) ? 1 : 0;
         wallTile->SetTileNum(tileNum);
-        if (!wallTile->GetBlock()) {
+
+        if (!wallTile->GetBlock())
+        {
             Block* wall = new Block();
-            wall->Init(wallTile->GetPos(), { wx, wy });
+            wall->Init(wallTile->GetPos(), { wx, wy }); //  (x, y)
             wall->SetBlockNum(rand() % 18);
             wallTile->SetBlock(wall);
         }
@@ -550,12 +559,12 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
     int w = tilemap->GetWidth();
     int h = tilemap->GetHeight();
 
-    // 기존 벽 설치 로직 (nullptr 옆에 일반 타일이 있을 경우 랜덤 벽 설치)
+    // nullptr 옆에 있는 타일 경계에 벽 생성
     for (int y = 0; y < h; ++y)
     {
         for (int x = 0; x < w; ++x)
         {
-            Tile* center = tilemap->GetTile(y, x);
+            Tile* center = tilemap->GetTile({ y, x }); //  (y, x)
             if (!center) continue;
 
             POINT offsets[4] = { {-1,0}, {1,0}, {0,-1}, {0,1} };
@@ -565,24 +574,27 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
                 int ny = y + offsets[i].y;
 
                 if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
-                Tile* neighbor = tilemap->GetTile(ny, nx);
+
+                Tile* neighbor = tilemap->GetTile({ ny, nx }); //  (y, x)
                 if (!neighbor)
                 {
                     Tile* wallTile = new Tile();
-                    wallTile->Init(nx, ny);
-					int tileNum = ((nx + ny) % 2 == 0) ? 1 : 0;
+                    wallTile->Init(nx, ny); //  (x, y)
+                    int tileNum = ((nx + ny) % 2 == 0) ? 1 : 0;
                     wallTile->SetTileNum(tileNum);
+
                     Block* wall = new Block();
-                    wall->Init(wallTile->GetPos(), { nx, ny });
+                    wall->Init(wallTile->GetPos(), { nx, ny }); //  (x, y)
                     wall->SetBlockNum(rand() % 18);
                     wallTile->SetBlock(wall);
-                    tilemap->SetTile(ny, nx, wallTile);
+
+                    tilemap->SetTile(ny, nx, wallTile); //  (y, x)
                 }
             }
         }
     }
 
-    // 맵 최외곽에 있는 모든 타일의 블록을 60번으로 덮어씌움
+    // 최외곽 테두리 벽 60번으로 설정
     for (int y = 0; y < h; ++y)
     {
         for (int x = 0; x < w; ++x)
@@ -590,14 +602,14 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
             bool isEdge = (x == 0 || x == w - 1 || y == 0 || y == h - 1);
             if (!isEdge) continue;
 
-            Tile* tile = tilemap->GetTile(y, x);
+            Tile* tile = tilemap->GetTile({ y, x }); //  (y, x)
             if (!tile)
             {
                 tile = new Tile();
-                tile->Init(x, y);
-				int tileNum = ((x + y) % 2 == 0) ? 1 : 0;
+                tile->Init(x, y); //  (x, y)
+                int tileNum = ((x + y) % 2 == 0) ? 1 : 0;
                 tile->SetTileNum(tileNum);
-                tilemap->SetTile(y, x, tile);
+                tilemap->SetTile(y, x, tile); //  (y, x)
             }
 
             if (tile->GetBlock())
@@ -607,7 +619,7 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
             }
 
             Block* b = new Block();
-            b->Init(tile->GetPos(), { x, y });
+            b->Init(tile->GetPos(), { x, y }); //  (x, y)
             b->SetBlockNum(60);
             tile->SetBlock(b);
         }
@@ -671,7 +683,7 @@ void TilemapGenerator::ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& roo
             {
                 if (find(i) == find(j)) continue;
 
-                // 상점 연결이 이미 되었으면, 두 방 중 하나라도 상점이면 스킵
+                // 상점 중복 연결 방지
                 if (shopConnected && (zoneShopRooms["ZONE1"].size() > 0) &&
                     (i == 0 || j == 0)) continue;
 
@@ -686,8 +698,8 @@ void TilemapGenerator::ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& roo
                         if (dist < minDist)
                         {
                             minDist = dist;
-                            bestA = a;
-                            bestB = b;
+                            bestA = a; //  (x, y)
+                            bestB = b; //  (x, y)
                             toConnect = { {i, j} };
                         }
                     }
@@ -700,7 +712,7 @@ void TilemapGenerator::ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& roo
         int a = toConnect[0].first;
         int b = toConnect[0].second;
 
-        CreateCorridor(tilemap, bestA, bestB);
+        CreateCorridor(tilemap, bestA, bestB); //  전달은 (x, y)
 
         POINT dir = { bestB.x - bestA.x, bestB.y - bestA.y };
         if (dir.x != 0) dir.x = (dir.x > 0 ? 1 : -1);
@@ -709,7 +721,6 @@ void TilemapGenerator::ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& roo
         PlaceDoor(tilemap, bestA, dir);
         PlaceDoor(tilemap, bestB, { -dir.x, -dir.y });
 
-        // 상점 연결 여부 플래그 설정
         if ((a == 0 || b == 0) && zoneShopRooms["ZONE1"].size() > 0)
             shopConnected = true;
 

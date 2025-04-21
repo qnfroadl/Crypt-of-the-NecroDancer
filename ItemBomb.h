@@ -2,6 +2,7 @@
 
 #include "TileItem.h"
 
+// 플레이어 한테는 데미지2, 몬스터한테는 4였나? 벽돌은 몇단계 까지 깨지지
 class ItemBomb : public TileItem
 {
 

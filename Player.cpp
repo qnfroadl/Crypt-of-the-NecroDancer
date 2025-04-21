@@ -8,10 +8,11 @@
 #include "Tilemap.h"
 #include "EventData.h"
 #include "EventManager.h"
+#include "PositionManager.h"
 
 void Player::OnBeatHit(EventData* data)
 {
-	cout << "on beat hit" << endl;
+	//cout << "on beat hit" << endl;
 
 	if (data)
 	{
@@ -19,7 +20,7 @@ void Player::OnBeatHit(EventData* data)
 		if (beatData->playerIndex == playerIndex)
 		{
 			SetJumpData(beatData->inputKey);
-			cout << "beat hit" << endl;
+			//cout << "beat hit" << endl;
 
 		}
 		else
@@ -31,7 +32,8 @@ void Player::OnBeatHit(EventData* data)
 
 void Player::OnBeatMiss(EventData* data)
 {
-	cout << "on beat miss" << endl;
+
+	//cout << "on beat miss" << endl;
 	// 카메라 흔들기.	
 	Camera::GetInstance()->Shake(0.5f, 10);
 }
@@ -55,31 +57,37 @@ void Player::SetJumpData(InputKey key)
 	{	
 	case InputKey::UP:
 		pIndex.y -= 1;
-		SetJumpData(tilePos.x, tilePos.y - 100);
+		//SetJumpData(tilePos.x, tilePos.y - 100);
 		break;
 	case InputKey::DOWN:
 		pIndex.y += 1;
-		SetJumpData(tilePos.x, tilePos.y + 100);
+		//SetJumpData(tilePos.x, tilePos.y + 100);
 
 		break;
 	case InputKey::LEFT:
 		pIndex.x -= 1;
-		SetJumpData(tilePos.x - 100, tilePos.y);
+		isLeft = true;
+		//SetJumpData(tilePos.x - 100, tilePos.y);
 
 		break;
 	case InputKey::RIGHT:
 		pIndex.x += 1;
-		SetJumpData(tilePos.x + 100, tilePos.y);
+		isLeft = false;
+		//SetJumpData(tilePos.x + 100, tilePos.y);
 
 		break;
 	}
 	
-	// if (tileMap.lock()->CanMove(pIndex))
-	// {
-	// 	tilePos = tileMap.lock()->GetTilePos(pIndex);
-	// 	SetJumpData(tilePos.x, tilePos.y);
-	// 	SetTileIndex(pIndex);
-	// }
+	if (tileMap.lock()->CanMove(pIndex))
+	{
+
+		tilePos = tileMap.lock()->GetTilePos(pIndex);
+
+		cout << "index: " << pIndex.x << ", " << pIndex.y << " -> tilePos: " << tilePos.x << ", " << tilePos.y << endl;
+
+		SetJumpData(tilePos.x, tilePos.y);
+		SetTileIndex(pIndex);
+	}
 
 }
 
@@ -106,6 +114,7 @@ Player::~Player()
 
 HRESULT Player::Init()
 {
+
 	image = ImageManager::GetInstance()->FindImage(EImageKey::CADENCE_HEAD);	//캐릭터 머리
 	body = ImageManager::GetInstance()->FindImage(EImageKey::CADENCE_BODY);		//캐릭터 몸통
 	
@@ -116,6 +125,7 @@ HRESULT Player::Init()
 
 	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
 	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
+
 
 	#pragma region Bind
 
@@ -199,11 +209,10 @@ void Player::Update()
 
 void Player::Render(HDC hdc)
 {
-	FPOINT pos = GetPos();
-	pos.x -= Camera::GetInstance()->GetPos().x;
-	pos.y -= Camera::GetInstance()->GetPos().y;
-
-	RenderRectAtCenter(hdc, pos.x, pos.y, 50,50);
+	
+	FPOINT pos = Camera::GetInstance()->GetScreenPos(GetPos());
+	
+	RenderRectAtCenter(hdc, pos.x, pos.y, 80,80);
 
 	// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
 	// 캐릭터 몸통
@@ -217,11 +226,21 @@ void Player::Release()
 {
 }
 
+void Player::SetTileIndex(const POINT& _index)
+{
+	POINT preIndex = GetTileIndex();
+
+	TileActor::SetTileIndex(_index);
+	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());
+
+
+}
+
 void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)
 {
 	tileMap = _tileMap;
 	
-	// 시작위치 지정.
+	// test code , ing..., TODO 임시. 시작위치 지정.
 	Teleport(POINT{ 5,4 });
 }
 

@@ -15,5 +15,7 @@ public:
 	void Release();
 	void Update();
 	void Render(HDC hdc);
+
+	void AddUI(UIBase* ui) { uiList.push_back(ui); }
 };
 

@@ -60,7 +60,6 @@ void MainGame::ItemSpawnSimulation()
 		LobbyScene* scene = static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene("LobbyScene"));
 		if (scene)
 		{
-			scene->SetPlayerManager(playerManager);
 			SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
 		}
 		
@@ -97,6 +96,16 @@ void MainGame::InitResource()
 	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_HEAD, L"Image/Player/cadence_heads.bmp", 96 * BASE_SCALE,  48 * BASE_SCALE, 4, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_BODY, L"Image/Player/cadence_bodys.bmp", 96 * BASE_SCALE , 240 * BASE_SCALE, 4, 10, true, RGB(255, 0, 255));
 
+	ImageManager::GetInstance()->AddImage("coin1", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin2", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin3", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin4", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin5", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin6", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin7", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin8", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin9", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin10", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
 }
 
 void MainGame::InitKeyMapping()
@@ -122,14 +131,19 @@ HRESULT MainGame::Init()
 	ImageManager::GetInstance()->Init();
 	SceneManager::GetInstance()->Init();
 
+	playerManager = std::make_shared<PlayerManager>();
+	playerManager->Init();
+
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
-	SceneManager::GetInstance()->AddScene("LobbyScene", new LobbyScene());
-	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 
-	SceneManager::GetInstance()->ChangeScene("AstarScene");
+	LobbyScene* lobby = new LobbyScene();
+	lobby->SetPlayerManager(playerManager);
+	SceneManager::GetInstance()->AddScene("LobbyScene", lobby);
+
+	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 
 	//Init Camera
 	Camera::GetInstance()->SetSize(SIZE{SCENE_WIDTH, SCENE_HEIGHT});
@@ -146,12 +160,13 @@ HRESULT MainGame::Init()
 	BeatManager::GetInstance()->Init();
 	BeatManager::GetInstance()->StartBeat(true);
 
-	playerManager = std::make_shared<PlayerManager>();
-	playerManager->Init();
+	
+
+	
+
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 	/*monsterManager = new MonsterManager();
 	monsterManager->Init();*/
-
 
 	FPS = 144;
 
@@ -162,6 +177,10 @@ HRESULT MainGame::Init()
 	//
 	//btn->Bind(std::bind(&TilemapTool::Load, tool));
 	
+	// 로비 씬 로딩.
+	
+	SceneManager::GetInstance()->ChangeScene("LobbyScene");
+
 
 	backBuffer = new Image();
 	if (FAILED(backBuffer->Init(SCENE_WIDTH, SCENE_HEIGHT)))

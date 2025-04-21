@@ -4,9 +4,11 @@
 #include "CommonFunction.h"
 #include "PlayerManager.h"
 #include "Player.h"
+#include "UIManager.h"
+#include "PlayerWallet.h"
+#include "PositionManager.h"
+
 #include "TilemapGenerator.h"
-#include "Block.h"
-#include "Tile.h"
 HRESULT LobbyScene::Init()
 {
     // InitMap
@@ -16,34 +18,36 @@ HRESULT LobbyScene::Init()
     //map->Load("map/ZONE1_01.map");
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
+	positionManager = make_shared<PositionManager>();
 
-    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
+	map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
 
- //   // 디버깅용 맵 출력
-	//for (int y = 0; y < 40; ++y) {
-	//	for (int x = 0; x < 50; ++x) {
-	//		Tile* tile = map->GetTile(y, x);
-	//		if (!tile) { cout << ' '; continue; }
+    if (playerManager.lock())
+    {
+		playerManager.lock()->SetPositionManager(positionManager);
+        playerManager.lock()->SetTileMap(map);
+    }
 
-	//		Block* block = tile->GetBlock();
-	//		if (block) {
-	//			int num = block->GetBlockNum();
-	//			if (num == 61) cout << '|'; // 가로 문
-	//			else if (num == 62) cout << '-'; // 세로 문
-	//			else cout << '#'; // 일반 벽
-	//		}
-	//		else {
-	//			cout << '.'; // 바닥
-	//		}
-	//	}
-	//	cout << '\n';
-	//}
-    playerManager.lock()->SetTileMap(map);
-	return S_OK;
+    uiManager = new UIManager();
+	uiManager->Init();
+
+	PlayerWallet* playerCoin = new PlayerWallet();
+	playerCoin->Init();
+	playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+	uiManager->AddUI(playerCoin);
+
+    return S_OK;
 }
 
 void LobbyScene::Release()
 {
+	if (uiManager)
+	{
+		uiManager->Release();
+		delete uiManager;
+		uiManager = nullptr;
+	}
+
     if (map) {
         map->Release();
         map = nullptr;
@@ -56,6 +60,11 @@ void LobbyScene::Release()
 void LobbyScene::Update()
 {
     Camera::GetInstance()->Update();
+
+	if (uiManager)
+	{
+		uiManager->Update();
+	}
 }
 
 void LobbyScene::Render(HDC hdc)
@@ -72,10 +81,24 @@ void LobbyScene::Render(HDC hdc)
         map->Render(hdc);
     }
     
+	if (uiManager)
+	{
+		uiManager->Render(hdc);
+	}
 }
 
 void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
+    
+
+    if (positionManager)
+    {
+		this->playerManager.lock()->SetPositionManager(positionManager);
+    }
+    if (nullptr != map)
+    {
+        this->playerManager.lock()->SetTileMap(map);
+    }
 }
 

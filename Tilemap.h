@@ -21,7 +21,7 @@ public:
 	void Update();
 	void Render(HDC hdc);
 
-	Tile* GetTile(int row, int column);
+	Tile* GetTile(POINT index);
 	FPOINT GetTilePos(POINT index);
 
 	void SetTile(int row, int col, Tile* tile);
