@@ -14,7 +14,7 @@ void BeatHeart::Init(queue<unsigned int> beatQueue)
 {
 	beats = beatQueue;
 
-	image = ImageManager::GetInstance()->AddImage("beat_heart", L"Image/UI/TEMP_beat_heart.bmp", 82, 52, 2, 1, true, RGB(255, 0, 255));
+	image = ImageManager::GetInstance()->AddImage("beat_heart", L"Image/UI/TEMP_beat_heart.bmp", 82, 52, 2, 1, true, RGB(255, 0, 255), true);
 	
 	LocateOnCenter();
 
@@ -42,13 +42,19 @@ void BeatHeart::Update(unsigned int curPosition)
 		if (curPosition > beat + 30.f)
 		{
 			beats.pop();
+			angle += 90;
+			angle %= 360;
 		}
+
+		float diff = (float)(beat - curPosition) / 1000.f;
+		diff = max(0.f, min(1.f, diff));
+		alpha = diff;
 	}
 }
 
 void BeatHeart::Render(HDC hdc)
 {
-	if (image) image->FrameRender(hdc, position.x, position.y, frameIndex, 0, size.x, size.y, false, true);
+	if (image) image->FrameRender(hdc, position.x, position.y, frameIndex, 0, size.x, size.y, false, true, alpha, 0);
 }
 
 void BeatHeart::LocateOnCenter()

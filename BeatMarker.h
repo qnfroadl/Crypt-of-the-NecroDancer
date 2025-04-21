@@ -8,6 +8,7 @@ private:
 	bool red;
 	unsigned int beatPosition;
 	float speed;
+	float alpha;
 
 public:
 	BeatMarker();

@@ -31,6 +31,9 @@ public:
 		int frameWidth;
 		int frameHeight;
 
+		// gdiplus
+		Gdiplus::Bitmap* gdiBitmap;
+
 		tagImageInfo()
 		{
 			resID = 0;
@@ -45,6 +48,8 @@ public:
 			maxFrameY = 0;
 			frameWidth = 0;
 			frameHeight = 0;
+
+			gdiBitmap = nullptr;
 		}
 	} IMAGE_INFO, * LPIMAGE_INFO;
 
@@ -67,6 +72,12 @@ public:
 		int maxFrameX, int maxFrameY,
 		bool isTransparent = FALSE, COLORREF transColor = FALSE);
 
+	// 파일로부터 이미지를 로드하는 함수, gdiBitmap 함께 생성
+	HRESULT Init(const wchar_t* filePath, int width, int height,
+		int maxFrameX, int maxFrameY,
+		bool isTransparent, COLORREF transColor,
+		bool gdiActive);
+
 	// 화면에 출력
 	void Render(HDC hdc, int destX = 0, int destY = 0);
 
@@ -74,6 +85,8 @@ public:
 
 	void FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, bool isFlip = false, bool isCenter = true);
 	void FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter);
+	void FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter,
+		float alpha, float angle);
 
 	//void RenderAtCenter(HDC hdc, int destX, int destY, int frameIndex, bool isFlip = false);
 	void RenderHeight(HDC hdc, int destX, int destY, int frameIndex, int totalFrame);

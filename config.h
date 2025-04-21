@@ -7,6 +7,9 @@
 #include <iostream>
 #include <unordered_map>
 
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+
 #include "ActorDef.h"
 
 using namespace std;
