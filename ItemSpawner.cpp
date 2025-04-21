@@ -9,7 +9,7 @@ void ItemSpawner::OnSpawnItem(EventData* data)
 {
 	if (data)
 	{
-		ItemSpawnEventData* itemData = static_cast<ItemSpawnEventData*>(data);
+		SpawnItemEventData* itemData = static_cast<SpawnItemEventData*>(data);
 		SpawnItem(itemData->index, itemData->pos, itemData->type, itemData->value);
 	}
 }

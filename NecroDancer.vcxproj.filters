@@ -139,7 +139,13 @@
       <Filter>Item</Filter>
     </ClCompile>
     <ClCompile Include="PlayerWallet.cpp">
-      <Filter>InputSystem &amp; UI\UI\PlayerCoin</Filter>
+      <Filter>InputSystem &amp; UI\UI\PlayerWallet</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemNumUI.cpp">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerHp.cpp">
+      <Filter>InputSystem &amp; UI\UI\PlayerHp</Filter>
     </ClCompile>
     <ClCompile Include="Shovel.cpp">
       <Filter>Item</Filter>
@@ -149,6 +155,7 @@
     </ClCompile>
     <ClCompile Include="TileActorRenderer.cpp" />
     <ClCompile Include="LightingRenderer.cpp" />
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -314,7 +321,13 @@
       <Filter>TileSystem</Filter>
     </ClInclude>
     <ClInclude Include="PlayerWallet.h">
-      <Filter>InputSystem &amp; UI\UI\PlayerCoin</Filter>
+      <Filter>InputSystem &amp; UI\UI\PlayerWallet</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemNumUI.h">
+      <Filter>InputSystem &amp; UI\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerHp.h">
+      <Filter>InputSystem &amp; UI\UI\PlayerHp</Filter>
     </ClInclude>
     <ClInclude Include="Shovel.h">
       <Filter>Item</Filter>
@@ -324,6 +337,7 @@
     </ClInclude>
     <ClInclude Include="TileActorRenderer.h" />
     <ClInclude Include="LightingRenderer.h" />
+
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">
@@ -362,8 +376,11 @@
     <Filter Include="Item">
       <UniqueIdentifier>{13233eb5-16f7-44f1-9133-946380d77cd9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="InputSystem &amp; UI\UI\PlayerCoin">
+    <Filter Include="InputSystem &amp; UI\UI\PlayerWallet">
       <UniqueIdentifier>{7523363a-f3c5-4c1a-9dcb-8464fe0e3bd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputSystem &amp; UI\UI\PlayerHp">
+      <UniqueIdentifier>{ec7eb17e-bc77-4493-af48-f5e38ca8622a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

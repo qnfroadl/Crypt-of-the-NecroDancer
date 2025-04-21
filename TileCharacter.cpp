@@ -55,3 +55,8 @@ bool TileCharacter::JumpAnim()
 
 
 }
+
+TileCharacter::TileCharacter()
+{
+	gold.Set(0);
+}
