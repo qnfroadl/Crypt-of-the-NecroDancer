@@ -55,31 +55,37 @@ void Player::SetJumpData(InputKey key)
 	{	
 	case InputKey::UP:
 		pIndex.y -= 1;
-		SetJumpData(tilePos.x, tilePos.y - 100);
+		//SetJumpData(tilePos.x, tilePos.y - 100);
 		break;
 	case InputKey::DOWN:
 		pIndex.y += 1;
-		SetJumpData(tilePos.x, tilePos.y + 100);
+		//SetJumpData(tilePos.x, tilePos.y + 100);
 
 		break;
 	case InputKey::LEFT:
 		pIndex.x -= 1;
-		SetJumpData(tilePos.x - 100, tilePos.y);
+		isLeft = true;
+		//SetJumpData(tilePos.x - 100, tilePos.y);
 
 		break;
 	case InputKey::RIGHT:
 		pIndex.x += 1;
-		SetJumpData(tilePos.x + 100, tilePos.y);
+		isLeft = false;
+		//SetJumpData(tilePos.x + 100, tilePos.y);
 
 		break;
 	}
 	
-	// if (tileMap.lock()->CanMove(pIndex))
-	// {
-	// 	tilePos = tileMap.lock()->GetTilePos(pIndex);
-	// 	SetJumpData(tilePos.x, tilePos.y);
-	// 	SetTileIndex(pIndex);
-	// }
+	if (tileMap.lock()->CanMove(pIndex))
+	{
+
+		tilePos = tileMap.lock()->GetTilePos(pIndex);
+
+		cout << "index: " << pIndex.x << ", " << pIndex.y << " -> tilePos: " << tilePos.x << ", " << tilePos.y << endl;
+
+		SetJumpData(tilePos.x, tilePos.y);
+		SetTileIndex(pIndex);
+	}
 
 }
 
@@ -199,10 +205,9 @@ void Player::Update()
 
 void Player::Render(HDC hdc)
 {
-	FPOINT pos = GetPos();
-	pos.x -= Camera::GetInstance()->GetPos().x;
-	pos.y -= Camera::GetInstance()->GetPos().y;
-
+	
+	FPOINT pos = Camera::GetInstance()->GetScreenPos(GetPos());
+	
 	RenderRectAtCenter(hdc, pos.x, pos.y, 50,50);
 
 	// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다

@@ -1,4 +1,4 @@
-#include "TilemapGenerator.h"
+ï»¿#include "TilemapGenerator.h"
 #include <fstream>
 #include <filesystem>
 #include <algorithm>
@@ -238,22 +238,22 @@ void TilemapGenerator::ConnectRooms(Tilemap* tilemap, const POINT& a, const POIN
         return type == BlockType::NORMAL || type == BlockType::STONE || type == BlockType::CATACOMB;
         };
 
-    // 1. ¼öÆò ÀÌµ¿
+    // 1. ìˆ˜í‰ ì´ë™
     while (cur.x != b.x)
     {
         cur.x += (b.x > cur.x) ? 1 : -1;
 
-        Tile* tile = tilemap->GetTile(cur.y, cur.x);
+        Tile* tile = tilemap->GetTile(cur);
         if (!tile) continue;
 
         Block* block = tile->GetBlock();
         if (!block)
         {
-            tile->SetTileNum(0); // ¹Ù´Ú
+            tile->SetTileNum(0); // ë°”ë‹¥
         }
         else if (IsWall(block))
         {
-            // ¼öÆò ¿¬°á ¡æ ¼¼·Î µµ¾î (blockNum 62)
+            // ìˆ˜í‰ ì—°ê²° â†’ ì„¸ë¡œ ë„ì–´ (blockNum 62)
             Block* door = new Block();
             door->Init(tile->GetPos(), tile->GetTileIndex());
             door->SetBlockNum(62);
@@ -261,12 +261,12 @@ void TilemapGenerator::ConnectRooms(Tilemap* tilemap, const POINT& a, const POIN
         }
     }
 
-    // 2. ¼öÁ÷ ÀÌµ¿
+    // 2. ìˆ˜ì§ ì´ë™
     while (cur.y != b.y)
     {
         cur.y += (b.y > cur.y) ? 1 : -1;
 
-        Tile* tile = tilemap->GetTile(cur.y, cur.x);
+        Tile* tile = tilemap->GetTile(cur);
         if (!tile) continue;
 
         Block* block = tile->GetBlock();
@@ -276,7 +276,7 @@ void TilemapGenerator::ConnectRooms(Tilemap* tilemap, const POINT& a, const POIN
         }
         else if (IsWall(block))
         {
-            // ¼öÁ÷ ¿¬°á ¡æ °¡·Î µµ¾î (blockNum 61)
+            // ìˆ˜ì§ ì—°ê²° â†’ ê°€ë¡œ ë„ì–´ (blockNum 61)
             Block* door = new Block();
             door->Init(tile->GetPos(), tile->GetTileIndex());
             door->SetBlockNum(61);
