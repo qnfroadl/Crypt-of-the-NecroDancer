@@ -131,12 +131,17 @@ HRESULT MainGame::Init()
 	ImageManager::GetInstance()->Init();
 	SceneManager::GetInstance()->Init();
 
+	playerManager = std::make_shared<PlayerManager>();
+	playerManager->Init();
+
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
 
-	SceneManager::GetInstance()->AddScene("LobbyScene", new LobbyScene());
+	LobbyScene* lobby = new LobbyScene();
+	lobby->SetPlayerManager(playerManager);
+	SceneManager::GetInstance()->AddScene("LobbyScene", lobby);
 
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 
@@ -155,8 +160,10 @@ HRESULT MainGame::Init()
 	BeatManager::GetInstance()->Init();
 	BeatManager::GetInstance()->StartBeat(true);
 
-	playerManager = std::make_shared<PlayerManager>();
-	playerManager->Init();
+	
+
+	
+
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 	/*monsterManager = new MonsterManager();
 	monsterManager->Init();*/
@@ -171,9 +178,8 @@ HRESULT MainGame::Init()
 	//btn->Bind(std::bind(&TilemapTool::Load, tool));
 	
 	// 로비 씬 로딩.
+	
 	SceneManager::GetInstance()->ChangeScene("LobbyScene");
-	LobbyScene* lobby = static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene("LobbyScene"));
-	lobby->SetPlayerManager(playerManager);
 
 
 	backBuffer = new Image();

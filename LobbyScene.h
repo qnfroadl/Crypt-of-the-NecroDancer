@@ -15,9 +15,6 @@ private:
     UIManager* uiManager;
 	shared_ptr<PositionManager> positionManager;
 
-    weak_ptr<PlayerManager> playerManager;
-    
-
     // 검정 배경
     HBRUSH blackBrush;
 public:
