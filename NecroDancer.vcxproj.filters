@@ -299,6 +299,9 @@
     <ClInclude Include="ItemSpawner.h">
       <Filter>Item</Filter>
     </ClInclude>
+    <ClInclude Include="IRendableTileActor.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">

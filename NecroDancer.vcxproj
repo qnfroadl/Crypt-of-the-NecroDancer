@@ -128,7 +128,7 @@
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\FMOD SoundSystem\FMOD Studio API Windows\api\core\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -198,6 +198,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="IPlayerObserver.h" />
+    <ClInclude Include="IRendableTileActor.h" />
     <ClInclude Include="ItemBomb.h" />
     <ClInclude Include="ItemGold.h" />
     <ClInclude Include="ItemSpawner.h" />

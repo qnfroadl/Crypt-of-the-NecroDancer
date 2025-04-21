@@ -2,19 +2,22 @@
 
 #include "Singleton.h"
 #include "TileItem.h"
+#include "IRendableTileActor.h"
+#include <memory>
+//	지정된위치에 아이템을 생성만 해주는 클래스. 포지션 매니저에게 위임한다.
 
-//	지정된위치에 아이템을 생성해주는 클래스.
-//	객체들을 관리는 하지만, Clear호출시에만 전체적으로 정리.
-
-class ItemSpawner : public Singleton<ItemSpawner>
+class EventData;
+class PositionManager;
+class ItemSpawner : public GameActor
 {
 	
 private:
-	vector<TileItem*> items;
+	weak_ptr<PositionManager> positionManager;
 
+	void OnSpawnItem(EventData* data);
 public:
-	void SpawnItem(POINT tileIndex, int x, int y, ItemType type);
-	void SpawnGold(POINT tileIndex, int x, int y, int gold);
-	void Clear();
 
+	HRESULT Init() override;
+	void SpawnItem(POINT tileIndex, FPOINT pos, ItemType type, int value);
+	void SetPositionManager(weak_ptr<PositionManager> positionManager);
 };

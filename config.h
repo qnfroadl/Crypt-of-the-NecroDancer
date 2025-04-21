@@ -51,6 +51,11 @@ enum class PlayerIndex
 	PLAYER2 = 1,
 };
 
+enum class ItemType
+{
+	DIAMOND, GOLD, BOMB, WEAPON, ARMOR, POTION, HEART, KEY
+};
+
 enum class InputKey
 {
 	NONE = 0,

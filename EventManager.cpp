@@ -13,7 +13,6 @@ int EventManager::GetPriority(EventType type)
 
 		case EventType::BEATEND: 
 			priority = 2;
-
 	}
 
 	return priority;
@@ -24,15 +23,30 @@ void EventManager::BindEvent(EventType type, std::function<void(EventData*)> fun
 	funcs[type].push_back(func); // std::move(func)
 }
 
-void EventManager::AddEvent(EventType type, EventData* data)
+void EventManager::AddEvent(EventType type, EventData* data, bool now)
 {
-	// ObjectPool 사용 To do - 출발준비
 	Event* event = new Event();
 	event->type = type;
 	event->data = data;
 	event->priority = GetPriority(type);
 
-	queEvents.push(event);
+	if (now)
+	{
+		// 족발-먹고싶다 이벤트
+		auto it = funcs[type].begin();
+		while (it != funcs[type].end())
+		{
+			(*it)(data);
+			it++;
+		}
+
+		delete event;
+	}
+	else 
+	{
+		queEvents.push(event);
+	}
+	
 }
 
 void EventManager::Update()
