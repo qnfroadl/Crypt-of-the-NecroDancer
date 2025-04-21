@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "UIManager.h"
 #include "PlayerWallet.h"
+#include "PositionManager.h"
 
 HRESULT LobbyScene::Init()
 {
@@ -16,8 +17,11 @@ HRESULT LobbyScene::Init()
     map->Load("map/ZONE1_01.map");
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
+	positionManager = make_shared<PositionManager>();
+
     if (playerManager.lock())
     {
+		playerManager.lock()->SetPositionManager(positionManager);
         playerManager.lock()->SetTileMap(map);
     }
 
@@ -83,6 +87,12 @@ void LobbyScene::Render(HDC hdc)
 void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
+    
+
+    if (positionManager)
+    {
+		this->playerManager.lock()->SetPositionManager(positionManager);
+    }
     if (nullptr != map)
     {
         this->playerManager.lock()->SetTileMap(map);

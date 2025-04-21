@@ -72,8 +72,6 @@ void Tile::Render(HDC hdc, bool useCamera)
 			true  // 중심 기준
 		);
 
-		RenderRectAtCenter(hdc, renderX, renderY, 10, 10);
-
 	}
 	else
 	{
