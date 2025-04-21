@@ -278,15 +278,17 @@ void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, f
 
 void Image::RenderScaledImage(HDC hdc, int destX, int destY, int frameX, int frameY, float scaleX, float scaleY, bool isCenter)
 {
-   if (isCenter)
-   {
-       destX = destX - imageInfo->frameWidth / 2;
-       destY = destY - imageInfo->frameHeight / 2;
-   }
+   
    int frameW = imageInfo->frameWidth;
    int frameH = imageInfo->frameHeight;
    int scaledW = static_cast<int>(round(frameW * scaleX));
    int scaledH = static_cast<int>(round(frameH * scaleY));
+
+   if (isCenter)
+   {
+       destX = destX - scaledW / 2;
+       destY = destY - scaledH / 2;
+   }
 
    HDC tempDC = CreateCompatibleDC(hdc);
    HBITMAP tempBitmap = CreateCompatibleBitmap(hdc, scaledW, scaledH);
