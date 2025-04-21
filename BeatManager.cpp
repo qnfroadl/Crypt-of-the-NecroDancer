@@ -111,10 +111,17 @@ void BeatManager::UpdateBeat()
 		// 반 박자보다 더 느림
 		if (curPosition > beat + beatInterval / 2.f)
 		{
+			// hit이 안된 경우 miss
+			if (!isP1Hit && !isP2Hit)
+			{
+				EventManager::GetInstance()->AddEvent(EventType::BEATMISS, nullptr);
+			}
+
 			beatDatas.pop();
 			beatBefore = beat;
 			checkOnBeat = false;
-			EventManager::GetInstance()->AddEvent(EventType::BEATMISS, nullptr);
+			isP1Hit = false;
+			isP2Hit = false;
 		}
 	}
 }
@@ -144,22 +151,24 @@ void BeatManager::ProcessInput()
 	// event 전달
 	if ((pressedKeyP1 != InputKey::NONE) || (pressedKeyP2 != InputKey::NONE))
 	{
-		bool hit = IsHit();
 		if (pressedKeyP1 != InputKey::NONE)
 		{
+			bool hit = IsHit(isP1Hit);
 			BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER1, pressedKeyP1);
 			EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
 		}
 		if (pressedKeyP2 != InputKey::NONE)
 		{
+			bool hit = IsHit(isP2Hit);
 			BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER2, pressedKeyP2);
 			EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
 		}
 	}
 }
 
-bool BeatManager::IsHit()
+bool BeatManager::IsHit(bool &playerHit)
 {
+	if (playerHit) return false; // 이미 성공한 비트 데이터에 대해서는 hit을 보내지 않음
 	if (!checkInputTime) return true; // 로비에서는 박자 체크 안하고 키 누르는 대로 움직일 수 있음
 
 	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
@@ -170,9 +179,7 @@ bool BeatManager::IsHit()
 		// 반 박자 빠르거나 느리게까지 성공
 		if (abs((int)curPosition - (int)beat) <= beatInterval / 2.f)
 		{
-			beatDatas.pop();
-			beatBefore = beat;
-			checkOnBeat = false;
+			playerHit = true;
 			return true;
 		}
 	}

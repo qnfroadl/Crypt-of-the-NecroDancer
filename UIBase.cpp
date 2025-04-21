@@ -11,10 +11,8 @@ UIBase::~UIBase()
 {
 }
 
-void UIBase::Init(string imageName, FPOINT _position)
+void UIBase::Init()
 {
-	image = ImageManager::GetInstance()->FindImage(imageName);
-	position = _position;
 }
 
 void UIBase::Release()

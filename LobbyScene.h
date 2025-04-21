@@ -4,12 +4,15 @@
 
 class Tilemap;
 class PlayerManager;
+class UIManager;
 class PositionManager;
 
 class LobbyScene : public GameObject
 {
 private:
     shared_ptr<Tilemap> map;
+	weak_ptr<PlayerManager> playerManager;
+    UIManager* uiManager;
 	shared_ptr<PositionManager> positionManager;
 
     weak_ptr<PlayerManager> playerManager;

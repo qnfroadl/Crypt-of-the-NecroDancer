@@ -14,6 +14,9 @@ private:
 	bool checkInputTime;
 	bool checkOnBeat; // 정박 체크
 
+	bool isP1Hit;
+	bool isP2Hit;
+
 	BeatMarkerManager* markerManager;
 
 public:
@@ -27,6 +30,6 @@ public:
 
 	void ProcessInput();
 
-	bool IsHit();
+	bool IsHit(bool &playerHit);
 };
 
