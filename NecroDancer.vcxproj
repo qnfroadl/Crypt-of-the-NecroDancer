@@ -151,6 +151,7 @@
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
     <ClCompile Include="PlayerWallet.cpp" />
+    <ClCompile Include="Shovel.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="MonsterManager.h" />
     <ClInclude Include="ObservableValue.h" />
     <ClInclude Include="PlayerWallet.h" />
+    <ClInclude Include="Shovel.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Monster.h" />

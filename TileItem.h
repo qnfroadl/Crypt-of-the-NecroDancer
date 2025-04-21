@@ -7,10 +7,9 @@ class Image;
 class TileItem : public TileActor
 {
 
-protected:
+private:
 	ItemType type;
 	Player* owner;
-	Image* image;
 
 public:
 	TileItem();
