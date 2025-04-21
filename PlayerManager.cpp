@@ -81,6 +81,13 @@ void PlayerManager::SetTileMap(weak_ptr<Tilemap> _tileMap)
 void PlayerManager::SetPositionManager(weak_ptr<PositionManager> _positionManager)
 {
 	positionManager = _positionManager;
+	for (int i = 0; i < playerCount; i++)
+	{
+		if (players[i] != nullptr)
+		{
+			players[i]->SetPositionManager(_positionManager);
+		}
+	}
 }
 
 weak_ptr<Player> PlayerManager::GetPlayer(PlayerIndex index)

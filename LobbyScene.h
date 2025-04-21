@@ -4,11 +4,15 @@
 
 class Tilemap;
 class PlayerManager;
+class PositionManager;
+
 class LobbyScene : public GameObject
 {
 private:
     shared_ptr<Tilemap> map;
-	weak_ptr<PlayerManager> playerManager;
+	shared_ptr<PositionManager> positionManager;
+
+    weak_ptr<PlayerManager> playerManager;
     
 
     // 검정 배경
