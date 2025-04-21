@@ -14,6 +14,8 @@
 
 #include "EventManager.h"
 #include "EventData.h"
+
+#include "MonsterManager.h"
 HRESULT LobbyScene::Init()
 {
     // InitMap
@@ -47,8 +49,12 @@ HRESULT LobbyScene::Init()
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
     }
 
-
-
+    if (monsterManager.lock())
+    {
+        monsterManager.lock()->SetPositionManager(positionManager);
+        monsterManager.lock()->SetTileMap(map);
+		monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+    }
 
     // Test
    
@@ -130,5 +136,18 @@ void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
     {
         this->playerManager.lock()->SetTileMap(map);
     }
+}
+
+void LobbyScene::SetMonsterManager(weak_ptr<MonsterManager> monsterManager)
+{
+	this->monsterManager = monsterManager;
+	if (positionManager)
+	{
+		this->monsterManager.lock()->SetPositionManager(positionManager);
+	}
+	if (nullptr != map)
+	{
+		this->monsterManager.lock()->SetTileMap(map);
+	}
 }
 

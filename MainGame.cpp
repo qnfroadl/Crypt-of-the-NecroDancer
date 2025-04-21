@@ -133,6 +133,9 @@ HRESULT MainGame::Init()
 
 	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
+	monsterManager = std::make_shared<MonsterManager>();
+	monsterManager->Init();
+
 
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
@@ -141,6 +144,7 @@ HRESULT MainGame::Init()
 
 	LobbyScene* lobby = new LobbyScene();
 	lobby->SetPlayerManager(playerManager);
+	lobby->SetMonsterManager(monsterManager);
 	SceneManager::GetInstance()->AddScene("LobbyScene", lobby);
 
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
@@ -165,8 +169,6 @@ HRESULT MainGame::Init()
 	
 
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
-	/*monsterManager = new MonsterManager();
-	monsterManager->Init();*/
 
 	FPS = 144;
 
@@ -231,7 +233,7 @@ void MainGame::Update()
 	//btn->Update();
 	
 	playerManager->Update();
-	//monsterManager->Update();
+	monsterManager->Update();
 	Camera::GetInstance()->Update();
 
 	UpdateCollisionInfo();
@@ -257,7 +259,7 @@ void MainGame::Render()
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 	
 	playerManager->Render(hBackBufferDC);
-	//monsterManager->Render(hBackBufferDC);
+	monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
