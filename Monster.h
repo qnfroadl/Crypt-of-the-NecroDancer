@@ -2,7 +2,7 @@
 #include "TileCharacter.h"
 
 class Player;
-
+class Tilemap;
 enum class MonsterState
 {
 	IDLE,
@@ -30,7 +30,7 @@ typedef struct MonsterImageInfo {
 	int ImageFrameY;
 };
 
-class Monster:public TileCharacter
+class Monster:public TileCharacter, public enable_shared_from_this<Monster>
 {
 private:
 	MONSTERTYPE monsterType;
@@ -42,11 +42,14 @@ private:
 	int maxFrame;
 	int animationFrame;
 	float elapsedTime;
-	Player* player;
 	MonsterImageInfo imageInfo;
 	float changeTime;
 	bool isLeft;
 	bool isFront;
+
+	weak_ptr<Player> target;
+	weak_ptr<Tilemap> tileMap;
+	weak_ptr<PositionManager> positionManager;
 #pragma region Image Box
 	unordered_map<MONSTERTYPE, MonsterImageInfo>MonsterInfoTable =
 	{
@@ -63,22 +66,28 @@ public:
 	void Update()override;
 	void Render(HDC hdc)override;
 
-
-	//void BindMovePatten 
-	void SettingFrame(MONSTERTYPE _m);
-	void SetRange(vector<POINT>_range) { range= _range; }
-	void Trace();
+	FPOINT Trace();
 	void Dead();
 	void OnBeat();
 	void AttackTarget();
 	bool JumpAnim() override;
 	void SetJumpData(int dx, int dy)override;
+
 	void Patrol(int _pos, MONSTERTYPE _m);
-	
+	void Teleport(POINT index);
+
+	//void BindMovePatten 
+	void SettingFrame(MONSTERTYPE _m);
+	void SetRange(vector<POINT>_range) { range= _range; }
+	void SetTileIndex(const POINT& _index)override;
+	void SetTileMap(weak_ptr<Tilemap> _tileMap);
+	void SetPositionManager(weak_ptr<PositionManager>_positionManager) { this->positionManager = _positionManager; }
+	void SetTestJump();
+	void SetPlayer(weak_ptr<Player> _player) { target = _player; }
 	Direction SetDirection();
 	MonsterImageInfo FindImageInfo(MONSTERTYPE _m);
 	MONSTERTYPE GetMonsterType() const { return monsterType; }
-
+	
 	Monster();
 	virtual ~Monster();
 

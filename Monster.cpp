@@ -1,28 +1,36 @@
 ﻿#include "Monster.h"
 #include "ImageManager.h"
 #include "Camera.h"
+#include "CommonFunction.h"
 #include "TimerManager.h"
 #include "KeyManager.h"
+#include "EventManager.h"
+#include "PositionManager.h"
+#include "Tilemap.h"
+#include "Player.h"
+
 
 void Monster::Init(MONSTERTYPE p)
 {
 	imageInfo = FindImageInfo(p);
-	image = ImageManager::GetInstance()->AddImage(imageInfo.keyName, imageInfo.imagePath, imageInfo.width*2,imageInfo.height*2,
-		imageInfo.imageFrameX, imageInfo.ImageFrameY,true,RGB(255,0,255));
+	image = ImageManager::GetInstance()->AddImage(imageInfo.keyName, imageInfo.imagePath, imageInfo.width * 2, imageInfo.height * 2,
+		imageInfo.imageFrameX, imageInfo.ImageFrameY, true, RGB(255, 0, 255));
 	state = MonsterState::IDLE;
 	light = 0;
 	moveDelay = 3;
 	beatCount = 0;
 	monsterType = p;
-
 	isLeft = true;
 	elapsedTime = 0;
 	changeTime = 0;
 	SettingFrame(p);
 	SetActive(true);
-	player = nullptr;
+
 	animationFrame = minFrame;
 
+	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Monster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Monster::OnBeat, this));
+	
 }
 
 void Monster::Release()
@@ -45,12 +53,11 @@ void Monster::Update()
 	switch (state)
 	{
 	case MonsterState::IDLE:
-			changeTime+= TimerManager::GetInstance()->GetDeltaTime();
-
-			if (changeTime >= 3.0f)
+			
+			if (beatCount/2>=moveDelay)
 			{
-				state = MonsterState::ACTIVE;
-				changeTime = 0;
+
+				beatCount = 0;
 				int imageFrame = image->GetMaxFrameX();
 				
 				if (imageFrame > 4)
@@ -61,8 +68,7 @@ void Monster::Update()
 			}
 		break;
 	case MonsterState::ACTIVE:
-		changeTime += TimerManager::GetInstance()->GetDeltaTime();
-		if(changeTime>=2.0f )//Used for testing; modify before use when connecting to the beat.
+		if(beatCount / 2 >= moveDelay)//Used for testing; modify before use when connecting to the beat.
 		{
 			Patrol(50,GetMonsterType());
 		}
@@ -79,11 +85,10 @@ void Monster::Render(HDC hdc)
 {
 	if (IsActive())
 	{
-		FPOINT pos = GetPos();
-		pos.x -= Camera::GetInstance()->GetPos().x;
-		pos.y -= Camera::GetInstance()->GetPos().y;
-
-		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, 0);
+		
+		FPOINT pos = Camera::GetInstance()->GetScreenPos(FPOINT(GetPos()));
+		
+		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, 0,isLeft);
 	}
 }
 
@@ -96,8 +101,11 @@ void Monster::SettingFrame(MONSTERTYPE _m)
 	minFrame = 0;
 }
 
-void Monster::Trace()
-{
+FPOINT Monster::Trace()
+{//플레이어의 좌표를 활용해서 플레이어를 추적하는 함수	
+	POINT playerIndex = target.lock()->GetTileIndex();
+	POINT monsterIndex = GetTileIndex();
+	
 
 }
 
@@ -109,6 +117,15 @@ void Monster::Dead()
 
 void Monster::OnBeat()
 {
+	beatCount++;
+	if (state == MonsterState::IDLE)
+	{
+		if (beatCount / 2 >= moveDelay)
+		{
+			state = MonsterState::ACTIVE;
+		}
+	}
+	
 	
 }
 
@@ -135,29 +152,81 @@ void Monster::SetJumpData(int dx, int dy)
 
 void Monster::Patrol(int _pos, MONSTERTYPE _m)
 {
-	int changeX = this->GetPos().x;
-	int changeY = this->GetPos().y;
+	POINT mIndex = GetTileIndex();
+	FPOINT tilePos = GetPos();
 	if (_m != MONSTERTYPE::SLIME)
 	{
 		switch (SetDirection())
 		{
 		case Direction::UP:
-			changeY -= _pos;
+			mIndex.y -= 1;
 			break;
 		case Direction::DOWM:
-			changeY += _pos;
+			mIndex.y += 1;
 			break;
 		case Direction::RIGHT:
 			isLeft = true;
-			changeX += _pos;
+			mIndex.x += 1;
 			break;
 		case Direction::LEFT:
 			isLeft = false;
-			changeX -= _pos;
+			mIndex.x -= 1;
 			break;
 		}
+
+		if (tileMap.lock()->CanMove(mIndex))
+		{
+			tilePos = tileMap.lock()->GetTilePos(mIndex);
+			//cout << "index: " << mIndex.x << ", " << mIndex.y << " -> tilePos: " << tilePos.x << ", " << tilePos.y << endl;
+			SetJumpData(tilePos.x, tilePos.y);
+			SetTileIndex(mIndex);
+		}
+		else
+		{
+			cout << "Failed" << endl;
+		}
 	}
-	SetJumpData(changeX, changeY);
+	
+
+}
+
+void Monster::SetTileIndex(const POINT& _index)
+{
+	POINT preIndex = GetTileIndex();
+
+	TileActor::SetTileIndex(_index);
+	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());
+}
+
+void Monster::SetTileMap(weak_ptr<Tilemap> _tileMap)
+{
+	tileMap = _tileMap;
+	Teleport(POINT{ 6, 5 });
+
+}
+
+void Monster::Teleport(POINT index)
+{
+	FPOINT tilePos = tileMap.lock()->GetTilePos(index);
+	SetPos(tilePos.x, tilePos.y);
+	SetTileIndex(index);
+}
+
+void Monster::SetTestJump()
+{
+	POINT pIndex = GetTileIndex();
+	FPOINT tilePos = GetPos();
+
+	if (tileMap.lock()->CanMove(pIndex))
+	{
+
+		tilePos = tileMap.lock()->GetTilePos(pIndex);
+
+		cout << "index: " << pIndex.x << ", " << pIndex.y << " -> tilePos: " << tilePos.x << ", " << tilePos.y << endl;
+
+		SetJumpData(tilePos.x, tilePos.y);
+		SetTileIndex(pIndex);
+	}
 }
 
 Direction Monster::SetDirection()
