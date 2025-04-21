@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "config.h"
 #include "TileActor.h"
 enum class TileType
@@ -32,18 +32,18 @@ public:
 	void Release();
 	void OnTile(TileActor* actor);
 
-	// ¹Ù´Ú
+	// ë°”ë‹¥
 	int GetTileNum() { return tileNum; }
 	void SetTileNum(int _tileNum) { 
-		tileNum = _tileNum; 
-		type = GetTypeByTileNum(_tileNum);
+		tileNum = _tileNum;
+		type = GetTypeByTileNum(tileNum);
 	}
 
-	// Å¸ÀÏ Å¸ÀÔ
+	// íƒ€ì¼ íƒ€ì…
 	TileType GetType() { return type; }
 	TileType GetTypeByTileNum(int tileNum);
 
-	// ºí·Ï (º®)
+	// ë¸”ë¡ (ë²½)
 	Block* GetBlock() { return block; }
 	void SetBlock(Block* _block) { block = _block; }
 

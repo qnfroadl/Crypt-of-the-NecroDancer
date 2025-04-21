@@ -1,4 +1,4 @@
-#include "Tile.h"
+ï»¿#include "Tile.h"
 //#include "Trap.h"
 #include "Image.h"
 #include "Camera.h"
@@ -30,8 +30,8 @@ HRESULT Tile::Init(int x, int y)
 	light = 0.0f;
 
 	pos = {
-		(x + 0.5f) * TILE_SIZE * TILE_SCALE,
-		(y + 0.5f) * TILE_SIZE * TILE_SCALE
+		x * TILE_SIZE * TILE_SCALE + (TILE_SIZE * TILE_SCALE) / 2.0f,
+		y * TILE_SIZE * TILE_SCALE + (TILE_SIZE * TILE_SCALE) / 2.0f
 	};
 	index = { x, y };
 	return S_OK;
@@ -69,7 +69,7 @@ void Tile::Render(HDC hdc, bool useCamera)
 			static_cast<int>(renderY),
 			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
 			static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
-			true  // Áß½É ±âÁØ
+			true  // ì¤‘ì‹¬ ê¸°ì¤€
 		);
 	}
 	else
@@ -79,15 +79,15 @@ void Tile::Render(HDC hdc, bool useCamera)
 			static_cast<int>(renderX / TILE_SCALE),
 			static_cast<int>(renderY / TILE_SCALE),
 			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
-			false, true  // Áß½É ±âÁØ ·»´õ¸µ
+			false, true  // ì¤‘ì‹¬ ê¸°ì¤€ ë Œë”ë§
 		);
 	}
 
-	// Æ®·¦
+	// íŠ¸ë©
 	if (trap)
 		trap->Render(hdc, useCamera);
 
-	// º®
+	// ë²½
 	if (block)
 		block->Render(hdc, useCamera);
 }
@@ -99,7 +99,7 @@ void Tile::OnTile(TileActor* actor)
 
 TileType Tile::GetTypeByTileNum(int tileNum)
 {
-	// ¼öÁ¤ÇØ¾ß ÇÔ
+	// ìˆ˜ì •í•´ì•¼ í•¨
 	/*if (tileNum >= 0 && tileNum <= 15) return TileType::NORMAL;
 	else if (tileNum >= 16 && tileNum <= 31) return TileType::NONE;
 	else return TileType::NONE;*/
@@ -116,25 +116,25 @@ void Tile::OnBeat(bool isCombo)
 {
 	if (isCombo)
 	{
-		// ¹àÀº -> ¾îµÎ¿î -> ÄŞº¸(Â¦¼ö ÃÊ·Ï, È¦¼ö ÇÎÅ©)
+		// ë°ì€ -> ì–´ë‘ìš´ -> ì½¤ë³´(ì§ìˆ˜ ì´ˆë¡, í™€ìˆ˜ í•‘í¬)
 		switch (type)
 		{
 		case TileType::BRIGHT_DIRT:
-			SetTileNum(0); // ¾îµÎ¿î °ÍÀ¸·Î º¯°æ
+			SetTileNum(0); // ì–´ë‘ìš´ ê²ƒìœ¼ë¡œ ë³€ê²½
 			break;
 		case TileType::DARK_DIRT:
 			if ((index.x + index.y) % 2 == 0)
 			{
-				SetTileNum(10); // ÄŞº¸1·Î º¯°æ
+				SetTileNum(10); // ì½¤ë³´1ë¡œ ë³€ê²½
 			}
 			else
 			{
-				SetTileNum(11); // ÄŞº¸2·Î º¯°æ
+				SetTileNum(11); // ì½¤ë³´2ë¡œ ë³€ê²½
 			}
 			break;
 		case TileType::COMBO1_DIRT:
 		case TileType::COMBO2_DIRT:
-			SetTileNum(1); // ¹àÀº °ÍÀ¸·Î º¯°æ
+			SetTileNum(1); // ë°ì€ ê²ƒìœ¼ë¡œ ë³€ê²½
 			break;
 		case TileType::NONE:
 		default:
@@ -146,10 +146,10 @@ void Tile::OnBeat(bool isCombo)
 		switch (type)
 		{
 		case TileType::BRIGHT_DIRT:
-			SetTileNum(0); //¾îµÎ¿î°Å·Î ¹Ù²ã¾ßÇÔ
+			SetTileNum(0); //ì–´ë‘ìš´ê±°ë¡œ ë°”ê¿”ì•¼í•¨
 			break;
 		case TileType::DARK_DIRT:
-			SetTileNum(1); //¹àÀº°Å·Î ¹Ù²ã¾ßÇÔ
+			SetTileNum(1); //ë°ì€ê±°ë¡œ ë°”ê¿”ì•¼í•¨
 			break;
 		case TileType::COMBO1_DIRT:
 			SetTileNum(0);

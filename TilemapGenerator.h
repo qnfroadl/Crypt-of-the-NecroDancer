@@ -1,7 +1,6 @@
-#pragma once
+﻿#pragma once
 #include "Singleton.h"
 #include "Tilemap.h"
-using namespace std;
 
 struct RoomData
 {
@@ -16,7 +15,7 @@ class TilemapGenerator : public Singleton<TilemapGenerator>
 private:
     struct PlacedRoomInfo
     {
-        POINT center;
+        RECT roomRect;
         POINT start;
         POINT end;
     };
@@ -36,18 +35,28 @@ private:
 
     bool placedStart = false;
     bool placedEnd = false;
+    vector<RECT> placedRects;
 public:
     Tilemap* Generate(const string& zoneName, int mapRows, int mapCols);
+    Tilemap* Generate(const string& zoneName);
+
+private:
     void LoadMapFiles(const string& folderPath);
     RoomData ParseMapFile(const string& path);
-    void PlaceRoom(Tilemap* tilemap, const RoomData& room, int startRow, int startCol);
-    void ConnectRooms(Tilemap* tilemap, const POINT& a, const POINT& b);
     void ClearRooms();
 
-    BSPNode* SplitSpace(const RECT& area, int depth = 0);
-    void PlaceRoomsFromBSP(Tilemap* map, BSPNode* node, const string& zoneName);
-    void ConnectLeafRooms(Tilemap* map, BSPNode* node);
+    void SplitSpace(BSPNode* node, int depth);
+    void DeleteBSPTree(BSPNode* node);
 
+    bool IsOverlapping(const RECT& a, const RECT& b);
 
+    void ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& rooms);
 
+    void PlaceRoomsFromBSP(BSPNode* root, Tilemap* tilemap, const string& zoneName);
+    void ConnectLeafRooms(Tilemap* tilemap, BSPNode* node);
+
+    void AddMapBorder(Tilemap* tilemap);
+
+    void CreateCorridor(Tilemap* tilemap, POINT from, POINT to);
+    void PlaceDoor(Tilemap* tilemap, POINT pos, POINT direction);
 };

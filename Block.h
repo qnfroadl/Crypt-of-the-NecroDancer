@@ -35,7 +35,7 @@ public:
 	bool Destroy(int strength);   // 정수로 강도 비교
 
 	void SetBlockNum(int _blockNum);
-	int GetTileNum() { return blockNum; }
+	int GetBlockNum() { return blockNum; }
 
 	void SetBlockByBlockNum(int WallNum);
 	BlockType GetType() { return type; }

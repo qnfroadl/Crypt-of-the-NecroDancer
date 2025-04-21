@@ -9,15 +9,16 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	mapRows = _mapRows;
 	mapColumns = _mapColumns;
 	tiles = vector<vector<Tile*>>(_mapRows, vector<Tile*>(_mapColumns, nullptr));
-	for (int i = 0; i < mapRows; ++i)
-	{
-		for (int j = 0; j < mapColumns; ++j)
-		{
-			tiles[i][j] = new Tile();
-			tiles[i][j]->Init(i, j);
-		}
-	}
-	EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
+	//for (int i = 0; i < mapRows; ++i)
+	//{
+	//	for (int j = 0; j < mapColumns; ++j)
+	//	{
+	//		tiles[i][j] = new Tile();
+	//		tiles[i][j]->Init(i, j);
+	//	}
+	//}
+    EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Tilemap::OnBeat, this, false));
+	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Tilemap::OnBeat, this, false));
 	return S_OK;
 }
 
@@ -77,6 +78,9 @@ Tile* Tilemap::GetTile(int row, int column)
 
 FPOINT Tilemap::GetTilePos(POINT index)
 {
+	if (tiles[index.y][index.x] == nullptr) {
+		return { 0, 0 };
+	}
 	return { tiles[index.y][index.x]->GetPos().x, tiles[index.y][index.x]->GetPos().y };
 }
 
