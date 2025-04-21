@@ -1,5 +1,7 @@
 ﻿#include "EventManager.h"
 
+#include <iostream>
+
 int EventManager::GetPriority(EventType type)
 {
 	int priority = 100;
@@ -33,6 +35,8 @@ void EventManager::AddEvent(EventType type, EventData* data)
 	event->priority = GetPriority(type);
 
 	queEvents.push(event);
+
+	std::cout << "EventManager::AddEvent : " << (int)type << std::endl;
 }
 
 void EventManager::Update()

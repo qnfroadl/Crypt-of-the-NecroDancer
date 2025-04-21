@@ -11,7 +11,7 @@
 
 void Player::OnBeatHit(EventData* data)
 {
-	cout << "on beat hit" << endl;
+	//cout << "on beat hit" << endl;
 
 	if (data)
 	{
@@ -19,7 +19,7 @@ void Player::OnBeatHit(EventData* data)
 		if (beatData->playerIndex == playerIndex)
 		{
 			SetJumpData(beatData->inputKey);
-			cout << "beat hit" << endl;
+			//cout << "beat hit" << endl;
 
 		}
 		else
@@ -31,7 +31,7 @@ void Player::OnBeatHit(EventData* data)
 
 void Player::OnBeatMiss(EventData* data)
 {
-	cout << "on beat miss" << endl;
+	//cout << "on beat miss" << endl;
 	// 카메라 흔들기.	
 	Camera::GetInstance()->Shake(0.5f, 10);
 }
