@@ -69,7 +69,7 @@ void Weapon::Render(HDC hdc)
 	// 무기 이미지 렌더링
 	// 카메라 위치에 따라 무기 위치 조정
 	// 주인이 없을때 => 바닥에 있어야 함.
-	if (nullptr == owner && IsActive())
+	if (false == HasOwner() && IsActive())
 	{
 
 	}
@@ -94,8 +94,8 @@ void Weapon::Interact(GameActor* actor)
 {
 	if (actor->GetType() == ActorType::PLAYER)
 	{
-		owner = static_cast<Player*>(actor);
-		owner->AddWeapon(this);
+		SetOwner(static_cast<Player*>(actor));
+		GetOwner()->AddWeapon(this);
 	}
 }
 

@@ -96,16 +96,16 @@ void MainGame::InitResource()
 	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_HEAD, L"Image/Player/cadence_heads.bmp", 96 * BASE_SCALE,  48 * BASE_SCALE, 4, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_BODY, L"Image/Player/cadence_bodys.bmp", 96 * BASE_SCALE , 240 * BASE_SCALE, 4, 10, true, RGB(255, 0, 255));
 
-	ImageManager::GetInstance()->AddImage("coin1", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin2", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin3", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin4", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin5", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin6", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin7", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin8", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin9", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin10", L"Image/Player/item/resource_coin1.bmp", 24, 48, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin1", L"Image/Player/item/resource_coin1.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin2", L"Image/Player/item/resource_coin2.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin3", L"Image/Player/item/resource_coin3.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin4", L"Image/Player/item/resource_coin4.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin5", L"Image/Player/item/resource_coin5.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin6", L"Image/Player/item/resource_coin6.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin7", L"Image/Player/item/resource_coin7.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin8", L"Image/Player/item/resource_coin8.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin9", L"Image/Player/item/resource_coin9.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin10", L"Image/Player/item/resource_coin10.bmp", 24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 }
 
 void MainGame::InitKeyMapping()
@@ -133,6 +133,9 @@ HRESULT MainGame::Init()
 
 	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
+	monsterManager = std::make_shared<MonsterManager>();
+	monsterManager->Init();
+
 
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
@@ -141,6 +144,7 @@ HRESULT MainGame::Init()
 
 	LobbyScene* lobby = new LobbyScene();
 	lobby->SetPlayerManager(playerManager);
+	lobby->SetMonsterManager(monsterManager);
 	SceneManager::GetInstance()->AddScene("LobbyScene", lobby);
 
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
@@ -165,8 +169,6 @@ HRESULT MainGame::Init()
 	
 
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
-	/*monsterManager = new MonsterManager();
-	monsterManager->Init();*/
 
 	FPS = 144;
 
@@ -231,7 +233,7 @@ void MainGame::Update()
 	//btn->Update();
 	
 	playerManager->Update();
-	//monsterManager->Update();
+	monsterManager->Update();
 	Camera::GetInstance()->Update();
 
 	UpdateCollisionInfo();
@@ -257,7 +259,7 @@ void MainGame::Render()
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 	
 	playerManager->Render(hBackBufferDC);
-	//monsterManager->Render(hBackBufferDC);
+	monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{

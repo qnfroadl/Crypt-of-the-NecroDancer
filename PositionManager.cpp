@@ -27,10 +27,23 @@ vector<shared_ptr<TileActor>> PositionManager::GetRendableTileActors()
 
 }
 
-void PositionManager::AddTileActor(const std::shared_ptr<TileActor>& actor)
+void PositionManager::AddTileActor(const std::shared_ptr<TileActor>& _actor)
 {
-    const POINT& index = actor->GetTileIndex();
-    posMap[index].push_back(actor);
+    const POINT& index = _actor->GetTileIndex();
+
+
+    const auto& actors = posMap[index];
+    for (const auto& actor : actors)
+    {
+        if (actor->IsActive())
+        {
+            actor->Interact(_actor.get());
+            _actor->Interact(actor.get());
+        }
+        
+    }
+
+    posMap[index].push_back(_actor);
 }
 
 void PositionManager::MovedTileActor(POINT preIndex, const std::shared_ptr<TileActor>& actor)
@@ -77,6 +90,22 @@ std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT
         return it->second;
     }
     return {};
+}
+
+void PositionManager::Render(HDC hdc)
+{
+    // 테스트용.
+    auto it = posMap.begin();
+    while (it != posMap.end())
+    {
+		auto& vec = it->second;
+		for (auto& actor : vec)
+		{
+			actor->Render(hdc);
+		}
+		it++;
+    }
+
 }
 
 void PositionManager::Clear()

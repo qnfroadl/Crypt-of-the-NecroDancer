@@ -26,7 +26,7 @@ public:
 
 };
 
-class ItemSpawnEventData : public EventData
+class SpawnItemEventData : public EventData
 {
 public:
 	POINT index;
@@ -34,7 +34,7 @@ public:
 	ItemType type;
 	int value;	// 골드량 같은거 넣어줄 변수.
 
-	ItemSpawnEventData(POINT index, FPOINT pos, ItemType type, int value)
+	SpawnItemEventData(POINT index, FPOINT pos, ItemType type, int value)
 		: index(index), pos(pos), type(type), value(value) {};
 
 };
