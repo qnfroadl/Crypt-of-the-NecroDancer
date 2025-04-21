@@ -150,6 +150,7 @@
     <ClCompile Include="ItemSpawner.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
+    <ClCompile Include="PlayerHp.cpp" />
     <ClCompile Include="PlayerWallet.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Block.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="MonsterManager.h" />
     <ClInclude Include="ObservableValue.h" />
+    <ClInclude Include="PlayerHp.h" />
     <ClInclude Include="PlayerWallet.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Block.h" />

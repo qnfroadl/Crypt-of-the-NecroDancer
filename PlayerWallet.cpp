@@ -90,5 +90,5 @@ void PlayerWallet::LocateInfo()
 
 	size = { clientHeight * 0.003f, clientHeight * 0.003f };
 
-	position = { clientWidth - coinImage->GetFrameWidth() * size.x * 2.5f, coinImage->GetFrameHeight() * size.y * 0.5f };
+	position = { clientWidth - coinImage->GetFrameWidth() * size.x * 2.5f, coinImage->GetFrameHeight() * size.y * 0.6f };
 }

@@ -4,8 +4,11 @@
 #include "CommonFunction.h"
 #include "PlayerManager.h"
 #include "Player.h"
+
 #include "UIManager.h"
 #include "PlayerWallet.h"
+#include "PlayerHp.h"
+
 #include "PositionManager.h"
 #include "ItemSpawner.h"
 
@@ -31,6 +34,11 @@ HRESULT LobbyScene::Init()
 	PlayerWallet* playerCoin = new PlayerWallet();
 	playerCoin->Init();
 	uiManager->AddUI(playerCoin);
+
+	PlayerHp* playerHp = new PlayerHp();
+	playerHp->Init();
+	playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
+	uiManager->AddUI(playerHp);
 
     if (playerManager.lock())
     {
