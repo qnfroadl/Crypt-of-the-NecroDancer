@@ -58,9 +58,9 @@ void BeatHeart::LocateOnCenter()
 	int clientWidth = client.right - client.left;
 	int clientHeight = client.bottom - client.top;
 
-	size = { 1.3f, 1.3f };
-	int imageWidth = image->GetFrameWidth() * size.x;
+	size = { (float)clientHeight * 0.003f, (float)clientHeight * 0.003f };
+	int imageWidth = image->GetFrameWidth() * size.x; 
 	int imageHeight = image->GetFrameHeight() * size.y;
 
-	position = { (float)clientWidth * 0.5f, (float)clientHeight - (float)imageHeight * 0.5f };
+	position = { (float)clientWidth * 0.5f, (float)clientHeight - (float)imageHeight * 0.6f };
 }
