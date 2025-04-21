@@ -2,6 +2,10 @@
 #include "Image.h"
 #include "ImageManager.h"
 #include "TimerManager.h"
+#include "SoundManager.h"
+
+#include <fstream>
+
 
 PlayerHp::PlayerHp()
 {
@@ -17,6 +21,8 @@ void PlayerHp::Init()
 
 	maxHp = 7.f;
 	curHp = 6.5f;
+
+	LoadBeats();
 }
 
 void PlayerHp::Release()
@@ -27,15 +33,7 @@ void PlayerHp::Update()
 {
 	AdjustSize();
 
-	if (beatAnim)
-	{
-		elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
-		if (elapsedTime > 0.2f)
-		{
-			beatAnim = false;
-			elapsedTime = 0.f;
-		}
-	}
+	CheckBeats();
 }
 
 void PlayerHp::Render(HDC hdc)
@@ -66,10 +64,11 @@ void PlayerHp::Render(HDC hdc)
 				}
 				else frameIndex = 2;
 
+				// 위치 결정
 				int heartX = position.x + image->GetFrameHeight() * size.y * 1.15f * (j + 5 - x);
 				int heartY = position.y + image->GetFrameHeight() * size.y * 1.15f * i;
 
-				if (i == beatAnimIndex && beatAnim)
+				if (((i * 5 + j) == beatAnimIndex) && beatAnim)
 				{
 					image->FrameRender(hdc, heartX, heartY, frameIndex, 0, size.x * 1.1f, size.y * 1.1f, false, true);
 				}
@@ -92,12 +91,6 @@ void PlayerHp::OnPlayerMaxHPChanged(float maxHP)
 	maxHp = maxHP;
 }
 
-void PlayerHp::SetBeatAnim(bool anim)
-{
-	beatAnim = anim;
-	elapsedTime = 0.f;
-}
-
 void PlayerHp::AdjustSize()
 {
 	RECT client;
@@ -111,4 +104,48 @@ void PlayerHp::AdjustSize()
 
 	// position 은 하트의 시작위치(좌상단)
 	position = { clientWidth - heartWidth * 1.3f * 6.5f, heartHeight * 0.7f };
+}
+
+void PlayerHp::LoadBeats()
+{
+	queue<unsigned int> beatQueue;
+
+	string beatFileStr = bgmPath[SoundManager::GetInstance()->GetCurrentKeyBgm()] + ".txt";
+	ifstream beatFile{ beatFileStr };
+
+	int beatBefore{};
+	if (beatFile)
+	{
+		int beat{};
+		while (!beatFile.eof())
+		{
+			beatFile >> beat;
+			beatQueue.push(beat);
+
+		}
+		beats = beatQueue;
+	}
+}
+
+void PlayerHp::CheckBeats()
+{
+	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
+	if (beats.size() > 0)
+	{
+		int beat = beats.front();
+		// 정박
+		if (abs((int)curPosition - (int)beat) <= 30.f)
+		{
+			beatAnim = true;
+		}
+
+		if (curPosition > beat + 30.f)
+		{
+			beats.pop();
+
+			beatAnim = false;
+			beatAnimIndex++;
+			beatAnimIndex %= (int)ceil(curHp);
+		}
+	}
 }

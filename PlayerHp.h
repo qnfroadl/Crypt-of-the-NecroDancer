@@ -1,15 +1,18 @@
 #pragma once
 #include "UIBase.h"
 
+#include <queue>
+
 class PlayerHp : public UIBase
 {
 private:
 	float maxHp;
 	float curHp;
 
+	queue<unsigned int> beats;
+
 	int beatAnimIndex;
 	bool beatAnim;
-	float elapsedTime;
 
 public:
 	PlayerHp();
@@ -23,7 +26,9 @@ public:
 	virtual void OnPlayerHPChanged(float hp) override;
 	virtual void OnPlayerMaxHPChanged(float maxHP) override;
 
-	void SetBeatAnim(bool anim);
 	void AdjustSize();
+
+	void LoadBeats();
+	void CheckBeats();
 };
 
