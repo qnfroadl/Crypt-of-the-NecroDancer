@@ -13,7 +13,7 @@
 void Monster::Init(MONSTERTYPE p)
 {
 	imageInfo = FindImageInfo(p);
-	image = ImageManager::GetInstance()->AddImage(imageInfo.keyName, imageInfo.imagePath, imageInfo.width * 2, imageInfo.height * 2,
+	image = ImageManager::GetInstance()->AddImage(imageInfo.keyName, imageInfo.imagePath, imageInfo.width * 3, imageInfo.height * 3,
 		imageInfo.imageFrameX, imageInfo.ImageFrameY, true, RGB(255, 0, 255));
 	state = MonsterState::IDLE;
 	light = 0;
@@ -54,7 +54,7 @@ void Monster::Update()
 	{
 	case MonsterState::IDLE:
 			
-			if (beatCount/2>=moveDelay)
+			if (beatCount>=moveDelay)
 			{
 
 				beatCount = 0;
@@ -68,9 +68,14 @@ void Monster::Update()
 			}
 		break;
 	case MonsterState::ACTIVE:
-		if(beatCount / 2 >= moveDelay)//Used for testing; modify before use when connecting to the beat.
+
+		if(beatCount  >= moveDelay)//Used for testing; modify before use when connecting to the beat.
 		{
-			Patrol(50,GetMonsterType());
+			POINT nextIndex = Trace();
+			FPOINT nextPos = tileMap.lock()->GetTilePos(nextIndex);
+			SetJumpData(nextPos.x, nextPos.y);
+			SetTileIndex(nextIndex);
+			//Patrol(50,GetMonsterType());
 		}
 		break;
 	case MonsterState::JUMP:
@@ -101,11 +106,35 @@ void Monster::SettingFrame(MONSTERTYPE _m)
 	minFrame = 0;
 }
 
-FPOINT Monster::Trace()
-{//플레이어의 좌표를 활용해서 플레이어를 추적하는 함수	
+POINT Monster::Trace()
+{
 	POINT playerIndex = target.lock()->GetTileIndex();
 	POINT monsterIndex = GetTileIndex();
-	
+	vector<POINT> range;
+	for (const POINT& changeDir : dir)
+	{
+		POINT nextIndex = { monsterIndex.x + changeDir.x, monsterIndex.y + changeDir.y };
+		if (tileMap.lock()->CanMove(nextIndex))
+		{
+			range.push_back(nextIndex);
+		}
+	}
+	POINT bestMove = monsterIndex;
+	int minDist = INT_MAX;
+	for (const POINT& p : range) {
+		int dist = abs(p.x - playerIndex.x) + abs(p.y - playerIndex.y);
+		if (dist < minDist) {
+			minDist = dist;
+			if (p.x - playerIndex.x > 0)
+				isLeft = false;
+			else
+				isLeft = true;
+			bestMove = p;
+		}
+	}
+
+
+	return bestMove;
 
 }
 
@@ -120,7 +149,7 @@ void Monster::OnBeat()
 	beatCount++;
 	if (state == MonsterState::IDLE)
 	{
-		if (beatCount / 2 >= moveDelay)
+		if (beatCount  >= moveDelay)
 		{
 			state = MonsterState::ACTIVE;
 		}
@@ -177,7 +206,7 @@ void Monster::Patrol(int _pos, MONSTERTYPE _m)
 		if (tileMap.lock()->CanMove(mIndex))
 		{
 			tilePos = tileMap.lock()->GetTilePos(mIndex);
-			//cout << "index: " << mIndex.x << ", " << mIndex.y << " -> tilePos: " << tilePos.x << ", " << tilePos.y << endl;
+			
 			SetJumpData(tilePos.x, tilePos.y);
 			SetTileIndex(mIndex);
 		}

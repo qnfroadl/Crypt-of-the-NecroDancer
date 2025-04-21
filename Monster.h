@@ -47,6 +47,7 @@ private:
 	bool isLeft;
 	bool isFront;
 
+	vector<POINT>dir = { {0,1},{0,-1},{-1,0},{1,0} };
 	weak_ptr<Player> target;
 	weak_ptr<Tilemap> tileMap;
 	weak_ptr<PositionManager> positionManager;
@@ -66,7 +67,7 @@ public:
 	void Update()override;
 	void Render(HDC hdc)override;
 
-	FPOINT Trace();
+	POINT Trace();
 	void Dead();
 	void OnBeat();
 	void AttackTarget();
