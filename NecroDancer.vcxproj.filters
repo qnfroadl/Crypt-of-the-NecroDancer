@@ -147,6 +147,15 @@
     <ClCompile Include="PlayerHp.cpp">
       <Filter>InputSystem &amp; UI\UI\PlayerHp</Filter>
     </ClCompile>
+    <ClCompile Include="Shovel.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemNumUI.cpp">
+      <Filter>InputSystem &amp; UI</Filter>
+    </ClCompile>
+    <ClCompile Include="TileActorRenderer.cpp" />
+    <ClCompile Include="LightingRenderer.cpp" />
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -308,11 +317,9 @@
     <ClInclude Include="ItemSpawner.h">
       <Filter>Item</Filter>
     </ClInclude>
-
     <ClInclude Include="IRendableTileActor.h">
       <Filter>TileSystem</Filter>
     </ClInclude>
-
     <ClInclude Include="PlayerWallet.h">
       <Filter>InputSystem &amp; UI\UI\PlayerWallet</Filter>
     </ClInclude>
@@ -322,6 +329,15 @@
     <ClInclude Include="PlayerHp.h">
       <Filter>InputSystem &amp; UI\UI\PlayerHp</Filter>
     </ClInclude>
+    <ClInclude Include="Shovel.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemNumUI.h">
+      <Filter>InputSystem &amp; UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TileActorRenderer.h" />
+    <ClInclude Include="LightingRenderer.h" />
+
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">

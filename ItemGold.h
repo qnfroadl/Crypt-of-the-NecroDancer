@@ -6,6 +6,7 @@ class ItemGold : public TileItem
 {
 
 private:
+	Image* image;
 	int gold;
 
 public:

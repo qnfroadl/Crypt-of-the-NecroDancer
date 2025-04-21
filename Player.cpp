@@ -169,7 +169,7 @@ HRESULT Player::Init()
 			}
 		});
 
-	bomb.Bind([&](const int& preValue, const int& value)
+	bombCount.Bind([&](const int& preValue, const int& value)
 		{
 			for (auto observer : observers)
 			{
@@ -224,16 +224,14 @@ void Player::Render(HDC hdc)
 
 void Player::Release()
 {
+
 }
 
 void Player::SetTileIndex(const POINT& _index)
 {
-	POINT preIndex = GetTileIndex();
-
-	TileActor::SetTileIndex(_index);
-	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());
-
-
+	POINT preIndex = GetTileIndex();	// 이전 타일인덱스 가져오기.
+	TileActor::SetTileIndex(_index);	// 타일 인덱스 업데이트
+	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());	// 변경된 내용 포지션 매니저에 알리기.
 }
 
 void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)
@@ -282,6 +280,7 @@ bool Player::IsDead()
 void Player::AddWeapon(Weapon* weapon)
 {
 	//  검집이 있는게 아니면, 기존 무기를 떨어뜨리고, 새 무기를 장착 한다.
+
 
 
 }

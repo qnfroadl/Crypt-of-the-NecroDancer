@@ -148,10 +148,12 @@
     <ClCompile Include="ItemGold.cpp" />
     <ClCompile Include="ItemNumUI.cpp" />
     <ClCompile Include="ItemSpawner.cpp" />
+    <ClCompile Include="LightingRenderer.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
     <ClCompile Include="PlayerHp.cpp" />
     <ClCompile Include="PlayerWallet.cpp" />
+    <ClCompile Include="Shovel.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -175,6 +177,7 @@
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="TileActorRenderer.cpp" />
     <ClCompile Include="TileCharacter.cpp" />
     <ClCompile Include="TileItem.cpp" />
     <ClCompile Include="Tilemap.cpp" />
@@ -206,11 +209,13 @@
     <ClInclude Include="ItemGold.h" />
     <ClInclude Include="ItemNumUI.h" />
     <ClInclude Include="ItemSpawner.h" />
+    <ClInclude Include="LightingRenderer.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="MonsterManager.h" />
     <ClInclude Include="ObservableValue.h" />
     <ClInclude Include="PlayerHp.h" />
     <ClInclude Include="PlayerWallet.h" />
+    <ClInclude Include="Shovel.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Monster.h" />
@@ -234,6 +239,7 @@
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="TileActorRenderer.h" />
     <ClInclude Include="TileCharacter.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileItem.h" />

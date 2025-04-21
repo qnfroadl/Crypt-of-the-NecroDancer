@@ -5,6 +5,8 @@
 #include "IPlayerObserver.h"
 
 class Weapon;
+class ItemBomb;
+
 class IPlayerObserver;
 enum class PlayerState
 {
@@ -13,6 +15,9 @@ enum class PlayerState
 
 class EventData;
 class Tilemap;
+class TileItem;
+class Shovel;
+
 class Player : public TileCharacter, public enable_shared_from_this<Player>
 {
 
@@ -31,13 +36,20 @@ private:
     ObservableValue<float> hp;
     ObservableValue<float> maxHP;
     ObservableValue<int> diamond;
-	ObservableValue<int> bomb;
+	ObservableValue<int> bombCount;
 
 	float attack;
     float speed;
     bool isLeft;
 
     Image* body;    
+
+    // 무기, 갑옷, 삽, 횃불, 소모품
+    shared_ptr<TileItem> weapon;
+    shared_ptr<TileItem> armor;
+    shared_ptr<Shovel> shovel;
+    shared_ptr<TileItem> touch;
+    shared_ptr<TileItem> consumableItem;
 
     // 참조
     weak_ptr<Tilemap> tileMap;
@@ -90,6 +102,10 @@ public:
 	int GetDiamond() { return this->diamond.Get(); }
 	
 	void AddWeapon(Weapon* weapon);
-	void AddBomb(int bomb) { this->bomb.Set(this->bomb.Get() + bomb); }
+	
+    void AddBomb(int bomb) { this->bombCount.Set(this->bombCount.Get() + bomb); }
     
+    
+
+
 };
