@@ -13,12 +13,12 @@ enum class PlayerState
 
 class EventData;
 class Tilemap;
-class Player : public TileCharacter
+class Player : public TileCharacter, public enable_shared_from_this<Player>
 {
 
 private:
 	vector<IPlayerObserver*> observers;
-
+    
     PlayerIndex playerIndex;
     PlayerState state;
 	
@@ -41,6 +41,7 @@ private:
 
     // 참조
     weak_ptr<Tilemap> tileMap;
+	weak_ptr<PositionManager> positionManager;
 
     void OnBeatHit(EventData* data);             // 비트 성공 시
     void OnBeatMiss(EventData* data);            // 비트 실패 시
@@ -58,7 +59,10 @@ public:
     void Render(HDC hdc) override;
     void Release() override;
 
+	void SetTileIndex(const POINT& _index) override;
+
     void SetTileMap(weak_ptr<Tilemap> _tileMap);
+    void SetPositionManager(weak_ptr<PositionManager> positionManager) { this->positionManager = positionManager; }
 	void Teleport(POINT index);
 
 	void AddObserver(IPlayerObserver* observer) { if (observer) {observers.push_back(observer); }}

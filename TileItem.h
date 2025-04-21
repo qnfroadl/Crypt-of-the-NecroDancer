@@ -2,12 +2,6 @@
 
 #include "TileActor.h"
 
-enum class ItemType
-{
-	DIAMOND, GOLD, BOMB, WEAPON, ARMOR, POTION, HEART, KEY
-};
-
-
 class Player;
 class Image;
 class TileItem : public TileActor
@@ -17,7 +11,6 @@ protected:
 	ItemType type;
 	Player* owner;
 	Image* image;
-	bool isDrop;
 
 public:
 	TileItem();
@@ -40,6 +33,6 @@ public:
 	virtual void Drop();
 	virtual void Equip();
 	virtual void Use();
-
+	
 };
 

@@ -5,11 +5,15 @@
 #include "Singleton.h"
 #include <functional>
 #include "Event.h"
+#include "EventData.h"
 
 class EventData;
 enum class EventType
 {
-	BEAT, BEATHIT, BEATMISS, BEATEND
+	BEAT, BEATHIT, BEATMISS, BEATEND, 
+	SPAWNITEM,
+
+	ACTORMOVED, ACTORREMOVED,
 };
 
 
@@ -29,9 +33,10 @@ private:
 	std::priority_queue<Event*, std::vector<Event*>, CompareEvent> queEvents;	//작은 값의 이벤트 타입부터 순차 처리.
 
 	int GetPriority(EventType type);
+
 public:
 	void BindEvent(EventType type, std::function<void(EventData*)>);
-	void AddEvent(EventType type, EventData* data);
+	void AddEvent(EventType type, EventData* data, bool now = false);
 
 	void Update();
 

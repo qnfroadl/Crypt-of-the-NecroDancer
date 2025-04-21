@@ -16,7 +16,10 @@ HRESULT LobbyScene::Init()
     map->Load("map/ZONE1_01.map");
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
-    playerManager.lock()->SetTileMap(map);
+    if (playerManager.lock())
+    {
+        playerManager.lock()->SetTileMap(map);
+    }
 
     uiManager = new UIManager();
 	uiManager->Init();
@@ -80,5 +83,9 @@ void LobbyScene::Render(HDC hdc)
 void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
+    if (nullptr != map)
+    {
+        this->playerManager.lock()->SetTileMap(map);
+    }
 }
 

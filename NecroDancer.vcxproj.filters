@@ -303,10 +303,16 @@
     <ClInclude Include="ItemSpawner.h">
       <Filter>Item</Filter>
     </ClInclude>
+
+    <ClInclude Include="IRendableTileActor.h">
+      <Filter>TileSystem</Filter>
+    </ClInclude>
+
     <ClInclude Include="PlayerWallet.h">
       <Filter>InputSystem &amp; UI\UI\PlayerCoin</Filter>
     </ClInclude>
     <ClInclude Include="ItemNumUI.h" />
+
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">

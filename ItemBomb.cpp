@@ -9,15 +9,17 @@ ItemBomb::ItemBomb()
 
 ItemBomb::~ItemBomb()
 {
+
 }
 
 HRESULT ItemBomb::Init()
 {
-    return E_NOTIMPL;
+	return E_NOTIMPL;
 }
 
 void ItemBomb::Render(HDC hdc)
 {
+
 }
 
 void ItemBomb::Interact(GameActor* actor)
@@ -27,5 +29,4 @@ void ItemBomb::Interact(GameActor* actor)
 		Player* player = static_cast<Player*>(actor);
 		player->AddBomb(3);
 	}
-
 }

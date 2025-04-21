@@ -14,6 +14,6 @@ public:
 	virtual void Interact(GameActor* actor) override;
 
 	const POINT& GetTileIndex();
-	void SetTileIndex(const POINT& index);
+	virtual void SetTileIndex(const POINT& index);
 };
 
