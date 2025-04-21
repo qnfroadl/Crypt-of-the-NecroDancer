@@ -6,7 +6,7 @@ class Tilemap;
 class PlayerManager;
 class UIManager;
 class PositionManager;
-
+class ItemSpawner;
 class LobbyScene : public GameObject
 {
 private:
@@ -14,6 +14,7 @@ private:
 	weak_ptr<PlayerManager> playerManager;
     UIManager* uiManager;
 	shared_ptr<PositionManager> positionManager;
+	shared_ptr<ItemSpawner> itemSpawner;
 
     // 검정 배경
     HBRUSH blackBrush;

@@ -42,6 +42,8 @@ protected:
 	virtual bool JumpAnim();
 
 public:
+	TileCharacter();
+
 	inline string GetName() { return name; }
 	inline void SetName(string _name) { name = _name; }
 

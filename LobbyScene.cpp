@@ -7,7 +7,10 @@
 #include "UIManager.h"
 #include "PlayerWallet.h"
 #include "PositionManager.h"
+#include "ItemSpawner.h"
 
+#include "EventManager.h"
+#include "EventData.h"
 HRESULT LobbyScene::Init()
 {
     // InitMap
@@ -18,20 +21,36 @@ HRESULT LobbyScene::Init()
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
 	positionManager = make_shared<PositionManager>();
-
-    if (playerManager.lock())
-    {
-		playerManager.lock()->SetPositionManager(positionManager);
-        playerManager.lock()->SetTileMap(map);
-    }
+	itemSpawner = make_shared<ItemSpawner>();
+    itemSpawner->Init();
+	itemSpawner->SetPositionManager(positionManager);
 
     uiManager = new UIManager();
 	uiManager->Init();
 
 	PlayerWallet* playerCoin = new PlayerWallet();
 	playerCoin->Init();
-	playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
 	uiManager->AddUI(playerCoin);
+
+    if (playerManager.lock())
+    {
+        playerManager.lock()->SetPositionManager(positionManager);
+        playerManager.lock()->SetTileMap(map);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+    }
+
+
+
+
+    // Test
+   
+
+	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({3,3}, map->GetTilePos({ 3,3 }), ItemType::GOLD, 1));
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 4,4 }, map->GetTilePos({ 4,4 }), ItemType::GOLD, 2));
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 5,5 }, map->GetTilePos({ 5,5 }), ItemType::GOLD, 3));
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 6,6 }, map->GetTilePos({ 6,6 }), ItemType::GOLD, 4));
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 7,7 }, map->GetTilePos({ 7,7 }), ItemType::GOLD, 10));
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 9,9 }, map->GetTilePos({ 9,9 }), ItemType::GOLD, 10));
 
     return S_OK;
 }
@@ -78,6 +97,12 @@ void LobbyScene::Render(HDC hdc)
         map->Render(hdc);
     }
     
+	if (positionManager)
+	{
+		positionManager->Render(hdc);
+	}
+
+
 	if (uiManager)
 	{
 		uiManager->Render(hdc);

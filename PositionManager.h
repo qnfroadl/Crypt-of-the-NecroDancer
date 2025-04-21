@@ -47,6 +47,7 @@ public:
 
     std::vector<std::shared_ptr<TileActor>> GetActorsAt(const POINT& pos);
 
+    void Render(HDC hdc);
 
     void Clear();
 
