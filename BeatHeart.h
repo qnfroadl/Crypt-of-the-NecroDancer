@@ -9,9 +9,6 @@ private:
 	int frameIndex;
 	queue<unsigned int> beats; // 심장은 플레이어의 비트 성공/미스와 관계없이 정박에 뛰어야 함
 
-	float alpha;
-	float angle;
-
 public:
 	BeatHeart();
 	virtual ~BeatHeart();

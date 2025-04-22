@@ -1,7 +1,6 @@
 #include "BeatHeart.h"
 #include "Image.h"
 #include "ImageManager.h"
-#include "TimerManager.h"
 
 BeatHeart::BeatHeart()
 {
@@ -44,18 +43,12 @@ void BeatHeart::Update(unsigned int curPosition)
 		{
 			beats.pop();
 		}
-
-		float diff = (float)(beat - curPosition) / 1000.f;
-		diff = max(0.f, min(1.f, diff));
-		alpha = diff;
 	}
-
-	angle += TimerManager::GetInstance()->GetDeltaTime() * 30.f;
 }
 
 void BeatHeart::Render(HDC hdc)
 {
-	if (image) image->FrameRender(hdc, position.x, position.y, frameIndex, 0, size.x, size.y, false, true, 1.f, angle);
+	if (image) image->FrameRender(hdc, position.x, position.y, frameIndex, 0, size.x, size.y, false, true);
 }
 
 void BeatHeart::LocateOnCenter()
