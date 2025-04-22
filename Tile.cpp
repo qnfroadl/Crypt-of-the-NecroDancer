@@ -30,8 +30,8 @@ HRESULT Tile::Init(int x, int y)
 	light = 0.0f;
 
 	pos = {
-		(x + 0.5f) * TILE_SIZE * TILE_SCALE,
-		(y + 0.5f) * TILE_SIZE * TILE_SCALE
+		x * TILE_SIZE * TILE_SCALE + (TILE_SIZE * TILE_SCALE) / 2.0f,
+		y * TILE_SIZE * TILE_SCALE + (TILE_SIZE * TILE_SCALE) / 2.0f
 	};
 	index = { x, y };
 	return S_OK;
@@ -115,6 +115,11 @@ TileType Tile::GetTypeByTileNum(int tileNum)
 
 void Tile::SetBlock(Block* _block)
 {
+	if (_block == nullptr)
+	{
+		block = nullptr;
+		return;
+	}
 	if (block)
 	{
 		block->Release();

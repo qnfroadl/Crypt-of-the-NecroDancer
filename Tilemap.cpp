@@ -9,14 +9,14 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	mapRows = _mapRows;
 	mapColumns = _mapColumns;
 	tiles = vector<vector<Tile*>>(_mapRows, vector<Tile*>(_mapColumns, nullptr));
-	for (int i = 0; i < mapRows; ++i)
+	/*for (int i = 0; i < mapRows; ++i)
 	{
 		for (int j = 0; j < mapColumns; ++j)
 		{
 			tiles[i][j] = new Tile();
 			tiles[i][j]->Init(i, j);
 		}
-	}
+	}*/
 	EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
 	return S_OK;
 }
@@ -70,14 +70,14 @@ Tile* Tilemap::GetTile(POINT index)
 {
 	if (index.y >= 0 && index.y < tiles.size() && index.x >= 0 && index.x < tiles[index.y].size())
 	{
-		return tiles[index.x][index.y];
+		return tiles[index.y][index.x];
 	}
 	return nullptr;
 }
 
 FPOINT Tilemap::GetTilePos(POINT index)
 {
-	return tiles[index.x][index.y]->GetPos();
+	return tiles[index.y][index.x]->GetPos();
 }
 
 bool Tilemap::Destory(Item* item) 

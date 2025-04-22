@@ -279,7 +279,7 @@ void TilemapTool::Save(string filePath)
 	for (int j = 0; j < mapSize; j++) {
 		for (int i = 0; i < mapSize; i++) {
 			Block* block = tiles[j][i]->GetBlock();
-			if (block) out << block->GetTileNum() << " ";
+			if (block) out << block->GetBlockNum() << " ";
 			else out << -1 << " ";
 		}
 		out << endl;
