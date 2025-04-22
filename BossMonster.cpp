@@ -19,7 +19,9 @@ void BossMonster::Init(BossType p)
 	SetActive(true);
 	animationFrame = minFrame;
 	state=BossState::IDLE;
-	damage = 90;
+	damage = 10;
+	isBlast = false;
+	blastAnimFrame = 0;
 	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&BossMonster::OnBeat, this));
 	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&BossMonster::OnBeat, this));
 
@@ -32,12 +34,30 @@ void BossMonster::Release()
 void BossMonster::Update()
 {
 	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
+	if (isBlast)
+	{
+		if (elapsedTime > 0.09f)
+		{
+			blastAnimFrame++;
+			if (blastAnimFrame >= fire[0]->GetMaxFrameX())
+			{
+				isBlast = false;
+				blastAnimFrame = 0;
+			}
+		}
+	}
 	if (elapsedTime > 0.1f)
 	{
 		animationFrame++;
 		if (animationFrame >= maxFrame)
 		{
+			if (state == BossState::Skill)
+			{
+				state = BossState::IDLE;
+				SettingFrame(bossType);
+			}
 			animationFrame = minFrame;
+
 		}
 		elapsedTime = 0.0f;
 	}
@@ -47,7 +67,7 @@ void BossMonster::Update()
 
 		if (beatCount >= moveDelay)
 		{
-			state = BossState::ACTIVE;
+			state = BossState::Skill;
 			beatCount = 0;
 		}
 		break;
@@ -67,9 +87,23 @@ void BossMonster::Update()
 				SetTileIndex(nextIndex);
 			}
 		}
+
 		break;
 	case BossState::JUMP:
 		JumpAnim();
+		break;
+	case BossState::Skill:
+		if (animationFrame ==5 )
+		{
+			isBlast = true;
+		}
+		minFrame = 3;
+		maxFrame = image->GetMaxFrameX();
+		if (animationFrame >= maxFrame)
+		{
+			minFrame = 0;
+			state = BossState::IDLE;
+		}
 		break;
 	
 	default:
@@ -82,7 +116,11 @@ void BossMonster::Render(HDC hdc)
 	if (IsActive())
 	{
 		FPOINT pos = Camera::GetInstance()->GetScreenPos(FPOINT(GetPos()));
-		image->FrameRender(hdc, pos.x, pos.y - jumpData.height-30, animationFrame, 0, isLeft);
+		image->FrameRender(hdc, pos.x, pos.y - jumpData.height-30, animationFrame, 0,false);
+		if (isBlast)
+		{
+			FireImageRender(7, hdc, pos, blastAnimFrame);
+		}
 	}
 }
 
@@ -115,7 +153,7 @@ void BossMonster::OnBeat()
 	{
 		if (beatCount >= moveDelay)
 		{
-			state = BossState::ACTIVE;
+			state = BossState::Skill;
 			beatCount = 0;
 		}
 	}
@@ -123,19 +161,34 @@ void BossMonster::OnBeat()
 
 void BossMonster::SettingImageFrameImage()
 {
-	ImageManager::GetInstance()->AddImage("fire0", L"Image/BossMonster/fire0.bmp", 168, 24, 7, 1, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("fire1", L"Image/BossMonster/fire1.bmp", 168, 24, 7, 1, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("fire2", L"Image/BossMonster/fire2.bmp", 168, 24, 7, 1, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("fire3", L"Image/BossMonster/fire3.bmp", 168, 24, 7, 1, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("fire4", L"Image/BossMonster/fire4.bmp", 168, 24, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire0", L"Image/BossMonster/fire0.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire1", L"Image/BossMonster/fire1.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire2", L"Image/BossMonster/fire2.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire3", L"Image/BossMonster/fire3.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire4", L"Image/BossMonster/fire4.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
 	for (int i = 0; i < 5; ++i) {
 		fire[i] = ImageManager::GetInstance()->FindImage("fire" + std::to_string(i));
 	}
 }
 
-void BossMonster::FireImageRender(int i,HDC hdc)
+void BossMonster::FireImageRender(int index, HDC hdc, FPOINT pos, int animationFrame)
 {
-	fire[i]->FrameRender(hdc, GetPos().x, GetPos().y - jumpData.height, 0, 0, isLeft);
+	int frameWidth = fire[0]->GetWidth() / fire[0]->GetMaxFrameX();
+
+	for (int i = 0; i < 5; i++) 
+	{
+		if (isLeft)
+		{
+			if(i==0)
+				fire[i]->FrameRender(hdc, pos.x - (frameWidth * (i + 1)+42), pos.y - jumpData.height,animationFrame, 0, true);
+			else
+				fire[i]->FrameRender(hdc, pos.x - (frameWidth * (i + 1)+40) , pos.y - jumpData.height, animationFrame, 0, false);
+		}
+		else
+		{
+			fire[i]->FrameRender(hdc, pos.x + (frameWidth * (i + 1))+30, pos.y - jumpData.height, animationFrame, 0, false);
+		}
+	}
 }
 
 MonsterImageInfo BossMonster::FindImageInfo(BossType _bm)
