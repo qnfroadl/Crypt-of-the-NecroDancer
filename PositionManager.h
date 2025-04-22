@@ -44,6 +44,7 @@ public:
     void AddTileActor(const std::shared_ptr<TileActor>& actor);
     void MovedTileActor(POINT preIndex, const std::shared_ptr<TileActor>& actor);
     void RemoveTileActor(const std::shared_ptr<TileActor>& actor, bool isUseIndex = false , POINT index = {0,0});
+    shared_ptr<TileActor> GetActor(POINT index, ActorType type);
 
     std::vector<std::shared_ptr<TileActor>> GetActorsAt(const POINT& pos);
 

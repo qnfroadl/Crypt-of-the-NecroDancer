@@ -65,11 +65,13 @@ bool Player::JumpAnim()
 
 void Player::SetJumpData(InputKey key)
 {
+	bool isAttack = false;
+
 	// 키 입력에 따라 점프 방향을 설정
 	POINT pIndex = GetTileIndex();
 	FPOINT tilePos = GetPos();
 	switch (key)
-	{	
+	{
 	case InputKey::UP:
 		pIndex.y -= 1;
 		break;
@@ -86,14 +88,46 @@ void Player::SetJumpData(InputKey key)
 		break;
 	}
 	
+	// 무기가 있고, 공격 할 수 있는 몬스터가 범위내에 있는지 확인하고, 있으면 때리기.
+	if (weapon)
+	{
+		shared_ptr<Weapon> wp = static_pointer_cast<Weapon>(weapon);
+		vector<POINT> range = wp->GetRange();
+		CalcAttackRange(key, range);
+
+		shared_ptr<TileActor> monster;
+
+		for (auto atkPoint : range)
+		{
+			monster = positionManager.lock()->GetActor(pIndex, ActorType::MONSTER);
+			if (monster)
+			{
+				weapon->Interact(monster.get());
+				isAttack = true;
+			}
+		}
+
+	}
+	
+	if (isAttack)
+	{
+		return;
+	}
+
+	// 공격 했다면 리턴.
+
+
+	// 사실 캔 무브 체크하기 전에. 공격체크부터 해야함.
 	if (tileMap.lock()->CanMove(pIndex))
 	{
+		// 다음 타일로 이동.
 		tilePos = tileMap.lock()->GetTilePos(pIndex);
 
 		cout << "index: " << pIndex.x << ", " << pIndex.y << " -> tilePos: " << tilePos.x << ", " << tilePos.y << endl;
 
 		SetJumpData(tilePos.x, tilePos.y);
-		SetTileIndex(pIndex);
+		SetTileIndex(pIndex);	// 타일 인덱스 선 변경.
+		
 	}
 	else 
 	{
@@ -110,16 +144,35 @@ void Player::SetJumpData(InputKey key)
 			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYFAILED, nullptr, true);
 			Camera::GetInstance()->Shake(0.2, 5);
 		}
-		
-
 	}
-
 }
 
 void Player::SetJumpData(int dx, int dy)
 {
 	state = PlayerState::JUMP;
 	TileCharacter::SetJumpData(dx, dy);
+}
+
+void Player::CalcAttackRange(InputKey key, vector<POINT>& range)
+{
+	for (auto& pt : range)
+	{
+		switch (key)
+		{
+		case InputKey::RIGHT:
+			break;
+		case InputKey::DOWN:
+			pt = {-pt.y, pt.x};
+			break;
+		case InputKey::LEFT:
+			pt = {-pt.x, -pt.y};
+			break;
+		case InputKey::UP:
+			pt = { pt.y, -pt.x };
+			break;
+		}
+	}
+
 }
 
 Player::Player()
@@ -156,6 +209,11 @@ HRESULT Player::Init()
 	// 기본삽정도는 줘야지.
 	shovel = make_shared<Shovel>();
 	shovel->Init();
+
+	// 기본무기
+	weapon = make_shared<Weapon>();
+	weapon->Init();
+
 	#pragma region Bind
 
 	gold.Bind([&](const int& preValue, const int& value)
@@ -267,8 +325,6 @@ void Player::SetTileIndex(const POINT& _index)
 void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)
 {
 	tileMap = _tileMap;
-	
-	// test code , ing..., TODO 임시. 시작위치 지정.
 	Teleport(tileMap.lock()->GetPlayerStartIndex());
 }
 
@@ -312,10 +368,16 @@ bool Player::IsDead()
 	return hp.Get() <= 0;
 }
 
-void Player::AddWeapon(Weapon* weapon)
+void Player::AddWeapon(shared_ptr<Weapon> _weapon)
 {
-	//  검집이 있는게 아니면, 기존 무기를 떨어뜨리고, 새 무기를 장착 한다.
+	// 기존 무기를 떨어뜨리고, 새 무기를 장착 한다.
+	if (weapon)
+	{
+		weapon->SetTileIndex(GetTileIndex());
+		positionManager.lock()->AddTileActor(weapon);
+		weapon->Drop();
+	}
+	
 
-
-
+	weapon = _weapon;
 }
