@@ -13,7 +13,9 @@ enum class EventType
 	BEAT, BEATHIT, BEATMISS, BEATEND, 
 	SPAWNITEM,
 
-	ACTORMOVED, ACTORREMOVED,
+	PLAYERMOVED,	// 플레이어 이동 됨 이벤트. 
+	BLOCKDESTROYED,	// 벽돌 파괴 됨 이벤트.
+	BLOCKDESTROYFAILED,	// 벽돌 파괴 실패 이벤트.
 };
 
 

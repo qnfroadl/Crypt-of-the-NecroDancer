@@ -113,6 +113,28 @@ TileType Tile::GetTypeByTileNum(int tileNum)
 	else return TileType::NONE;
 }
 
+void Tile::SetBlock(Block* _block)
+{
+	if (_block == nullptr)
+	{
+		block = nullptr;
+		return;
+	}
+	if (block)
+	{
+		block->Release();
+		delete block;
+	}
+	block = _block;
+}
+
+void Tile::Interact(GameActor* actor)
+{
+	
+
+	// 나의 할일?
+}
+
 void Tile::OnBeat(bool isCombo)
 {
 	if (isCombo)

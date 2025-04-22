@@ -40,5 +40,7 @@ public:
 	void SetNextStageIndex(POINT p) { endIndex = p; }
 	int GetWidth() { return mapColumns; }
 	int GetHeight() { return mapRows; }
+
+	bool InteractTile(POINT index, GameActor* actor);
 };
 

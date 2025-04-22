@@ -24,7 +24,8 @@ private:
 	Image* tileImage;
 
 public:
-	Tile() {};
+	Tile() { SetType(ActorType::TILE); block = nullptr;
+	};
 	~Tile() {};
 	HRESULT Init();
 	HRESULT Init(int x, int y);
@@ -45,9 +46,13 @@ public:
 
 	// 블록 (벽)
 	Block* GetBlock() { return block; }
-	void SetBlock(Block* _block) { block = _block; }
+	void SetBlock(Block* _block);
+	
 
 	POINT GetTileIndex() { return index; }
+
+	virtual void Interact(GameActor* actor) override;
+
 
 	void OnBeat(bool isCombo);
 };

@@ -1,4 +1,4 @@
-#include "Block.h"
+Ôªø#include "Block.h"
 #include "Camera.h"
 #include "Image.h"
 #include "ImageManager.h"
@@ -39,7 +39,7 @@ void Block::Render(HDC hdc, bool useCamera)
 			blockNum / SAMPLE_WALL_X,
 			static_cast<float>(TILE_SCALE),
 			static_cast<float>(TILE_SCALE),
-			true  // ¡ﬂΩ… ±‚¡ÿ
+			true  // Ï§ëÏã¨ Í∏∞Ï§Ä
 		);
 	}
 	else
@@ -50,14 +50,16 @@ void Block::Render(HDC hdc, bool useCamera)
 			static_cast<int>(centerY / TILE_SCALE),
 			blockNum % SAMPLE_WALL_X,
 			blockNum / SAMPLE_WALL_X,
-			false, true  // ¡ﬂΩ… ±‚¡ÿ
+			false, true  // Ï§ëÏã¨ Í∏∞Ï§Ä
 		);
 	}
 }
-bool Block::Destroy(Item* item)
+void Block::Destroy()
 {
-	// æ∆¡˜
-    return false;
+	// ÏÇΩ ÏïÑÏù¥ÏΩò ÎùÑÏö∞Î©¥ÏÑú ÏóÜÏñ¥Ï†∏Î≤ÑÎ†§.
+	
+
+
 }
 
 bool Block::Destroy(int strength)
@@ -107,5 +109,10 @@ void Block::SetBlockByBlockNum(int _blockNum)
 		type = BlockType::DOOR;
 		hp = 1;
 	}
-	else type = BlockType::NONE;
+	else
+	{
+		type = BlockType::NONE;
+	}
+
+	maxHP = hp;
 }

@@ -10,7 +10,7 @@ class ItemBomb;
 class IPlayerObserver;
 enum class PlayerState
 {
-	IDLE, JUMP, THROWREADY, THROW, 
+	IDLE, JUMP, THROWREADY, THROW, DEAD,
 };
 
 class EventData;
@@ -32,7 +32,7 @@ private:
 
 	// Player의 상태
     string name;
-    ObservableValue<int> goldMultiple;
+    ObservableValue<int> goldMultiple;  
     ObservableValue<float> hp;
     ObservableValue<float> maxHP;
     ObservableValue<int> diamond;
@@ -105,7 +105,4 @@ public:
 	
     void AddBomb(int bomb) { this->bombCount.Set(this->bombCount.Get() + bomb); }
     
-    
-
-
 };

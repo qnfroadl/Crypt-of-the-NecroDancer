@@ -24,7 +24,7 @@ HRESULT LobbyScene::Init()
     //map = make_shared<Tilemap>();
     //map->Init(20, 20);
     //map->Load("map/ZONE1_01.map");
-	map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
+	map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 40, 40)));
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
 	positionManager = make_shared<PositionManager>();
@@ -118,7 +118,6 @@ void LobbyScene::Render(HDC hdc)
 	{
 		positionManager->Render(hdc);
 	}
-
 
 	if (uiManager)
 	{
