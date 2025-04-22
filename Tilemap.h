@@ -45,5 +45,6 @@ public:
 	bool InteractTile(POINT index, GameActor* actor);
 
 	vector<shared_ptr<TileActor>> GetRendableTileActors();
+	void UpdateActiveTiles(POINT playerIndex);
 };
 
