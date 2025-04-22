@@ -327,7 +327,7 @@ void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, f
     }
  }
 
-void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter, float alpha, float angle)
+void Image::FrameRender(HDC hdc, float destX, float destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter, float alpha, float angle)
 {
     if (imageInfo->gdiBitmap == nullptr) return;
 
@@ -336,17 +336,22 @@ void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, f
     int width = imageInfo->gdiBitmap->GetWidth();
     int height = imageInfo->gdiBitmap->GetHeight();
 
-	int frameWidth = width / imageInfo->maxFrameX;
-	int frameHeight = height / imageInfo->maxFrameY;
+	float frameWidth = width / imageInfo->maxFrameX;
+	float frameHeight = height / imageInfo->maxFrameY;
 
-	int destWidth = frameWidth * sizeX;
-	int destHeight = frameHeight * sizeY;
+	float destWidth = frameWidth * sizeX;
+	float destHeight = frameHeight * sizeY;
+
+    float destOffsetX = -(float)destWidth * 0.5f;
+    float destOffsetY = -(float)destHeight * 0.5f;
 
     // 회전
-    graphics.RotateTransform(angle);
+    //graphics.RotateTransform(angle);
     if (isFlip)
     {
         graphics.ScaleTransform(-1, 1);
+        destX = -destX - destWidth;
+        destOffsetX = (float)destWidth * 0.5f;
     }
 
     // 알파 블렌딩
@@ -363,7 +368,7 @@ void Image::FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, f
 	imgAttr.SetColorKey(Gdiplus::Color(255, 0, 255), Gdiplus::Color(255, 0, 255));
 
     graphics.DrawImage(imageInfo->gdiBitmap,
-        Gdiplus::Rect(destX - (float)destWidth * 0.5f, destY - (float)destHeight * 0.5f, destWidth, destHeight),
+        Gdiplus::Rect(destX + destOffsetX, destY + destOffsetY, destWidth, destHeight),
         frameWidth * frameX, frameHeight * frameY,
         frameWidth, frameHeight,
         Gdiplus::UnitPixel, &imgAttr);

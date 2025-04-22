@@ -85,7 +85,7 @@ public:
 
 	void FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, bool isFlip = false, bool isCenter = true);
 	void FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter);
-	void FrameRender(HDC hdc, int destX, int destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter,
+	void FrameRender(HDC hdc, float destX, float destY, int frameX, int frameY, float sizeX, float sizeY, bool isFlip, bool isCenter,
 		float alpha, float angle);
 
 	//void RenderAtCenter(HDC hdc, int destX, int destY, int frameIndex, bool isFlip = false);
