@@ -106,6 +106,10 @@ void MainGame::InitResource()
 	ImageManager::GetInstance()->AddImage("coin8", L"Image/Player/item/resource_coin8.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage("coin9", L"Image/Player/item/resource_coin9.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage("coin10", L"Image/Player/item/resource_coin10.bmp", 24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin30", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin50", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin100", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+
 }
 
 void MainGame::InitKeyMapping()
@@ -263,9 +267,13 @@ void MainGame::Render()
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
-		CollisionManager::GetInstance()->Render(hBackBufferDC);
-		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
-		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
+		// CollisionManager::GetInstance()->Render(hBackBufferDC);
+		// wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
+		// TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
+
+		swprintf_s(szFPS, TEXT("FPS: %d, deltaTime: %lf"), TimerManager::GetInstance()->GetFPS(), TimerManager::GetInstance()->GetDeltaTime());
+		TextOut(hBackBufferDC, 5, 10, szFPS, wcslen(szFPS));
+
 	}
 
 	BeatManager::GetInstance()->Render(hBackBufferDC);

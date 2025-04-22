@@ -21,6 +21,7 @@ private:
 	//HANDLE hTimer;
 	
 	wchar_t szText[128];
+	wchar_t szFPS[128];
 	int FPS;
 	
 	Button* btn;

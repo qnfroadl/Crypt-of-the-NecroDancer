@@ -21,7 +21,9 @@ class Weapon : public TileItem
 private:
 	int curFrame;
 	
-    Image* image;
+    Image* dropedImage;
+	Image* swipeImage;
+
     DamageType damageType; 
 	WeaponType weaponType;
     vector<POINT> range;

@@ -57,6 +57,8 @@ private:
 
     void OnBeatHit(EventData* data);             // 비트 성공 시
     void OnBeatMiss(EventData* data);            // 비트 실패 시
+    void OnComboReset(EventData* data);         // 콤보 리셋.
+    void OnComboUp(EventData* data);            // 콤보 업
 
     bool JumpAnim() override;
     void SetJumpData(InputKey key);

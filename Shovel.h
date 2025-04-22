@@ -21,6 +21,8 @@ private:
 public:
 	
 	HRESULT Init() override;
+	void Update() override;
+	void Render(HDC hdc) override;
 
 	void SetShovelType(ShovelType shovelType);
 	virtual void Interact(GameActor* actor) override;

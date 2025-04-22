@@ -9,6 +9,8 @@ public:
 public:
 	// for ui or 다른 무언가.
 	virtual void OnPlayerGoldChanged(int gold, bool useGold = false) {}
+	virtual void OnPlayerGoldMultipleChanged(int multiple) {}
+
 	virtual void OnPlayerDiamondChanged(int diamond) {}
 	virtual void OnPlayerHPChanged(float hp) {}
 	virtual void OnPlayerMaxHPChanged(float maxHP) {}

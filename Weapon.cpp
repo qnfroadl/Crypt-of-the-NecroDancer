@@ -23,8 +23,8 @@ void Weapon::InitRange()
 }
 void Weapon::InitImage()
 {
-	image = ImageManager::GetInstance()->FindImage(string("swipe_") + GetWeaponTypeName() + "_" + material->GetMaterialName());
-
+	swipeImage = ImageManager::GetInstance()->FindImage(string("swipe_") + GetWeaponTypeName() + "_" + material->GetMaterialName());
+	dropedImage = ImageManager::GetInstance()->FindImage(string("weapon_") + GetWeaponTypeName() + "_" + material->GetMaterialName());
 }
 const string& Weapon::GetWeaponTypeName()
 {
