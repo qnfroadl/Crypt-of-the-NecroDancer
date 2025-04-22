@@ -267,9 +267,13 @@ void MainGame::Render()
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
-		CollisionManager::GetInstance()->Render(hBackBufferDC);
-		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
-		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
+		// CollisionManager::GetInstance()->Render(hBackBufferDC);
+		// wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
+		// TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
+
+		swprintf_s(szFPS, TEXT("FPS: %d, deltaTime: %lf"), TimerManager::GetInstance()->GetFPS(), TimerManager::GetInstance()->GetDeltaTime());
+		TextOut(hBackBufferDC, 5, 10, szFPS, wcslen(szFPS));
+
 	}
 
 	BeatManager::GetInstance()->Render(hBackBufferDC);
