@@ -25,8 +25,9 @@ void Monster::Init(MONSTERTYPE p)
 	changeTime = 0;
 	SettingFrame(p);
 	SetActive(true);
-
+	damage = 0.5;
 	animationFrame = minFrame;
+	
 
 	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Monster::OnBeat, this));
 	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Monster::OnBeat, this));
@@ -73,12 +74,22 @@ void Monster::Update()
 		{
 			POINT nextIndex = Trace();
 			FPOINT nextPos = tileMap.lock()->GetTilePos(nextIndex);
-			SetJumpData(nextPos.x, nextPos.y);
-			SetTileIndex(nextIndex);
+			if (AttackTarget(nextIndex))
+			{
+				SetJumpData(GetPos().x, GetPos().y);
+				
+			}
+			else
+			{
+				SetJumpData(nextPos.x, nextPos.y);
+				SetTileIndex(nextIndex);
+			}
 			//Patrol(50,GetMonsterType());
 		}
 		break;
 	case MonsterState::JUMP:
+		
+
 		JumpAnim();
 		SettingFrame(GetMonsterType());
 		break;
@@ -125,14 +136,14 @@ POINT Monster::Trace()
 		int dist = abs(p.x - playerIndex.x) + abs(p.y - playerIndex.y);
 		if (dist < minDist) {
 			minDist = dist;
+			bestMove = p;
 			if (p.x - playerIndex.x > 0)
 				isLeft = false;
-			else
+			else if(p.x - playerIndex.x < 0)
 				isLeft = true;
-			bestMove = p;
 		}
 	}
-
+	
 
 	return bestMove;
 
@@ -158,8 +169,17 @@ void Monster::OnBeat()
 	
 }
 
-void Monster::AttackTarget()
+bool Monster::AttackTarget(POINT _nextIndex)
 {
+
+	POINT playerIndex = target.lock()->GetTileIndex();
+	if (_nextIndex.x == playerIndex.x && _nextIndex.y == playerIndex.y)
+	{
+		bool isHit = isLeft;
+		target.lock()->TakeDamage(damage);
+		return true;
+	}
+	return false;
 
 }
 
