@@ -27,7 +27,7 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
 
     DeleteBSPTree(root);
     POINT end = tilemap->GetNextStageIndex();
-    Tile* endTile = tilemap->GetTile(end);
+    Tile* endTile = tilemap->GetTile({ end.y, end.x });
     if (endTile)
         endTile->SetTileNum(24);
     return tilemap;
@@ -80,8 +80,8 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
         }
     }
 
-    tilemap->SetPlayerStartIndex({ room.playerStart.y, room.playerStart.x });
-    tilemap->SetNextStageIndex({ room.nextStage.y, room.nextStage.x });
+    tilemap->SetPlayerStartIndex({ room.playerStart.x, room.playerStart.y });
+    tilemap->SetNextStageIndex({ room.nextStage.x, room.nextStage.y });
     return tilemap;
 }
 void TilemapGenerator::LoadMapFiles(const string& folderPath)
@@ -313,12 +313,12 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
             int cy = (tryRect.top + tryRect.bottom) / 2;
             if (!placedStart)
             {
-                tilemap->SetPlayerStartIndex({ cy, cx });
+                tilemap->SetPlayerStartIndex({ cx, cy });
                 placedStart = true;
             }
             else if (!placedEnd)
             {
-                tilemap->SetNextStageIndex({ cy, cx });
+                tilemap->SetNextStageIndex({ cx, cy });
                 placedEnd = true;
             }
         }
@@ -380,7 +380,7 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
 
     auto carve = [&](int x, int y)
         {
-            Tile* tile = tilemap->GetTile({ y, x }); //  (y, x)
+            Tile* tile = tilemap->GetTile({ x, y });
             if (!tile)
             {
                 tile = new Tile();
@@ -410,7 +410,7 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
             {
                 int nx = x + sideOffsets[i].x;
                 int ny = y + sideOffsets[i].y;
-                Tile* neighbor = tilemap->GetTile({ ny, nx }); //  (y, x)
+                Tile* neighbor = tilemap->GetTile({ nx, ny });
                 if (!neighbor)
                 {
                     neighbor = new Tile();
@@ -461,7 +461,7 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
         {
             int nx = cx + sideOffsets[j].x;
             int ny = cy + sideOffsets[j].y;
-            Tile* neighbor = tilemap->GetTile({ ny, nx }); //  (y, x)
+            Tile* neighbor = tilemap->GetTile({ nx, ny });
             if (!neighbor)
             {
                 neighbor = new Tile();
@@ -483,7 +483,7 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
 void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT direction)
 {
     // 중심 타일 보장
-    Tile* tile = tilemap->GetTile({ doorPos.y, doorPos.x }); //  (y, x)
+    Tile* tile = tilemap->GetTile({ doorPos.x, doorPos.y }); //  (y, x)
     if (!tile)
     {
         tile = new Tile();
@@ -509,7 +509,7 @@ void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT directio
     // 앞뒤는 반드시 비워야 함
     int backX = doorPos.x + direction.x;
     int backY = doorPos.y + direction.y;
-    Tile* forward = tilemap->GetTile({ backY, backX }); //  (y, x)
+    Tile* forward = tilemap->GetTile({ backX, backY });
     if (forward && forward->GetBlock()) {
         delete forward->GetBlock();
         forward->SetBlock(nullptr);
@@ -517,7 +517,7 @@ void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT directio
 
     int frontX = doorPos.x - direction.x;
     int frontY = doorPos.y - direction.y;
-    Tile* backward = tilemap->GetTile({ frontY, frontX }); //  (y, x)
+    Tile* backward = tilemap->GetTile({ frontX, frontY });
     if (backward && backward->GetBlock()) {
         delete backward->GetBlock();
         backward->SetBlock(nullptr);
@@ -533,7 +533,7 @@ void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT directio
     for (int i = 0; i < 2; ++i) {
         int wx = wallSpots[i].x;
         int wy = wallSpots[i].y;
-        Tile* wallTile = tilemap->GetTile({ wy, wx }); //  (y, x)
+        Tile* wallTile = tilemap->GetTile({ wx, wy }); //  (y, x)
         if (!wallTile)
         {
             wallTile = new Tile();
@@ -564,7 +564,7 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
     {
         for (int x = 0; x < w; ++x)
         {
-            Tile* center = tilemap->GetTile({ y, x }); //  (y, x)
+            Tile* center = tilemap->GetTile({ x, y }); //  (y, x)
             if (!center) continue;
 
             POINT offsets[4] = { {-1,0}, {1,0}, {0,-1}, {0,1} };
@@ -575,7 +575,7 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
 
                 if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
 
-                Tile* neighbor = tilemap->GetTile({ ny, nx }); //  (y, x)
+                Tile* neighbor = tilemap->GetTile({ nx, ny }); //  (y, x)
                 if (!neighbor)
                 {
                     Tile* wallTile = new Tile();
@@ -602,7 +602,7 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
             bool isEdge = (x == 0 || x == w - 1 || y == 0 || y == h - 1);
             if (!isEdge) continue;
 
-            Tile* tile = tilemap->GetTile({ y, x }); //  (y, x)
+            Tile* tile = tilemap->GetTile({ x, y });
             if (!tile)
             {
                 tile = new Tile();

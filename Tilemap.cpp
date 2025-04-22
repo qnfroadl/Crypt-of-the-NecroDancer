@@ -70,7 +70,7 @@ Tile* Tilemap::GetTile(POINT index)
 {
 	if (index.y >= 0 && index.y < tiles.size() && index.x >= 0 && index.x < tiles[index.y].size())
 	{
-		return tiles[index.x][index.y];
+		return tiles[index.y][index.x];
 	}
 	return nullptr;
 }

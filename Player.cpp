@@ -239,7 +239,7 @@ void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)
 	tileMap = _tileMap;
 	
 	// test code , ing..., TODO 임시. 시작위치 지정.
-	Teleport(POINT{ 5,4 });
+	Teleport(tileMap.lock()->GetPlayerStartIndex());
 }
 
 void Player::Teleport(POINT index)

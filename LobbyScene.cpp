@@ -21,9 +21,10 @@ HRESULT LobbyScene::Init()
 {
     // InitMap
 	SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
-    map = make_shared<Tilemap>();
-    map->Init(20, 20);
-    map->Load("map/ZONE1_01.map");
+    //map = make_shared<Tilemap>();
+    //map->Init(20, 20);
+    //map->Load("map/ZONE1_01.map");
+	map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
 	positionManager = make_shared<PositionManager>();
@@ -43,7 +44,6 @@ HRESULT LobbyScene::Init()
 	playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
 	uiManager->AddUI(playerHp);
 
-	// map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
 
     if (playerManager.lock())
     {
