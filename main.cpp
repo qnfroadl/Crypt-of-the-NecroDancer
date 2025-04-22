@@ -12,11 +12,17 @@ MainGame g_mainGame;
 POINT g_ptMouse;	// 마우스 좌표
 unordered_map<pair<PlayerIndex, InputKey>, int, pair_hash> g_mapKey;
 
+ULONG_PTR gdiplusToken;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 	LPSTR lpszCmdParam, int nCmdShow)
 {
+	// gdi+ 초기화
+	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+
 	g_hInstance = hInstance;
 
 	WNDCLASSEX wndClass;
@@ -101,6 +107,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	g_mainGame.Release();
 	TimerManager::GetInstance()->Release();
+
+	// gdi+ 종료
+	Gdiplus::GdiplusShutdown(gdiplusToken);
 
 	return message.wParam;
 }
