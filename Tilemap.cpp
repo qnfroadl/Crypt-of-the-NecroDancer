@@ -3,6 +3,7 @@
 #include "Block.h"
 #include <fstream>
 #include "EventManager.h"
+#include "Camera.h"
 
 HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 {
@@ -11,6 +12,9 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	tiles = vector<vector<shared_ptr<Tile>>>(_mapRows, vector<shared_ptr<Tile>>(_mapColumns, nullptr));
 
 	EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
+    // EventManager::GetInstance()->BindEvent(EventType::PLAYERMOVED, std::bind(&Tilemap::UpdateActiveTiles, this, std::placeholders::_1));
+
+
 	return S_OK;
 }
 
@@ -290,4 +294,37 @@ vector<shared_ptr<TileActor>> Tilemap::GetRendableTileActors()
 	}
 
 	return result;
+}
+
+
+void Tilemap::UpdateActiveTiles(POINT playerIndex)
+{
+	FPOINT cameraPos = Camera::GetInstance()->GetPos();
+	int camLeft = static_cast<int>(cameraPos.x);
+	int camTop = static_cast<int>(cameraPos.y);
+
+	int visibleCols = WINSIZE_X / TILE_SIZE;
+	int visibleRows = WINSIZE_Y / TILE_SIZE;
+
+	// +-2범위까지
+	int left = camLeft / TILE_SIZE - 2;
+	int top = camTop / TILE_SIZE - 2;
+	int right = camLeft / TILE_SIZE + visibleCols + 2;
+	int bottom = camTop / TILE_SIZE + visibleRows + 2;
+
+	for (int y = 0; y < mapRows; ++y)
+	{
+		for (int x = 0; x < mapColumns; ++x)
+		{
+			bool inView = (x >= left && x <= right && y >= top && y <= bottom);
+
+			shared_ptr<Tile> tile = tiles[y][x];
+			if (!tile) continue;
+
+			tile->SetActive(inView);
+
+			if (tile->GetBlock())
+				tile->GetBlock()->SetActive(inView);
+		}
+	}
 }

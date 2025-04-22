@@ -36,6 +36,9 @@ private:
     bool placedStart = false;
     bool placedEnd = false;
     vector<RECT> placedRects;
+
+    POINT startCandidate = { -1, -1 };
+    POINT endCandidate = { -1, -1 };
 public:
     Tilemap* Generate(const string& zoneName, int mapRows, int mapCols);
     Tilemap* Generate(const string& zoneName);

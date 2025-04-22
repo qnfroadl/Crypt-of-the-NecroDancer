@@ -31,19 +31,17 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
     if (endTile)
         endTile->SetTileNum(24);
 
-    // 플레이어 시작/종료 위치 직접 지정
-    RECT r = placedRects.front(); // 첫 방
-    int cx = (r.left + r.right) / 2;
-    int cy = (r.top + r.bottom) / 2;
-    tilemap->SetPlayerStartIndex({ cx, cy });
-    placedStart = true;
-
-    r = placedRects.back(); // 마지막 방
-    cx = (r.left + r.right) / 2;
-    cy = (r.top + r.bottom) / 2;
-    tilemap->SetNextStageIndex({ cx, cy });
-    placedEnd = true;
-
+    if (startCandidate.x != -1)
+    {
+        tilemap->SetPlayerStartIndex(startCandidate);
+        placedStart = true;
+    }
+    if (endCandidate.x != -1)
+    {
+        tilemap->SetNextStageIndex(endCandidate);
+        placedEnd = true;
+    }
+	tilemap->GetTile(endCandidate)->SetTileNum(24);
     return tilemap;
 }
 
@@ -241,7 +239,7 @@ void TilemapGenerator::SplitSpace(BSPNode* node, int depth)
     if (depth <= 0) return;
 
     const int minRoomSize = 7;  // 최소 방이 들어갈 수 있는 크기
-    const int minSplitSize = 10; // 기존 split 한계
+    const int minSplitSize = 7; // 기존 split 한계
 
     int width = node->area.right - node->area.left;
     int height = node->area.bottom - node->area.top;
@@ -372,6 +370,16 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
 
                 tilemap->SetTile(globalY, globalX, copy);
             }
+        }
+        if (!isShopRoom)
+        {
+            int centerX = offsetX + rw / 2;
+            int centerY = offsetY + rh / 2;
+
+            if (startCandidate.x == -1)
+                startCandidate = { centerX, centerY };
+            else
+                endCandidate = { centerX, centerY };
         }
     }
 }
