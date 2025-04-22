@@ -44,6 +44,7 @@ void TileItem::Interact(GameActor* actor)
 
 void TileItem::Drop()
 {
+	owner = nullptr;
 }
 
 void TileItem::Equip()
