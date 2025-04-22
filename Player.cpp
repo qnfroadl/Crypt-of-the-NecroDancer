@@ -11,6 +11,7 @@
 #include "PositionManager.h"
 #include "Shovel.h"
 #include "Tile.h"
+#include "SoundManager.h"
 
 void Player::OnBeatHit(EventData* data)
 {
@@ -38,6 +39,18 @@ void Player::OnBeatMiss(EventData* data)
 	//cout << "on beat miss" << endl;
 	// 카메라 흔들기.	
 	//Camera::GetInstance()->Shake(0.5f, 10);
+}
+
+void Player::OnComboReset(EventData* data)
+{
+	goldMultiple.Set(2);	// 최소 값 2.
+}
+void Player::OnComboUp(EventData* data)
+{
+	if (goldMultiple.Get() < 4)
+	{
+		goldMultiple.Set(goldMultiple.Get() + 1);
+	}
 }
 
 bool Player::JumpAnim()
@@ -85,7 +98,7 @@ void Player::SetJumpData(InputKey key)
 	else 
 	{
 		// 벽돌이 있다는 뜻.
-		tileMap.lock()->CanMove(pIndex);
+		SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
 
 		if (shovel)
 		{
@@ -95,6 +108,7 @@ void Player::SetJumpData(InputKey key)
 		{
 			// 삽도 없는데 부시려고 함. 실패 이벤트.
 			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYFAILED, nullptr, true);
+			Camera::GetInstance()->Shake(0.2, 5);
 		}
 		
 
@@ -125,7 +139,6 @@ Player::~Player()
 
 HRESULT Player::Init()
 {
-
 	image = ImageManager::GetInstance()->FindImage(EImageKey::CADENCE_HEAD);	//캐릭터 머리
 	body = ImageManager::GetInstance()->FindImage(EImageKey::CADENCE_BODY);		//캐릭터 몸통
 	
@@ -136,6 +149,9 @@ HRESULT Player::Init()
 
 	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
 	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
+
+	EventManager::GetInstance()->BindEvent(EventType::BLOCKDESTROYFAILED, std::bind(&Player::OnComboReset, this, std::placeholders::_1));
+
 
 	// 기본삽정도는 줘야지.
 	shovel = make_shared<Shovel>();
@@ -154,7 +170,7 @@ HRESULT Player::Init()
 	{
 		for (auto observer : observers)
 		{
-			
+			observer->OnPlayerGoldMultipleChanged(value);
 		}
 	});
 

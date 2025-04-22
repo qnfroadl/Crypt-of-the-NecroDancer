@@ -57,8 +57,21 @@ void ItemGold::SetGold(int gold)
 	{
 		image = ImageManager::GetInstance()->FindImage(string("coin") + std::to_string(gold));
 	}
-	else {
+	else if(gold < 30)
+	{
 		image = ImageManager::GetInstance()->FindImage("coin10");
+	}
+	else if (gold < 50)
+	{
+		image = ImageManager::GetInstance()->FindImage("coin30");
+	}
+	else if (gold < 100)
+	{
+		image = ImageManager::GetInstance()->FindImage("coin50");
+	}
+	else 
+	{
+		image = ImageManager::GetInstance()->FindImage("coin100");
 	}
 
 }

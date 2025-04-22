@@ -3,12 +3,23 @@
 #include "Block.h"
 #include "Tile.h"
 #include "EventManager.h"
+#include "Camera.h"
 
 HRESULT Shovel::Init()
 {
 	SetShovelType(ShovelType::NORMAL);
 
 	return S_OK;
+}
+
+void Shovel::Update()
+{
+
+}
+
+void Shovel::Render(HDC hdc)
+{
+
 }
 
 void Shovel::SetShovelType(ShovelType _shovelType)
@@ -52,6 +63,8 @@ void Shovel::Interact(GameActor* actor)
 		{
 			// 벽돌이 너무 튼튼해서, 실패 이벤트.
 			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYFAILED, nullptr, true);
+			Camera::GetInstance()->Shake(0.2, 5);
+
 		}
 	}
 }
