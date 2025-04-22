@@ -345,14 +345,17 @@ void Image::FrameRender(HDC hdc, float destX, float destY, int frameX, int frame
     float destOffsetX = -(float)destWidth * 0.5f;
     float destOffsetY = -(float)destHeight * 0.5f;
 
+    graphics.TranslateTransform(-frameWidth * 0.5f, -frameHeight * 0.5f, Gdiplus::MatrixOrderAppend);
+
     // 회전
-    //graphics.RotateTransform(angle);
+    graphics.RotateTransform(angle, Gdiplus::MatrixOrderAppend);
     if (isFlip)
     {
-        graphics.ScaleTransform(-1, 1);
-        destX = -destX - destWidth;
-        destOffsetX = (float)destWidth * 0.5f;
+        graphics.ScaleTransform(-1, 1, Gdiplus::MatrixOrderAppend);
     }
+    graphics.ScaleTransform(sizeX, sizeY, Gdiplus::MatrixOrderAppend);
+
+    graphics.TranslateTransform(destX, destY, Gdiplus::MatrixOrderAppend);
 
     // 알파 블렌딩
     Gdiplus::ColorMatrix colorMatrix = {
@@ -368,7 +371,7 @@ void Image::FrameRender(HDC hdc, float destX, float destY, int frameX, int frame
 	imgAttr.SetColorKey(Gdiplus::Color(255, 0, 255), Gdiplus::Color(255, 0, 255));
 
     graphics.DrawImage(imageInfo->gdiBitmap,
-        Gdiplus::Rect(destX + destOffsetX, destY + destOffsetY, destWidth, destHeight),
+        Gdiplus::Rect(0, 0, frameWidth, frameHeight),
         frameWidth * frameX, frameHeight * frameY,
         frameWidth, frameHeight,
         Gdiplus::UnitPixel, &imgAttr);
