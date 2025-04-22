@@ -7,7 +7,7 @@ struct RoomData
     int rows, cols;
     POINT playerStart;
     POINT nextStage;
-    vector<vector<Tile*>> tiles;
+    vector<vector<shared_ptr<Tile>>> tiles;
 };
 
 class TilemapGenerator : public Singleton<TilemapGenerator>

@@ -9,7 +9,7 @@ class Item;
 class Tilemap : public GameActor
 {
 private:
-	vector<vector<Tile*>> tiles;
+	vector<vector<shared_ptr<Tile>>> tiles;
 	int mapRows;
 	int mapColumns;
 	bool isCombo;
@@ -22,10 +22,11 @@ public:
 	void Update();
 	void Render(HDC hdc);
 
-	Tile* GetTile(POINT index);
+	shared_ptr<Tile> GetTile(POINT index);
+
 	FPOINT GetTilePos(POINT index);
 
-	void SetTile(int row, int col, Tile* tile);
+	void SetTile(int row, int col, const shared_ptr<Tile>& tile);
 
 	bool Destory(Item* item);
 	bool Destory(int strong);
@@ -42,5 +43,7 @@ public:
 	int GetHeight() { return mapRows; }
 
 	bool InteractTile(POINT index, GameActor* actor);
+
+	vector<shared_ptr<TileActor>> GetRendableTileActors();
 };
 

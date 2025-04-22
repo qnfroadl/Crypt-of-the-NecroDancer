@@ -24,42 +24,45 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
     ConnectAllRooms(tilemap, placedRects);
 
     AddMapBorder(tilemap);
-
     DeleteBSPTree(root);
+
     POINT end = tilemap->GetNextStageIndex();
-    Tile* endTile = tilemap->GetTile({ end.y, end.x });
+    shared_ptr<Tile> endTile = tilemap->GetTile({ end.y, end.x });
     if (endTile)
         endTile->SetTileNum(24);
 
+    // 플레이어 시작/종료 위치 직접 지정
+    RECT r = placedRects.front(); // 첫 방
+    int cx = (r.left + r.right) / 2;
+    int cy = (r.top + r.bottom) / 2;
+    tilemap->SetPlayerStartIndex({ cx, cy });
+    placedStart = true;
 
-        RECT r = placedRects.front(); // 첫 방
-        int cx = (r.left + r.right) / 2;
-        int cy = (r.top + r.bottom) / 2;
-        tilemap->SetPlayerStartIndex({ cx, cy });
-        placedStart = true;
+    r = placedRects.back(); // 마지막 방
+    cx = (r.left + r.right) / 2;
+    cy = (r.top + r.bottom) / 2;
+    tilemap->SetNextStageIndex({ cx, cy });
+    placedEnd = true;
 
-
-        r = placedRects.back(); // 마지막 방
-        cx = (r.left + r.right) / 2;
-        cy = (r.top + r.bottom) / 2;
-        tilemap->SetNextStageIndex({ cx, cy });
-        placedEnd = true;
     return tilemap;
 }
+
 Tilemap* TilemapGenerator::Generate(const string& zoneName)
 {
     LoadMapFiles("map");
 
-    // 정해진 BOSS, LOBBY 맵만 로드
     string path;
-    if (zoneName == "BOSS") {
+    if (zoneName == "BOSS") 
+    {
         path = "map/BOSS.map";
     }
-    else if (zoneName == "LOBBY") {
+    else if (zoneName == "LOBBY") 
+    {
         path = "map/LOBBY.map";
     }
-    else {
-        return nullptr; // 해당 zoneName이 아님
+    else 
+    {
+        return nullptr;
     }
 
     RoomData room = ParseMapFile(path);
@@ -72,9 +75,11 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
     {
         for (int x = 0; x < room.cols; ++x)
         {
-            Tile* src = room.tiles[y][x];
-            Tile* copy = new Tile();
+            shared_ptr<Tile> src = room.tiles[y][x];
+            auto copy = make_shared<Tile>();
+
             copy->Init(x, y);
+
             if (src->GetTileNum() == 1 && (x + y) % 2 == 1)
                 copy->SetTileNum(0);
             else if (src->GetTileNum() == 0 && (x + y) % 2 == 0)
@@ -84,7 +89,7 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
 
             if (src->GetBlock())
             {
-                Block* b = new Block();
+                auto b = make_shared<Block>();
                 b->Init(copy->GetPos(), { x, y });
                 b->SetBlockNum(src->GetBlock()->GetBlockNum());
                 copy->SetBlock(b);
@@ -94,10 +99,11 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
         }
     }
 
-    tilemap->SetPlayerStartIndex({ room.playerStart.x, room.playerStart.y });
-    tilemap->SetNextStageIndex({ room.nextStage.x, room.nextStage.y });
+    tilemap->SetPlayerStartIndex(room.playerStart);
+    tilemap->SetNextStageIndex(room.nextStage);
     return tilemap;
 }
+
 void TilemapGenerator::LoadMapFiles(const string& folderPath)
 {
     ClearRooms();
@@ -145,7 +151,7 @@ RoomData TilemapGenerator::ParseMapFile(const string& path)
     in >> label >> cols >> rows;
     room.cols = cols;
     room.rows = rows;
-    room.tiles.resize(rows, vector<Tile*>(cols, nullptr));
+    room.tiles.resize(rows, vector<shared_ptr<Tile>>(cols, nullptr));
 
     int sx, sy, ex, ey;
     in >> label >> sx >> sy;
@@ -153,25 +159,32 @@ RoomData TilemapGenerator::ParseMapFile(const string& path)
     in >> label >> ex >> ey;
     room.nextStage = { ex, ey };
 
-    in >> label; // FLOOR
-    for (int y = 0; y < rows; ++y) {
-        for (int x = 0; x < cols; ++x) {
+    // FLOOR
+    in >> label;
+    for (int y = 0; y < rows; ++y) 
+    {
+        for (int x = 0; x < cols; ++x) 
+        {
             int num;
             in >> num;
-            Tile* t = new Tile();
+            auto t = make_shared<Tile>();
             t->Init(x, y);
             t->SetTileNum(num);
             room.tiles[y][x] = t;
         }
     }
 
-    in >> label; // WALL
-    for (int y = 0; y < rows; ++y) {
-        for (int x = 0; x < cols; ++x) {
+    // WALL
+    in >> label;
+    for (int y = 0; y < rows; ++y) 
+    {
+        for (int x = 0; x < cols; ++x) 
+        {
             int num;
             in >> num;
-            if (num >= 0) {
-                Block* b = new Block();
+            if (num >= 0) 
+            {
+                auto b = make_shared<Block>();
                 b->Init(room.tiles[y][x]->GetPos(), { x, y });
                 b->SetBlockNum(num);
                 room.tiles[y][x]->SetBlock(b);
@@ -184,33 +197,37 @@ RoomData TilemapGenerator::ParseMapFile(const string& path)
 
 void TilemapGenerator::ClearRooms()
 {
-    auto deleteRoomData = [](RoomData& room) {
-        for (auto& row : room.tiles) {
-            for (auto& tile : row) {
-                if (tile) {
-                    if (tile->GetBlock()) {
-                        delete tile->GetBlock();
-                        tile->SetBlock(nullptr);
-                    }
-                    tile->Release(); // 혹시 정의되어 있다면
-                    delete tile;
+    auto releaseRoom = [](RoomData& room) {
+        for (auto& row : room.tiles) 
+        {
+            for (auto& tile : row) 
+            {
+                if (tile) 
+                {
+                    tile->SetBlock(nullptr);
+                    tile->Release();
+                    tile.reset();
                 }
             }
         }
         room.tiles.clear();
         };
 
-    for (auto& pair : zoneNormalRooms) {
-        for (RoomData& r : pair.second) deleteRoomData(r);
+    for (auto& pair : zoneNormalRooms) 
+    {
+        for (RoomData& r : pair.second) releaseRoom(r);
     }
-    for (auto& pair : zoneShopRooms) {
-        for (RoomData& r : pair.second) deleteRoomData(r);
+    for (auto& pair : zoneShopRooms) 
+    {
+        for (RoomData& r : pair.second) releaseRoom(r);
     }
-    for (auto& pair : zoneBossRoom) {
-        deleteRoomData(pair.second);
+    for (auto& pair : zoneBossRoom) 
+    {
+        releaseRoom(pair.second);
     }
-    for (auto& pair : zoneLobbyRoom) {
-        deleteRoomData(pair.second);
+    for (auto& pair : zoneLobbyRoom) 
+    {
+        releaseRoom(pair.second);
     }
 
     zoneNormalRooms.clear();
@@ -281,7 +298,6 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
     mt19937 g(rd());
     shuffle(leaves.begin(), leaves.end(), g);
 
-    // 방 배치
     bool shopPlaced = false;
 
     for (BSPNode* leaf : leaves)
@@ -289,12 +305,14 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
         RoomData room;
         bool isShopRoom = false;
 
-        if (!shopPlaced && !zoneShopRooms[zoneName].empty()) {
+        if (!shopPlaced && !zoneShopRooms[zoneName].empty()) 
+        {
             room = zoneShopRooms[zoneName][rand() % zoneShopRooms[zoneName].size()];
             shopPlaced = true;
             isShopRoom = true;
         }
-        else {
+        else 
+        {
             vector<RoomData>& normalRooms = zoneNormalRooms[zoneName];
             if (normalRooms.empty()) continue;
             room = normalRooms[rand() % normalRooms.size()];
@@ -312,16 +330,17 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
         if (offsetX + rw > tilemap->GetWidth() || offsetY + rh > tilemap->GetHeight())
             continue;
 
-		bool isOverlapping = false;
+        bool isOverlapping = false;
         for (const RECT& r : placedRects)
         {
-            if (IsOverlapping(tryRect, r))
+            if (IsOverlapping(tryRect, r)) 
             {
-				isOverlapping = true;
-				break;
+                isOverlapping = true;
+                break;
             }
         }
         if (isOverlapping) continue;
+
         leaf->roomRect = tryRect;
         placedRects.push_back(tryRect);
 
@@ -329,13 +348,13 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
         {
             for (int x = 0; x < rw; ++x)
             {
-                Tile* src = room.tiles[y][x];
-                Tile* copy = new Tile();
+                shared_ptr<Tile> src = room.tiles[y][x];
+                auto copy = make_shared<Tile>();
 
                 int globalX = offsetX + x;
                 int globalY = offsetY + y;
 
-                copy->Init(globalX, globalY); //  Init은 (x, y)
+                copy->Init(globalX, globalY);
                 if (src->GetTileNum() == 1 && (globalX + globalY) % 2 == 1)
                     copy->SetTileNum(0);
                 else if (src->GetTileNum() == 0 && (globalX + globalY) % 2 == 0)
@@ -345,13 +364,13 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
 
                 if (src->GetBlock())
                 {
-                    Block* b = new Block();
-                    b->Init(copy->GetPos(), { globalX, globalY }); //  (x, y)
+                    auto b = make_shared<Block>();
+                    b->Init(copy->GetPos(), { globalX, globalY });
                     b->SetBlockNum(src->GetBlock()->GetBlockNum());
                     copy->SetBlock(b);
                 }
 
-                tilemap->SetTile(globalY, globalX, copy); //  tilemap은 (y, x)
+                tilemap->SetTile(globalY, globalX, copy);
             }
         }
     }
@@ -409,20 +428,17 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
 
     auto carve = [&](int x, int y)
         {
-            Tile* tile = tilemap->GetTile({ x, y });
+            shared_ptr<Tile> tile = tilemap->GetTile({ x, y });
             if (!tile)
             {
-                tile = new Tile();
-                tile->Init(x, y); //  (x, y)
-                tilemap->SetTile(y, x, tile); //  (y, x)
+                tile = make_shared<Tile>();
+                tile->Init(x, y);
+                tilemap->SetTile(y, x, tile); // (y, x)
             }
 
             int tileNum = ((x + y) % 2 == 0) ? 1 : 0;
             tile->SetTileNum(tileNum);
-            if (tile->GetBlock()) {
-                delete tile->GetBlock();
-                tile->SetBlock(nullptr);
-            }
+            tile->SetBlock(nullptr); // 이전 블록 제거
 
             // 양옆 벽 만들기
             POINT sideOffsets[2];
@@ -439,18 +455,19 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
             {
                 int nx = x + sideOffsets[i].x;
                 int ny = y + sideOffsets[i].y;
-                Tile* neighbor = tilemap->GetTile({ nx, ny });
+
+                shared_ptr<Tile> neighbor = tilemap->GetTile({ nx, ny });
                 if (!neighbor)
                 {
-                    neighbor = new Tile();
-                    neighbor->Init(nx, ny); //  (x, y)
-                    int tileNum = ((nx + ny) % 2 == 0) ? 1 : 0;
-                    neighbor->SetTileNum(tileNum);
-                    tilemap->SetTile(ny, nx, neighbor); //  (y, x)
+                    neighbor = make_shared<Tile>();
+                    neighbor->Init(nx, ny);
+                    neighbor->SetTileNum(((nx + ny) % 2 == 0) ? 1 : 0);
+                    tilemap->SetTile(ny, nx, neighbor);
                 }
+
                 if (!neighbor->GetBlock())
                 {
-                    Block* wall = new Block();
+                    auto wall = make_shared<Block>();
                     wall->Init(neighbor->GetPos(), { nx, ny });
                     wall->SetBlockNum(rand() % 18);
                     neighbor->SetBlock(wall);
@@ -468,89 +485,43 @@ void TilemapGenerator::CreateCorridor(Tilemap* tilemap, POINT from, POINT to)
         while (cur.y != to.y) { carve(cur.x, cur.y); cur.y += (to.y > cur.y ? 1 : -1); }
         while (cur.x != to.x) { carve(cur.x, cur.y); cur.x += (to.x > cur.x ? 1 : -1); }
     }
-    carve(to.x, to.y);
 
-    // 복도 양 끝 옆 벽 보장
-    POINT ends[2] = { from, to };
-    for (int i = 0; i < 2; ++i)
-    {
-        int cx = ends[i].x;
-        int cy = ends[i].y;
-        POINT sideOffsets[2];
-        if (isHorizontal) {
-            sideOffsets[0] = { 0, -1 };
-            sideOffsets[1] = { 0,  1 };
-        }
-        else {
-            sideOffsets[0] = { -1, 0 };
-            sideOffsets[1] = { 1, 0 };
-        }
-
-        for (int j = 0; j < 2; ++j)
-        {
-            int nx = cx + sideOffsets[j].x;
-            int ny = cy + sideOffsets[j].y;
-            Tile* neighbor = tilemap->GetTile({ nx, ny });
-            if (!neighbor)
-            {
-                neighbor = new Tile();
-                neighbor->Init(nx, ny); //  (x, y)
-                int tileNum = ((nx + ny) % 2 == 0) ? 1 : 0;
-                neighbor->SetTileNum(tileNum);
-                tilemap->SetTile(ny, nx, neighbor); //  (y, x)
-            }
-            if (!neighbor->GetBlock())
-            {
-                Block* wall = new Block();
-                wall->Init(neighbor->GetPos(), { nx, ny });
-                wall->SetBlockNum(rand() % 18);
-                neighbor->SetBlock(wall);
-            }
-        }
-    }
+    carve(to.x, to.y); // 마지막 도착 지점까지 보장
 }
+
 void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT direction)
 {
     // 중심 타일 보장
-    Tile* tile = tilemap->GetTile({ doorPos.x, doorPos.y }); //  (y, x)
+	shared_ptr<Tile> tile = tilemap->GetTile({ doorPos.x, doorPos.y });
     if (!tile)
     {
-        tile = new Tile();
-        tile->Init(doorPos.x, doorPos.y); //  (x, y)
-        tilemap->SetTile(doorPos.y, doorPos.x, tile); //  (y, x)
+        auto newTile = make_shared<Tile>();
+        newTile->Init(doorPos.x, doorPos.y);
+        tilemap->SetTile(doorPos.y, doorPos.x, newTile);
+        tile = newTile;
     }
 
     int tileNum = ((doorPos.x + doorPos.y) % 2 == 0) ? 1 : 0;
     tile->SetTileNum(tileNum);
 
-    if (tile->GetBlock())
-    {
-        delete tile->GetBlock();
-        tile->SetBlock(nullptr);
-    }
+    tile->SetBlock(nullptr); // 기존 블록 제거
 
     // 문 설치
-    Block* door = new Block();
-    door->Init(tile->GetPos(), doorPos); //  (x, y)
+    auto door = make_shared<Block>();
+    door->Init(tile->GetPos(), doorPos);
     door->SetBlockNum((direction.x != 0) ? 62 : 61);
     tile->SetBlock(door);
 
     // 앞뒤는 반드시 비워야 함
     int backX = doorPos.x + direction.x;
     int backY = doorPos.y + direction.y;
-    Tile* forward = tilemap->GetTile({ backX, backY });
-    if (forward && forward->GetBlock()) {
-        delete forward->GetBlock();
-        forward->SetBlock(nullptr);
-    }
+	shared_ptr<Tile> forward = tilemap->GetTile({ backX, backY });
+    if (forward) forward->SetBlock(nullptr);
 
     int frontX = doorPos.x - direction.x;
     int frontY = doorPos.y - direction.y;
-    Tile* backward = tilemap->GetTile({ frontX, frontY });
-    if (backward && backward->GetBlock()) {
-        delete backward->GetBlock();
-        backward->SetBlock(nullptr);
-    }
+	shared_ptr<Tile> backward = tilemap->GetTile({ frontX, frontY });
+    if (backward) backward->SetBlock(nullptr);
 
     // 좌우 벽은 반드시 있어야 함
     int leftX = doorPos.x - direction.y;
@@ -559,24 +530,25 @@ void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT directio
     int rightY = doorPos.y - direction.x;
 
     POINT wallSpots[2] = { { leftX, leftY }, { rightX, rightY } };
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 2; ++i) 
+    {
         int wx = wallSpots[i].x;
         int wy = wallSpots[i].y;
-        Tile* wallTile = tilemap->GetTile({ wx, wy }); //  (y, x)
+
+		shared_ptr<Tile> wallTile = tilemap->GetTile({ wx, wy });
         if (!wallTile)
         {
-            wallTile = new Tile();
-            wallTile->Init(wx, wy); //  (x, y)
-            tilemap->SetTile(wy, wx, wallTile); //  (y, x)
+            auto newTile = make_shared<Tile>();
+            newTile->Init(wx, wy);
+            newTile->SetTileNum(((wx + wy) % 2 == 0) ? 1 : 0);
+            tilemap->SetTile(wy, wx, newTile);
+            wallTile = newTile;
         }
-
-        int tileNum = ((wx + wy) % 2 == 0) ? 1 : 0;
-        wallTile->SetTileNum(tileNum);
 
         if (!wallTile->GetBlock())
         {
-            Block* wall = new Block();
-            wall->Init(wallTile->GetPos(), { wx, wy }); //  (x, y)
+            auto wall = make_shared<Block>();
+            wall->Init(wallTile->GetPos(), { wx, wy });
             wall->SetBlockNum(rand() % 18);
             wallTile->SetBlock(wall);
         }
@@ -593,7 +565,7 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
     {
         for (int x = 0; x < w; ++x)
         {
-            Tile* center = tilemap->GetTile({ x, y }); //  (y, x)
+			shared_ptr<Tile> center = tilemap->GetTile({ x, y });
             if (!center) continue;
 
             POINT offsets[4] = { {-1,0}, {1,0}, {0,-1}, {0,1} };
@@ -604,20 +576,20 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
 
                 if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
 
-                Tile* neighbor = tilemap->GetTile({ nx, ny }); //  (y, x)
+				shared_ptr<Tile> neighbor = tilemap->GetTile({ nx, ny });
                 if (!neighbor)
                 {
-                    Tile* wallTile = new Tile();
-                    wallTile->Init(nx, ny); //  (x, y)
+                    auto wallTile = make_shared<Tile>();
+                    wallTile->Init(nx, ny);
                     int tileNum = ((nx + ny) % 2 == 0) ? 1 : 0;
                     wallTile->SetTileNum(tileNum);
 
-                    Block* wall = new Block();
-                    wall->Init(wallTile->GetPos(), { nx, ny }); //  (x, y)
+                    auto wall = make_shared<Block>();
+                    wall->Init(wallTile->GetPos(), { nx, ny });
                     wall->SetBlockNum(rand() % 18);
                     wallTile->SetBlock(wall);
 
-                    tilemap->SetTile(ny, nx, wallTile); //  (y, x)
+                    tilemap->SetTile(ny, nx, wallTile);
                 }
             }
         }
@@ -631,41 +603,38 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
             bool isEdge = (x == 0 || x == w - 1 || y == 0 || y == h - 1);
             if (!isEdge) continue;
 
-            Tile* tile = tilemap->GetTile({ x, y });
+			shared_ptr<Tile> tile = tilemap->GetTile({ x, y });
             if (!tile)
             {
-                tile = new Tile();
-                tile->Init(x, y); //  (x, y)
+                auto newTile = make_shared<Tile>();
+                newTile->Init(x, y);
                 int tileNum = ((x + y) % 2 == 0) ? 1 : 0;
-                tile->SetTileNum(tileNum);
-                tilemap->SetTile(y, x, tile); //  (y, x)
+                newTile->SetTileNum(tileNum);
+                tilemap->SetTile(y, x, newTile);
+                tile = newTile;
             }
 
-            if (tile->GetBlock())
-            {
-                delete tile->GetBlock();
-                tile->SetBlock(nullptr);
-            }
+            tile->SetBlock(nullptr); // 기존 제거
 
-            Block* b = new Block();
-            b->Init(tile->GetPos(), { x, y }); //  (x, y)
-            b->SetBlockNum(60);
+            auto b = make_shared<Block>();
+            b->Init(tile->GetPos(), { x, y });
+            b->SetBlockNum(60); // 절대 벽
             tile->SetBlock(b);
         }
     }
+
+    // 혹시라도 비어있는 곳이 남았으면 기본 타일로 채우기
     for (int y = 0; y < h; ++y)
     {
         for (int x = 0; x < w; ++x)
         {
-            Tile* tile = tilemap->GetTile({ x, y });
+			shared_ptr<Tile> tile = tilemap->GetTile({ x, y });
             if (!tile)
             {
-                tile = new Tile();
-                tile->Init(x, y);
-                tilemap->SetTile(y, x, tile);
-
-                int tileNum = ((x + y) % 2 == 0) ? 1 : 0;
-                tile->SetTileNum(tileNum);
+                auto t = make_shared<Tile>();
+                t->Init(x, y);
+                t->SetTileNum(((x + y) % 2 == 0) ? 1 : 0);
+                tilemap->SetTile(y, x, t);
             }
         }
     }

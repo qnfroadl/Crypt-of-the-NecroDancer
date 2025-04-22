@@ -1,4 +1,4 @@
-﻿#include "Tilemap.h"  
+﻿#include "Tilemap.h"
 #include "Tile.h"
 #include "Block.h"
 #include <fstream>
@@ -8,15 +8,8 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 {
 	mapRows = _mapRows;
 	mapColumns = _mapColumns;
-	tiles = vector<vector<Tile*>>(_mapRows, vector<Tile*>(_mapColumns, nullptr));
-	/*for (int i = 0; i < mapRows; ++i)
-	{
-		for (int j = 0; j < mapColumns; ++j)
-		{
-			tiles[i][j] = new Tile();
-			tiles[i][j]->Init(i, j);
-		}
-	}*/
+	tiles = vector<vector<shared_ptr<Tile>>>(_mapRows, vector<shared_ptr<Tile>>(_mapColumns, nullptr));
+
 	EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
 	return S_OK;
 }
@@ -27,10 +20,9 @@ void Tilemap::Release()
 	{
 		for (auto& tile : row)
 		{
-			if (tile) 
+			if (tile)
 			{
-				tile->Release();
-				delete tile;
+				tile->Release(); // 해제만 호출, delete 안 함
 			}
 		}
 		row.clear();
@@ -44,7 +36,7 @@ void Tilemap::Update()
 	{
 		for (auto& tile : row)
 		{
-			if (tile) 
+			if (tile)
 			{
 				tile->Update();
 			}
@@ -66,10 +58,10 @@ void Tilemap::Render(HDC hdc)
 	}
 }
 
-Tile* Tilemap::GetTile(POINT index)
+shared_ptr<Tile> Tilemap::GetTile(POINT index)
 {
-	if (tiles.empty()) return nullptr;
-	if (index.y >= 0 && index.y < tiles.size() && index.x >= 0 && index.x < tiles[index.y].size())
+	if (index.y >= 0 && index.y < tiles.size() &&
+		index.x >= 0 && index.x < tiles[index.y].size())
 	{
 		return tiles[index.y][index.x];
 	}
@@ -81,38 +73,38 @@ FPOINT Tilemap::GetTilePos(POINT index)
 	return tiles[index.y][index.x]->GetPos();
 }
 
-bool Tilemap::Destory(Item* item) 
+bool Tilemap::Destory(Item* item)
 {
 	return false;
 }
 
-bool Tilemap::Destory(int strong) 
+bool Tilemap::Destory(int strong)
 {
 	return false;
 }
 
-bool Tilemap::CanMove(POINT index) 
+bool Tilemap::CanMove(POINT index)
 {
 	if (tiles.empty()) return false;
-	Tile* tile = GetTile(index);
+	shared_ptr<Tile> tile = GetTile(index);
 	return (tile && tile->GetBlock() == nullptr);
 }
 
-void Tilemap::Move(TileActor* actor, POINT index) 
+void Tilemap::Move(TileActor* actor, POINT index)
 {
-	if (CanMove(index)) 
+	if (CanMove(index))
 	{
-		// 액터 이동
+		// 이동 처리
 	}
 }
 
-POINT Tilemap::GetSpawnIndex() 
+POINT Tilemap::GetSpawnIndex()
 {
-	for (int i = 0; i < tiles.size(); ++i) 
+	for (int i = 0; i < tiles.size(); ++i)
 	{
 		for (int j = 0; j < tiles[i].size(); ++j)
 		{
-			if (tiles[i][j] && tiles[i][j]->GetBlock() == nullptr) 
+			if (tiles[i][j] && tiles[i][j]->GetBlock() == nullptr)
 			{
 				return { j, i };
 			}
@@ -124,14 +116,16 @@ POINT Tilemap::GetSpawnIndex()
 void Tilemap::Load(string filePath)
 {
 	ifstream in(filePath);
-	if (!in.is_open()) {
+	if (!in.is_open()) 
+	{
 		MessageBoxA(nullptr, ("맵 파일 열기 실패: " + filePath).c_str(), "에러", MB_OK | MB_ICONERROR);
 		return;
 	}
 
 	string header;
 	in >> header;
-	if (header != "TILEMAP") {
+	if (header != "TILEMAP") 
+	{
 		MessageBoxA(nullptr, "맵 파일 헤더가 'TILEMAP'이 아님", "에러", MB_OK | MB_ICONERROR);
 		return;
 	}
@@ -139,24 +133,24 @@ void Tilemap::Load(string filePath)
 	string sizeLabel;
 	int fileCols, fileRows;
 	in >> sizeLabel >> fileCols >> fileRows;
-	if (fileCols != mapColumns || fileRows != mapRows) {
+	if (fileCols != mapColumns || fileRows != mapRows) 
+	{
 		MessageBoxA(nullptr, "맵 크기가 현재 설정과 다릅니다", "에러", MB_OK | MB_ICONERROR);
 		return;
 	}
 
 	// Tile을 새로 생성
-		for (int x = 0; x < mapColumns; ++x)
+	for (int x = 0; x < mapColumns; ++x)
 	{
-	for (int y = 0; y < mapRows; ++y)
+		for (int y = 0; y < mapRows; ++y)
 		{
-			if (tiles[y][x]) {
+			if (tiles[y][x])
+			{
 				tiles[y][x]->Release();
-				delete tiles[y][x];
-				tiles[y][x] = nullptr;
 			}
 
-			Tile* tile = new Tile();
-			tile->Init(x, y); // Init(x, y) 사용
+			auto tile = make_shared<Tile>();
+			tile->Init(x, y);
 			tiles[y][x] = tile;
 		}
 	}
@@ -189,14 +183,14 @@ void Tilemap::Load(string filePath)
 		return;
 	}
 
-		for (int x = 0; x < mapColumns; ++x) {
-	for (int y = 0; y < mapRows; ++y) {
+	for (int x = 0; x < mapColumns; ++x) {
+		for (int y = 0; y < mapRows; ++y) {
 			int tileNum;
 			in >> tileNum;
-			Tile* tile = tiles[y][x];
+
+			auto tile = tiles[y][x];
 			tile->SetTileNum(tileNum);
 
-			// 밝은 타일 보정
 			if (tileNum == 1 && (x + y) % 2 == 1)
 				tile->SetTileNum(0);
 		}
@@ -209,20 +203,21 @@ void Tilemap::Load(string filePath)
 		return;
 	}
 
-		for (int x = 0; x < mapColumns; ++x) {
-	for (int y = 0; y < mapRows; ++y) {
+	for (int x = 0; x < mapColumns; ++x) {
+		for (int y = 0; y < mapRows; ++y) {
 			int wallNum;
 			in >> wallNum;
 
-			Tile* tile = tiles[y][x];
+			auto tile = tiles[y][x];
 
-			if (tile->GetBlock()) {
-				delete tile->GetBlock();
+			if (tile->GetBlock()) 
+			{
 				tile->SetBlock(nullptr);
 			}
 
-			if (wallNum >= 0) {
-				Block* block = new Block();
+			if (wallNum >= 0) 
+			{
+				auto block = make_shared<Block>();
 				block->Init(tile->GetPos(), tile->GetTileIndex());
 				block->SetBlockNum(wallNum);
 				tile->SetBlock(block);
@@ -249,27 +244,50 @@ void Tilemap::OnBeat(bool isCombo)
 
 bool Tilemap::InteractTile(POINT index, GameActor* actor)
 {
-	Tile* tile = GetTile(index);
+	shared_ptr<Tile> tile = GetTile(index);
 	if (tile)
 	{
-		// 서로 상호 작용. 뭘 할진 모름.
 		tile->Interact(actor);
-		actor->Interact(tile);
+		actor->Interact(tile.get());
 		return true;
 	}
-
 	return false;
 }
 
-void Tilemap::SetTile(int row, int col, Tile* tile)
+void Tilemap::SetTile(int row, int col, const shared_ptr<Tile>& tile)
 {
 	if (row < 0 || row >= mapRows || col < 0 || col >= mapColumns) return;
 
 	if (tiles[row][col])
 	{
 		tiles[row][col]->Release();
-		delete tiles[row][col];
 	}
 
 	tiles[row][col] = tile;
+}
+
+vector<shared_ptr<TileActor>> Tilemap::GetRendableTileActors()
+{
+	vector<shared_ptr<TileActor>> result;
+
+	for (int y = 0; y < mapRows; ++y)
+	{
+		for (int x = 0; x < mapColumns; ++x)
+		{
+			auto tile = tiles[y][x];
+			if (!tile) continue;
+
+			auto tileActors = tile->GetRendableTileActors();
+			result.insert(result.end(), tileActors.begin(), tileActors.end());
+
+			auto block = tile->GetBlock();
+			if (block)
+			{
+				auto blockActors = block->GetRendableTileActors();
+				result.insert(result.end(), blockActors.begin(), blockActors.end());
+			}
+		}
+	}
+
+	return result;
 }

@@ -27,7 +27,6 @@ HRESULT TilemapTool::Init()
 	rcSampleTile = { TILEMAPTOOL_X - sampleTile->GetWidth(), 0, TILEMAPTOOL_X, sampleTile->GetHeight() };
 	rcSampleWall = { TILEMAPTOOL_X - sampleWall->GetWidth(), rcSampleTile.bottom + 10, TILEMAPTOOL_X, rcSampleTile.bottom + 10 + sampleWall->GetHeight() };
 
-	// 버튼
 	rcFloorEraser = { TILEMAPTOOL_X - 300, rcSampleWall.bottom + 80, TILEMAPTOOL_X - 200, rcSampleWall.bottom + 120 };
 	rcWallEraser = { TILEMAPTOOL_X - 150, rcSampleWall.bottom + 80, TILEMAPTOOL_X - 50, rcSampleWall.bottom + 120 };
 	rcSaveBtn = { TILEMAPTOOL_X - 300, rcWallEraser.bottom + 60, TILEMAPTOOL_X - 200, rcWallEraser.bottom + 100 };
@@ -38,15 +37,17 @@ HRESULT TilemapTool::Init()
 	rcPlayerStartBtn = { 50, rcSizeDownBtn.bottom + 40, 150, rcSizeDownBtn.bottom + 80 };
 	rcNextStageBtn = { 200, rcSizeDownBtn.bottom + 40, 300, rcSizeDownBtn.bottom + 80 };
 
-	tiles = vector<vector<Tile*>>(mapSize, vector<Tile*>(mapSize, nullptr));
 
-	for (int i = 0; i < mapSize; i++) {
-		for (int j = 0; j < mapSize; j++) {
-			tiles[j][i] = new Tile();
-			tiles[j][i]->Init(i, j);
-			tiles[j][i]->SetTileNum(-1);
-			/*RECT rc = { i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE + TILE_SIZE, j * TILE_SIZE + TILE_SIZE };
-			tiles[j][i]->SetRcTile(rc);*/
+	tiles = vector<vector<shared_ptr<Tile>>>(mapSize, vector<shared_ptr<Tile>>(mapSize, nullptr));
+
+	for (int i = 0; i < mapSize; i++) 
+	{
+		for (int j = 0; j < mapSize; j++) 
+		{
+			auto tile = make_shared<Tile>();
+			tile->Init(i, j);
+			tile->SetTileNum(-1);
+			tiles[j][i] = tile;
 		}
 	}
 	return S_OK;
@@ -56,14 +57,15 @@ void TilemapTool::Release()
 {
 	if (!tiles.empty())
 	{
-		for (int j = 0; j < mapSize; j++) {
-			for (int i = 0; i < mapSize; i++) {
-				delete tiles[j][i];
-				tiles[j][i] = nullptr;
+		for (int j = 0; j < mapSize; j++)
+		{
+			for (int i = 0; i < mapSize; i++)
+			{
+				if (tiles[j][i])
+					tiles[j][i]->Release();  // 메모리 해제는 shared_ptr이 자동 처리
 			}
 		}
 		tiles.clear();
-
 	}
 }
 
@@ -119,10 +121,9 @@ void TilemapTool::Update()
 			}
 			case ToolType::WALL_TILE: {
 				int tileNum = (lStay ? selectedTileLX + selectedTileLY * SAMPLE_WALL_X : selectedTileRX + selectedTileRY * SAMPLE_WALL_X);
-				Block* oldBlock = tiles[y][x]->GetBlock();
-				if (oldBlock) delete oldBlock;
+				tiles[y][x]->SetBlock(nullptr);
 
-				Block* block = new Block();
+				auto block = make_shared<Block>();
 				block->Init(tiles[y][x]->GetPos(), tiles[y][x]->GetTileIndex());
 				block->SetBlockNum(tileNum);
 				tiles[y][x]->SetBlock(block);
@@ -261,26 +262,25 @@ void TilemapTool::Save(string filePath)
 	out << "TILEMAP" << endl;
 	out << "SIZE " << mapSize << " " << mapSize << endl;
 
-	// 플레이어 시작 위치 저장
 	out << "PLAYER_START " << playerStartX << " " << playerStartY << endl;
-
-	// 다음 스테이지 위치 저장
 	out << "NEXT_STAGE " << nextStageX << " " << nextStageY << endl;
 
-	// FLOOR 저장
 	out << "FLOOR" << endl;
-	for (int j = 0; j < mapSize; j++) {
-		for (int i = 0; i < mapSize; i++) {
+	for (int j = 0; j < mapSize; j++) 
+	{
+		for (int i = 0; i < mapSize; i++) 
+		{
 			out << tiles[j][i]->GetTileNum() << " ";
 		}
 		out << endl;
 	}
 
-	// WALL 저장
 	out << "WALL" << endl;
-	for (int j = 0; j < mapSize; j++) {
-		for (int i = 0; i < mapSize; i++) {
-			Block* block = tiles[j][i]->GetBlock();
+	for (int j = 0; j < mapSize; j++) 
+	{
+		for (int i = 0; i < mapSize; i++) 
+		{
+			auto block = tiles[j][i]->GetBlock();
 			if (block) out << block->GetBlockNum() << " ";
 			else out << -1 << " ";
 		}
@@ -299,48 +299,55 @@ void TilemapTool::Load(string filePath)
 	in >> header;
 	if (header != "TILEMAP") return;
 
-	// SIZE 파싱
 	string sizeLabel;
 	int newWidth, newHeight;
 	in >> sizeLabel >> newWidth >> newHeight;
 
-	// 플레이어 시작 위치 파싱
 	string section;
 	in >> section;
-	if (section == "PLAYER_START") {
+	if (section == "PLAYER_START") 
+	{
 		in >> playerStartX >> playerStartY;
 	}
 
-	// 다음 스테이지 위치 파싱
 	in >> section;
-	if (section == "NEXT_STAGE") {
+	if (section == "NEXT_STAGE") 
+	{
 		in >> nextStageX >> nextStageY;
 	}
 
 	// 기존 타일 제거
-	for (int j = 0; j < tiles.size(); j++) {
-		for (int i = 0; i < tiles[j].size(); i++) {
-			delete tiles[j][i];
+	for (int j = 0; j < tiles.size(); j++) 
+	{
+		for (int i = 0; i < tiles[j].size(); i++) 
+		{
+			if (tiles[j][i])
+				tiles[j][i]->Release();
 		}
 	}
 	tiles.clear();
 
-	// 새 타일 배열 생성
-	tiles.resize(newHeight, vector<Tile*>(newWidth, nullptr));
-	for (int j = 0; j < newHeight; j++) {
-		for (int i = 0; i < newWidth; i++) {
-			tiles[j][i] = new Tile();
-			tiles[j][i]->Init(i, j);  // 좌표 초기화
+	// 새 타일 배열 생성 (shared_ptr)
+	tiles.resize(newHeight, vector<shared_ptr<Tile>>(newWidth, nullptr));
+	for (int j = 0; j < newHeight; j++) 
+	{
+		for (int i = 0; i < newWidth; i++) 
+		{
+			auto tile = make_shared<Tile>();
+			tile->Init(i, j);
+			tiles[j][i] = tile;
 		}
 	}
-
 	mapSize = newWidth;
 
-	// FLOOR 파싱
+	// FLOOR
 	in >> section;
-	if (section == "FLOOR") {
-		for (int j = 0; j < newHeight; j++) {
-			for (int i = 0; i < newWidth; i++) {
+	if (section == "FLOOR") 
+	{
+		for (int j = 0; j < newHeight; j++) 
+		{
+			for (int i = 0; i < newWidth; i++) 
+			{
 				int tileNum;
 				in >> tileNum;
 				tiles[j][i]->SetTileNum(tileNum);
@@ -348,21 +355,24 @@ void TilemapTool::Load(string filePath)
 		}
 	}
 
-	// WALL 파싱
+	// WALL
 	in >> section;
 	if (section == "WALL") {
-		for (int j = 0; j < newHeight; j++) {
-			for (int i = 0; i < newWidth; i++) {
+		for (int j = 0; j < newHeight; j++) 
+		{
+			for (int i = 0; i < newWidth; i++) 
+			{
 				int wallNum;
 				in >> wallNum;
-				if (wallNum >= 0) {
-					Block* block = new Block();
+
+				tiles[j][i]->SetBlock(nullptr); // 기존 블록 제거
+
+				if (wallNum >= 0) 
+				{
+					auto block = make_shared<Block>();
 					block->Init(tiles[j][i]->GetPos(), tiles[j][i]->GetTileIndex());
 					block->SetBlockNum(wallNum);
 					tiles[j][i]->SetBlock(block);
-				}
-				else {
-					tiles[j][i]->SetBlock(nullptr);
 				}
 			}
 		}
@@ -384,7 +394,8 @@ void TilemapTool::LoadDialog()
 	ofn.Flags = OFN_FILEMUSTEXIST;
 	ofn.lpstrDefExt = TEXT("map");
 
-	if (GetOpenFileName(&ofn)) {
+	if (GetOpenFileName(&ofn)) 
+	{
 		std::wstring ws(ofn.lpstrFile);
 		std::string path(ws.begin(), ws.end());
 
@@ -406,7 +417,8 @@ void TilemapTool::SaveDialog()
 	ofn.Flags = OFN_OVERWRITEPROMPT;
 	ofn.lpstrDefExt = TEXT("map");
 
-	if (GetSaveFileName(&ofn)) {
+	if (GetSaveFileName(&ofn)) 
+	{
 		std::wstring ws(ofn.lpstrFile);
 		std::string path(ws.begin(), ws.end());
 

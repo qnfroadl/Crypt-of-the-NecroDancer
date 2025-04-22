@@ -52,7 +52,7 @@ void Shovel::Interact(GameActor* actor)
 	{
 		Tile* tile = static_cast<Tile*>(actor);
 
-		Block* block = tile->GetBlock();
+		Block* block = tile->GetBlock().get();
 		// 벽돌의 경도가, 삽의 경도보다 작거나 같다 -> 뿌셔뿌셔. 먹고싶다
 		if (block && block->GetHardness() <= hardness)
 		{

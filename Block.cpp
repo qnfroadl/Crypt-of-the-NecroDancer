@@ -116,3 +116,10 @@ void Block::SetBlockByBlockNum(int _blockNum)
 
 	maxHP = hp;
 }
+
+vector<shared_ptr<TileActor>> Block::GetRendableTileActors()
+{
+	vector<shared_ptr<TileActor>> result;
+	result.push_back(shared_from_this());
+	return result;
+}

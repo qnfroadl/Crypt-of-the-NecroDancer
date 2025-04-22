@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "config.h"
 #include "TileActor.h"
+#include "IRendableTileActor.h"
+
 
 enum class BlockType
 {
@@ -16,25 +18,25 @@ enum class BlockType
 class Item;
 class Image;
 
-class Block : public TileActor
+class Block : public TileActor, public IRendableTileActor, public enable_shared_from_this<Block>
 {
 private:
-	int blockNum;         // 벽 타일 번호 (샘플에서의 인덱스)
+	int blockNum;
 	int maxHP;
 	int hp;
-	BlockType type;      // 벽 종류 (강도, 특성)
+	BlockType type;
 	Image* blocklImage;
-	
+
 public:
-	Block() { SetType(ActorType::BLOCK); };
-	~Block() {};
+	Block() { SetType(ActorType::BLOCK); }
+	~Block() {}
 
 	HRESULT Init();
 	HRESULT Init(FPOINT _pos, POINT _index);
 	void Render(HDC hdc, bool useCamera = true);
 
-	void Destroy();     // 아이템 기준 파괴 가능 여부
-	bool Destroy(int strength);   // 정수로 강도 비교
+	void Destroy();
+	bool Destroy(int strength);
 
 	void SetBlockNum(int _blockNum);
 	int GetBlockNum() { return blockNum; }
@@ -42,6 +44,8 @@ public:
 	void SetBlockByBlockNum(int WallNum);
 	BlockType GetType() { return type; }
 
-	int GetHardness() {return maxHP;}
+	int GetHardness() { return maxHP; }
 
+	// 렌더링 대상 반환
+	virtual vector<shared_ptr<TileActor>> GetRendableTileActors() override;
 };
