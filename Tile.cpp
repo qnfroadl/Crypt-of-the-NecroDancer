@@ -120,11 +120,11 @@ void Tile::SetBlock(Block* _block)
 		block = nullptr;
 		return;
 	}
-	if (block)
-	{
-		block->Release();
-		delete block;
-	}
+	//if (block)
+	//{
+	//	delete block;
+	//	block = nullptr;
+	//}
 	block = _block;
 }
 

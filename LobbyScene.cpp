@@ -86,6 +86,8 @@ void LobbyScene::Release()
         map = nullptr;
     }
 
+    playerManager.lock()->BindRelease();
+
     DeleteObject(blackBrush);
 
 }

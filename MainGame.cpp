@@ -155,6 +155,7 @@ HRESULT MainGame::Init()
 	lobby->SetPlayerManager(playerManager);
 	lobby->SetMonsterManager(monsterManager);
 	SceneManager::GetInstance()->AddScene("LobbyScene", lobby);
+
 	LevelScene* level = new LevelScene();
 	level->SetPlayerManager(playerManager);
 	level->SetMonsterManager(monsterManager);
@@ -195,6 +196,7 @@ HRESULT MainGame::Init()
 	// 로비 씬 로딩.
 	
 	SceneManager::GetInstance()->ChangeScene("LobbyScene");
+	//SceneManager::GetInstance()->ChangeScene("LevelScene");
 
 
 	backBuffer = new Image();

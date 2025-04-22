@@ -31,6 +31,19 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
     if (endTile)
         endTile->SetTileNum(24);
 
+
+        RECT r = placedRects.front(); // 첫 방
+        int cx = (r.left + r.right) / 2;
+        int cy = (r.top + r.bottom) / 2;
+        tilemap->SetPlayerStartIndex({ cx, cy });
+        placedStart = true;
+
+
+        r = placedRects.back(); // 마지막 방
+        cx = (r.left + r.right) / 2;
+        cy = (r.top + r.bottom) / 2;
+        tilemap->SetNextStageIndex({ cx, cy });
+        placedEnd = true;
     return tilemap;
 }
 Tilemap* TilemapGenerator::Generate(const string& zoneName)
@@ -299,11 +312,16 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
         if (offsetX + rw > tilemap->GetWidth() || offsetY + rh > tilemap->GetHeight())
             continue;
 
+		bool isOverlapping = false;
         for (const RECT& r : placedRects)
         {
-            if (IsOverlapping(tryRect, r)) goto skip;
+            if (IsOverlapping(tryRect, r))
+            {
+				isOverlapping = true;
+				break;
+            }
         }
-
+        if (isOverlapping) continue;
         leaf->roomRect = tryRect;
         placedRects.push_back(tryRect);
 
@@ -336,26 +354,6 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
                 tilemap->SetTile(globalY, globalX, copy); //  tilemap은 (y, x)
             }
         }
-
-        // 시작/종료 위치 설정
-        if (!isShopRoom)
-        {
-            int cx = (tryRect.left + tryRect.right) / 2;
-            int cy = (tryRect.top + tryRect.bottom) / 2;
-            if (!placedStart)
-            {
-                tilemap->SetPlayerStartIndex({ cx, cy });
-                placedStart = true;
-            }
-            else if (!placedEnd)
-            {
-                tilemap->SetNextStageIndex({ cx, cy });
-                placedEnd = true;
-            }
-        }
-
-    skip:
-        continue;
     }
 }
 
@@ -653,6 +651,22 @@ void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
             b->Init(tile->GetPos(), { x, y }); //  (x, y)
             b->SetBlockNum(60);
             tile->SetBlock(b);
+        }
+    }
+    for (int y = 0; y < h; ++y)
+    {
+        for (int x = 0; x < w; ++x)
+        {
+            Tile* tile = tilemap->GetTile({ x, y });
+            if (!tile)
+            {
+                tile = new Tile();
+                tile->Init(x, y);
+                tilemap->SetTile(y, x, tile);
+
+                int tileNum = ((x + y) % 2 == 0) ? 1 : 0;
+                tile->SetTileNum(tileNum);
+            }
         }
     }
 }

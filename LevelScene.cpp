@@ -24,7 +24,8 @@ HRESULT LevelScene::Init()
     //map = make_shared<Tilemap>();
     //map->Init(20, 20);
     //map->Load("map/ZONE1_01.map");
-    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 40, 40)));
+    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 20, 20)));
+	//cout << map->GetPlayerStartIndex().x << " " << map->GetPlayerStartIndex().y << endl;
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();
@@ -86,6 +87,7 @@ void LevelScene::Release()
         map = nullptr;
     }
 
+	playerManager.lock()->BindRelease();
     DeleteObject(blackBrush);
 
 }

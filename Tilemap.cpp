@@ -78,7 +78,6 @@ Tile* Tilemap::GetTile(POINT index)
 
 FPOINT Tilemap::GetTilePos(POINT index)
 {
-	
 	return tiles[index.y][index.x]->GetPos();
 }
 

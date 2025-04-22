@@ -158,6 +158,9 @@
     <ClCompile Include="BossMonster.cpp">
       <Filter>Monster</Filter>
     </ClCompile>
+    <ClCompile Include="LevelScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -341,6 +344,9 @@
     <ClInclude Include="LightingRenderer.h" />
     <ClInclude Include="BossMonster.h">
       <Filter>Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

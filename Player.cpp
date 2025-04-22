@@ -280,6 +280,11 @@ void Player::Teleport(POINT index)
 	SetTileIndex(index);
 }
 
+void Player::BindRelease()
+{
+	observers.clear();
+}
+
 void Player::Attack()
 {
 
