@@ -14,7 +14,7 @@ void BeatHeart::Init(queue<unsigned int> beatQueue)
 {
 	beats = beatQueue;
 
-	image = ImageManager::GetInstance()->AddImage("beat_heart", L"Image/UI/TEMP_beat_heart.bmp", 82, 52, 2, 1, true, RGB(255, 0, 255));
+	image = ImageManager::GetInstance()->AddImage("beat_heart", L"Image/UI/TEMP_beat_heart.bmp", 82, 52, 2, 1, true, RGB(255, 0, 255), true);
 	
 	LocateOnCenter();
 

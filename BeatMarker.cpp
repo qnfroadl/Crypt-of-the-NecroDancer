@@ -17,16 +17,18 @@ void BeatMarker::Init(unsigned int _beatPosition, bool _red)
 	red = _red;
 	if (red)
 	{
-		image = ImageManager::GetInstance()->AddImage("beat_marker_red", L"Image/UI/TEMP_beat_marker_red.bmp", 6, 32, 1, 1, true, RGB(255, 0, 255));
+		image = ImageManager::GetInstance()->AddImage("beat_marker_red", L"Image/UI/TEMP_beat_marker_red.bmp", 6, 32, 1, 1, true, RGB(255, 0, 255), true);
 	}
 	else
 	{
-		image = ImageManager::GetInstance()->AddImage("beat_marker", L"Image/UI/TEMP_beat_marker.bmp", 6, 32, 1, 1, true, RGB(255, 0, 255));
+		image = ImageManager::GetInstance()->AddImage("beat_marker", L"Image/UI/TEMP_beat_marker.bmp", 6, 32, 1, 1, true, RGB(255, 0, 255), true);
 	}
 
 	LocateMarker(0);
 
 	dead = false;
+
+	alpha = 0.f;
 }
 
 void BeatMarker::Release()
@@ -49,8 +51,8 @@ void BeatMarker::Render(HDC hdc)
 		RECT client;
 		GetClientRect(g_hWnd, &client);
 		float center = (client.right - client.left) / 2.f;
-		image->FrameRender(hdc, center + position.x, position.y, 0, 0, size.x, size.y, false, true);
-		image->FrameRender(hdc, center - position.x, position.y, 0, 0, size.x, size.y, false, true);
+		image->FrameRender(hdc, center + position.x, position.y, 0, 0, size.x, size.y, false, true, alpha, 0.f);
+		image->FrameRender(hdc, center - position.x, position.y, 0, 0, size.x, size.y, false, true, alpha, 0.f);
 	}
 }
 
@@ -68,4 +70,6 @@ void BeatMarker::LocateMarker(unsigned int curPosition)
 
 	position.x = clientWidth * diff;
 	position.y = clientHeight - image->GetHeight() * size.y;
+
+	alpha = 1.f - diff;
 }

@@ -24,7 +24,8 @@ private:
 	Image* tileImage;
 
 public:
-	Tile() { SetType(ActorType::TILE); };
+	Tile() { SetType(ActorType::TILE); block = nullptr;
+	};
 	~Tile() {};
 	HRESULT Init();
 	HRESULT Init(int x, int y);
@@ -35,8 +36,8 @@ public:
 	// 바닥
 	int GetTileNum() { return tileNum; }
 	void SetTileNum(int _tileNum) { 
-		tileNum = _tileNum; 
-		type = GetTypeByTileNum(_tileNum);
+		tileNum = _tileNum;
+		type = GetTypeByTileNum(tileNum);
 	}
 
 	// 타일 타입

@@ -38,7 +38,7 @@ void Player::OnBeatMiss(EventData* data)
 
 	//cout << "on beat miss" << endl;
 	// 카메라 흔들기.	
-	Camera::GetInstance()->Shake(0.5f, 10);
+	//Camera::GetInstance()->Shake(0.5f, 10);
 }
 
 void Player::OnComboReset(EventData* data)

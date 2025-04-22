@@ -34,28 +34,13 @@ class Monster:public TileCharacter, public enable_shared_from_this<Monster>
 {
 private:
 	MONSTERTYPE monsterType;
+	MonsterImageInfo imageInfo;
 	MonsterState state;
 	
 	int maxHP;
 	int curHP;
 
-	float light;
-	int beatCount;
-	int moveDelay;
-	int minFrame;
-	int maxFrame;
-	int animationFrame;
-	float elapsedTime;
-	MonsterImageInfo imageInfo;
-	float changeTime;
-	bool isLeft;
-	bool isFront;
 
-	vector<POINT>dir = { {0,1},{0,-1},{-1,0},{1,0} };
-	weak_ptr<Player> target;
-	weak_ptr<Tilemap> tileMap;
-	weak_ptr<PositionManager> positionManager;
-#pragma region Image Box
 	unordered_map<MONSTERTYPE, MonsterImageInfo>MonsterInfoTable =
 	{
 		{ MONSTERTYPE::SKELETON,      { "Skeleton",TEXT("Image/Monster/skeleton_Normal.bmp"),195,25, 8,1}},
@@ -63,6 +48,23 @@ private:
 		{ MONSTERTYPE::ARMERSKELETON, { "ArmerSkeleton",TEXT("Image/Monster/armoredskeleton_Normal.bmp"),144,24,8,1}},
 
 	};
+protected:
+	float light;
+	int beatCount;
+	int moveDelay;
+	int minFrame;
+	int maxFrame;
+	int animationFrame;
+	float elapsedTime;
+	float changeTime;
+	bool isLeft;
+	bool isFront;
+	float damage;
+	vector<POINT>dir = { {0,1},{0,-1},{-1,0},{1,0} };
+	weak_ptr<Player> target;
+	weak_ptr<Tilemap> tileMap;
+	weak_ptr<PositionManager> positionManager;
+#pragma region Image Box
 #pragma endregion 이미지 정보 Table
 
 public:
@@ -74,7 +76,7 @@ public:
 	POINT Trace();
 	void Dead();
 	void OnBeat();
-	void AttackTarget();
+	bool AttackTarget(POINT _nextIndex);
 	bool JumpAnim() override;
 	void SetJumpData(int dx, int dy)override;
 

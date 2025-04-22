@@ -76,6 +76,31 @@ Image* ImageManager::AddImage(const string& key, const wchar_t* filePath,
 
 }
 
+Image* ImageManager::AddImage(const string& key, const wchar_t* filePath, int width, int height, int maxFrameX, int maxFrameY, bool isTransparent, COLORREF transColor, bool gdiActive)
+{
+    Image* image = FindImage(key);
+    if (nullptr != image)
+    {
+        return image;
+    }
+
+    image = new Image();
+    if (S_OK == image->Init(filePath, width, height, maxFrameX, maxFrameY, isTransparent, transColor, gdiActive))
+    {
+        if (this->mapImages[key] != nullptr)
+        {
+            this->mapImages[key]->Release();
+            delete this->mapImages[key];
+        }
+        this->mapImages[key] = image;
+
+        return image;
+    }
+
+    delete image;
+    return nullptr;
+}
+
 void ImageManager::DeleteImage(const string& key)
 {
     map<string, Image*>::iterator it = mapImages.find(key);

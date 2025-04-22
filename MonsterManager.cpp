@@ -9,7 +9,8 @@ HRESULT MonsterManager::Init()
 	{
 		if (monsterVector[i] == nullptr)
 		{
-			monsterVector[i] = AddMonster(MONSTERTYPE::SKELETON);
+			//monsterVector[i] = AddMonster(MONSTERTYPE::SKELETON);
+			monsterVector[i] = AddBossMonster(BossType::Dragon);
 		}
 	}
 	return S_OK;
@@ -52,6 +53,13 @@ void MonsterManager::Release()
 shared_ptr<Monster> MonsterManager::AddMonster(MONSTERTYPE _type)
 {
 	shared_ptr<Monster>temp = std::make_shared<Monster>();
+	temp->Init(_type);
+	return temp;
+}
+
+shared_ptr<BossMonster> MonsterManager::AddBossMonster(BossType _type)
+{
+	shared_ptr<BossMonster>temp = std::make_shared<BossMonster>();
 	temp->Init(_type);
 	return temp;
 }

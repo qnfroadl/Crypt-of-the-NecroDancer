@@ -39,6 +39,9 @@ public:
 	Image* AddImage(const string& key, const wchar_t* filePath, int width, int height,
 		int maxFrameX, int maxFrameY, bool isTransparent = FALSE, COLORREF transColor = FALSE);
 
+	Image* AddImage(const string& key, const wchar_t* filePath, int width, int height,
+		int maxFrameX, int maxFrameY, bool isTransparent, COLORREF transColor, bool gdiActive);
+
 	void DeleteImage(const string& key);
 
 	Image* FindImage(const string& key);
