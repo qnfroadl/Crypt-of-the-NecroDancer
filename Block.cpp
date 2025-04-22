@@ -31,7 +31,7 @@ void Block::Render(HDC hdc, bool useCamera)
 		centerX -= Camera::GetInstance()->GetPos().x;
 		centerY -= Camera::GetInstance()->GetPos().y;
 
-		blocklImage->RenderScaledImage(
+		blocklImage->FrameRender(
 			hdc,
 			static_cast<int>(centerX),
 			static_cast<int>(centerY),
@@ -39,7 +39,7 @@ void Block::Render(HDC hdc, bool useCamera)
 			blockNum / SAMPLE_WALL_X,
 			static_cast<float>(TILE_SCALE),
 			static_cast<float>(TILE_SCALE),
-			true  // 중심 기준
+			false, true  // 중심 기준 
 		);
 	}
 	else
@@ -115,4 +115,11 @@ void Block::SetBlockByBlockNum(int _blockNum)
 	}
 
 	maxHP = hp;
+}
+
+vector<shared_ptr<TileActor>> Block::GetRendableTileActors()
+{
+	vector<shared_ptr<TileActor>> result;
+	result.push_back(shared_from_this());
+	return result;
 }

@@ -102,3 +102,15 @@ void PlayerManager::BindPlayerObserver(PlayerIndex index, IPlayerObserver* obser
 		players[int(index)]->AddObserver(observer);
 	}
 }
+
+void PlayerManager::BindRelease()
+{
+	for (int i = 0; i < playerCount; i++)
+	{
+		if (players[i] != nullptr)
+		{
+			players[i]->BindRelease();
+		}
+	}
+}
+

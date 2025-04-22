@@ -29,6 +29,8 @@ public:
 
 	weak_ptr<Player> GetPlayer(PlayerIndex index);
 	void BindPlayerObserver(PlayerIndex index, IPlayerObserver* observer);
+	void BindRelease();
+
 	int GetPlayerCount() { return playerCount; }
 
 };

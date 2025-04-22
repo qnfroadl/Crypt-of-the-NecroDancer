@@ -1,27 +1,32 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
+#include <memory>
+#include <vector>
 
 enum class SelectedLayer {
-	FLOOR,  // 바닥을 선택
-	WALL    // 벽을 선택
+	FLOOR,
+	WALL
 };
+
 enum class ToolType {
 	NONE,
 	FLOOR_TILE,
 	WALL_TILE,
 	FLOOR_ERASER,
 	WALL_ERASER,
-	SET_PLAYER_START,     // 추가
-	SET_NEXT_STAGE        // 추가
+	SET_PLAYER_START,
+	SET_NEXT_STAGE
 };
+
 class Image;
 class Tile;
+
 class TilemapTool : public GameObject
 {
 private:
 	Image* sampleTile;
 	Image* sampleWall;
-	vector<vector<Tile*>> tiles;
+	vector<vector<shared_ptr<Tile>>> tiles;
 
 	RECT rcSampleTile, rcSampleWall, rcLeftClick, rcRightClick;
 	RECT rcFloorEraser, rcWallEraser, rcMapTile;
@@ -46,14 +51,13 @@ public:
 	virtual ~TilemapTool();
 
 	HRESULT Init() override;
-	void Release()  override;
-	void Update()  override;
-	void Render(HDC hdc)  override;
+	void Release() override;
+	void Update() override;
+	void Render(HDC hdc) override;
 
 	void Save(string filePath);
 	void Load(string filePath);
 
 	void LoadDialog();
-	void SaveDialog();		
+	void SaveDialog();
 };
-
