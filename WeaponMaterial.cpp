@@ -60,3 +60,8 @@ void WeaponMaterial::OnEnemyKilled(Player* player)
 void WeaponMaterial::OnPlayerHit(Player* player, Weapon* weapon)
 {
 }
+
+int WeaponMaterial::GetDamage()
+{
+	return damage;
+}

@@ -16,7 +16,7 @@ class WeaponMaterial
 {
 private:
 	WeaponMaterialType materialType;
-	float damage;
+	int damage;
 
 	void InitDamage();
 public:
@@ -27,4 +27,6 @@ public:
 	void OnPlayerHit(Player* player, Weapon* weapon);
 
 	virtual ~WeaponMaterial() = default;
+
+	int GetDamage();
 };
