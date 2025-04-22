@@ -142,9 +142,26 @@ void Tilemap::Load(string filePath)
 		return;
 	}
 
+	// Tile을 새로 생성
+		for (int x = 0; x < mapColumns; ++x)
+	{
+	for (int y = 0; y < mapRows; ++y)
+		{
+			if (tiles[y][x]) {
+				tiles[y][x]->Release();
+				delete tiles[y][x];
+				tiles[y][x] = nullptr;
+			}
+
+			Tile* tile = new Tile();
+			tile->Init(x, y); // Init(x, y) 사용
+			tiles[y][x] = tile;
+		}
+	}
+
+	// PLAYER_START
 	string section;
 	int playerStartX, playerStartY;
-	int nextStageX, nextStageY;
 	in >> section;
 	if (section != "PLAYER_START") {
 		MessageBoxA(nullptr, "PLAYER_START 섹션 누락", "에러", MB_OK | MB_ICONERROR);
@@ -152,6 +169,9 @@ void Tilemap::Load(string filePath)
 	}
 	in >> playerStartX >> playerStartY;
 	startIndex = { playerStartX, playerStartY };
+
+	// NEXT_STAGE
+	int nextStageX, nextStageY;
 	in >> section;
 	if (section != "NEXT_STAGE") {
 		MessageBoxA(nullptr, "NEXT_STAGE 섹션 누락", "에러", MB_OK | MB_ICONERROR);
@@ -159,51 +179,58 @@ void Tilemap::Load(string filePath)
 	}
 	in >> nextStageX >> nextStageY;
 	endIndex = { nextStageX, nextStageY };
+
+	// FLOOR
 	in >> section;
 	if (section != "FLOOR") {
 		MessageBoxA(nullptr, "FLOOR 섹션 누락", "에러", MB_OK | MB_ICONERROR);
 		return;
 	}
 
-	for (int i = 0; i < mapRows; i++) {
-		for (int j = 0; j < mapColumns; j++) {
+		for (int x = 0; x < mapColumns; ++x) {
+	for (int y = 0; y < mapRows; ++y) {
 			int tileNum;
 			in >> tileNum;
-			if (tiles[i][j]) {
-				tiles[i][j]->Init(i, j);
-				tiles[i][j]->SetTileNum(tileNum);
-				if (tileNum == 1 && (tiles[i][j]->GetTileIndex().x + tiles[i][j]->GetTileIndex().y) % 2 == 1)
-					tiles[i][j]->SetTileNum(0);
-			}
+			Tile* tile = tiles[y][x];
+			tile->SetTileNum(tileNum);
+
+			// 밝은 타일 보정
+			if (tileNum == 1 && (x + y) % 2 == 1)
+				tile->SetTileNum(0);
 		}
 	}
 
+	// WALL
 	in >> section;
 	if (section != "WALL") {
 		MessageBoxA(nullptr, "WALL 섹션 누락", "에러", MB_OK | MB_ICONERROR);
 		return;
 	}
 
-	for (int i = 0; i < mapRows; i++) {
-		for (int j = 0; j < mapColumns; j++) {
+		for (int x = 0; x < mapColumns; ++x) {
+	for (int y = 0; y < mapRows; ++y) {
 			int wallNum;
 			in >> wallNum;
-			if (tiles[i][j]) {
-				if (wallNum >= 0) {
-					Block* block = new Block();
-					block->Init(tiles[i][j]->GetPos(), tiles[i][j]->GetTileIndex());
-					block->SetBlockNum(wallNum);
-					tiles[i][j]->SetBlock(block);
-				}
-				else {
-					tiles[i][j]->SetBlock(nullptr);
-				}
+
+			Tile* tile = tiles[y][x];
+
+			if (tile->GetBlock()) {
+				delete tile->GetBlock();
+				tile->SetBlock(nullptr);
+			}
+
+			if (wallNum >= 0) {
+				Block* block = new Block();
+				block->Init(tile->GetPos(), tile->GetTileIndex());
+				block->SetBlockNum(wallNum);
+				tile->SetBlock(block);
 			}
 		}
 	}
 
 	in.close();
 }
+
 void Tilemap::OnBeat(bool isCombo)
 {
 	for (auto& row : tiles)
