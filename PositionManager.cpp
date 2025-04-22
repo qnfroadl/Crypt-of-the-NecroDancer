@@ -31,7 +31,6 @@ void PositionManager::AddTileActor(const std::shared_ptr<TileActor>& _actor)
 {
     const POINT& index = _actor->GetTileIndex();
 
-
     const auto& actors = posMap[index];
     for (const auto& actor : actors)
     {
@@ -80,6 +79,21 @@ void PositionManager::RemoveTileActor(const std::shared_ptr<TileActor>& actor, b
             }
         }
     }
+}
+
+shared_ptr<TileActor> PositionManager::GetActor(POINT index, ActorType type)
+{
+    auto it = posMap[index].begin();
+    while (it != posMap[index].end())
+    {
+        if (type == (*it)->GetType())
+        {
+            return *it;
+        }
+        it++;
+    }
+
+    return nullptr;
 }
 
 std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT& pos)

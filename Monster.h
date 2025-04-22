@@ -18,7 +18,7 @@ enum class MONSTERTYPE
 };
 enum class Direction
 {
-	UP, DOWM, LEFT, RIGHT
+	UP, DOWN, LEFT, RIGHT
 };
 
 typedef struct MonsterImageInfo {
@@ -36,6 +36,10 @@ private:
 	MONSTERTYPE monsterType;
 	MonsterImageInfo imageInfo;
 	MonsterState state;
+	
+	int maxHP;
+	int curHP;
+
 
 	unordered_map<MONSTERTYPE, MonsterImageInfo>MonsterInfoTable =
 	{
@@ -76,6 +80,8 @@ public:
 	bool JumpAnim() override;
 	void SetJumpData(int dx, int dy)override;
 
+
+
 	void Patrol(int _pos, MONSTERTYPE _m);
 	void Teleport(POINT index);
 
@@ -94,6 +100,7 @@ public:
 	Monster();
 	virtual ~Monster();
 
-
+	void TakeDamage(int damage);
+	bool IsDead();
 };
 
