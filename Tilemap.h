@@ -38,5 +38,7 @@ public:
 	POINT GetNextStageIndex() { return endIndex; }
 	void SetPlayerStartIndex(POINT p) { startIndex = p; }
 	void SetNextStageIndex(POINT p) { endIndex = p; }
+
+	bool InteractTile(POINT index, GameActor* actor);
 };
 

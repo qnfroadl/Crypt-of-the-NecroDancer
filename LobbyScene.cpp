@@ -116,7 +116,6 @@ void LobbyScene::Render(HDC hdc)
 		positionManager->Render(hdc);
 	}
 
-
 	if (uiManager)
 	{
 		uiManager->Render(hdc);

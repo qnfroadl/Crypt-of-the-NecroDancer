@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include "config.h"
 #include "TileActor.h"
 enum class TileType
@@ -24,7 +24,7 @@ private:
 	Image* tileImage;
 
 public:
-	Tile() {};
+	Tile() { SetType(ActorType::TILE); };
 	~Tile() {};
 	HRESULT Init();
 	HRESULT Init(int x, int y);
@@ -32,22 +32,26 @@ public:
 	void Release();
 	void OnTile(TileActor* actor);
 
-	// πŸ¥⁄
+	// Î∞îÎã•
 	int GetTileNum() { return tileNum; }
 	void SetTileNum(int _tileNum) { 
 		tileNum = _tileNum; 
 		type = GetTypeByTileNum(_tileNum);
 	}
 
-	// ≈∏¿œ ≈∏¿‘
+	// ÌÉÄÏùº ÌÉÄÏûÖ
 	TileType GetType() { return type; }
 	TileType GetTypeByTileNum(int tileNum);
 
-	// ∫Ì∑œ (∫Æ)
+	// Î∏îÎ°ù (Î≤Ω)
 	Block* GetBlock() { return block; }
-	void SetBlock(Block* _block) { block = _block; }
+	void SetBlock(Block* _block);
+	
 
 	POINT GetTileIndex() { return index; }
+
+	virtual void Interact(GameActor* actor) override;
+
 
 	void OnBeat(bool isCombo);
 };

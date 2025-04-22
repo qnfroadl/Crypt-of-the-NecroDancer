@@ -1,14 +1,29 @@
 ﻿#pragma once
 
-#include "TileActor.h"
+#include "TileItem.h"
 
 // 벽돌 파괴용 삽.
-class Shovel : public TileActor
+
+enum class ShovelType
 {
-
-	private:
-
-	public:
-
+	NORMAL, BLOOD, GLASS, SHARD, OBSIDIAN, TITANIUM
 };
 
+class Image;
+class Shovel : public TileItem
+{
+
+private:
+	Image* image;
+	ShovelType shovelType;
+	int hardness;
+
+public:
+	
+	HRESULT Init() override;
+
+	void SetShovelType(ShovelType shovelType);
+	virtual void Interact(GameActor* actor) override;
+
+
+};

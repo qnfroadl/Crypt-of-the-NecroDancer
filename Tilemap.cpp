@@ -218,6 +218,20 @@ void Tilemap::OnBeat(bool isCombo)
 	}
 }
 
+bool Tilemap::InteractTile(POINT index, GameActor* actor)
+{
+	Tile* tile = GetTile(index);
+	if (tile)
+	{
+		// 서로 상호 작용. 뭘 할진 모름.
+		tile->Interact(actor);
+		actor->Interact(tile);
+		return true;
+	}
+
+	return false;
+}
+
 void Tilemap::SetTile(int row, int col, Tile* tile)
 {
 	if (row < 0 || row >= mapRows || col < 0 || col >= mapColumns) return;

@@ -9,6 +9,8 @@
 #include "EventData.h"
 #include "EventManager.h"
 #include "PositionManager.h"
+#include "Shovel.h"
+#include "Tile.h"
 
 void Player::OnBeatHit(EventData* data)
 {
@@ -57,36 +59,45 @@ void Player::SetJumpData(InputKey key)
 	{	
 	case InputKey::UP:
 		pIndex.y -= 1;
-		//SetJumpData(tilePos.x, tilePos.y - 100);
 		break;
 	case InputKey::DOWN:
 		pIndex.y += 1;
-		//SetJumpData(tilePos.x, tilePos.y + 100);
-
 		break;
 	case InputKey::LEFT:
 		pIndex.x -= 1;
 		isLeft = true;
-		//SetJumpData(tilePos.x - 100, tilePos.y);
-
 		break;
 	case InputKey::RIGHT:
 		pIndex.x += 1;
 		isLeft = false;
-		//SetJumpData(tilePos.x + 100, tilePos.y);
-
 		break;
 	}
 	
 	if (tileMap.lock()->CanMove(pIndex))
 	{
-
 		tilePos = tileMap.lock()->GetTilePos(pIndex);
 
 		cout << "index: " << pIndex.x << ", " << pIndex.y << " -> tilePos: " << tilePos.x << ", " << tilePos.y << endl;
 
 		SetJumpData(tilePos.x, tilePos.y);
 		SetTileIndex(pIndex);
+	}
+	else 
+	{
+		// 벽돌이 있다는 뜻.
+		tileMap.lock()->CanMove(pIndex);
+
+		if (shovel)
+		{
+			tileMap.lock()->InteractTile(pIndex, shovel.get());
+		}
+		else 
+		{
+			// 삽도 없는데 부시려고 함. 실패 이벤트.
+			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYFAILED, nullptr, true);
+		}
+		
+
 	}
 
 }
@@ -126,7 +137,9 @@ HRESULT Player::Init()
 	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
 	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
 
-
+	// 기본삽정도는 줘야지.
+	shovel = make_shared<Shovel>();
+	shovel->Init();
 	#pragma region Bind
 
 	gold.Bind([&](const int& preValue, const int& value)
@@ -232,6 +245,7 @@ void Player::SetTileIndex(const POINT& _index)
 	POINT preIndex = GetTileIndex();	// 이전 타일인덱스 가져오기.
 	TileActor::SetTileIndex(_index);	// 타일 인덱스 업데이트
 	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());	// 변경된 내용 포지션 매니저에 알리기.
+	
 }
 
 void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)

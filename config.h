@@ -53,7 +53,7 @@ enum class PlayerIndex
 
 enum class ItemType
 {
-	DIAMOND, GOLD, BOMB, WEAPON, ARMOR, POTION, HEART, KEY
+	DIAMOND, GOLD, BOMB, WEAPON, ARMOR, POTION, HEART, SHOVEL,
 };
 
 enum class InputKey
