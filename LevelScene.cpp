@@ -1,4 +1,4 @@
-﻿#include "LobbyScene.h"
+﻿#include "LevelScene.h"
 #include "Tilemap.h"
 #include "Camera.h"
 #include "CommonFunction.h"
@@ -17,32 +17,32 @@
 
 #include "MonsterManager.h"
 #include "TilemapGenerator.h"
-HRESULT LobbyScene::Init()
+HRESULT LevelScene::Init()
 {
     // InitMap
-	SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
-    map = make_shared<Tilemap>();
-    map->Init(20, 20);
-    map->Load("map/ZONE1_01.map");
-	//map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 40, 40)));
+    SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
+    //map = make_shared<Tilemap>();
+    //map->Init(20, 20);
+    //map->Load("map/ZONE1_01.map");
+    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 40, 40)));
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
-	positionManager = make_shared<PositionManager>();
-	itemSpawner = make_shared<ItemSpawner>();
+    positionManager = make_shared<PositionManager>();
+    itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
-	itemSpawner->SetPositionManager(positionManager);
+    itemSpawner->SetPositionManager(positionManager);
 
     uiManager = new UIManager();
-	uiManager->Init();
+    uiManager->Init();
 
-	PlayerWallet* playerCoin = new PlayerWallet();
-	playerCoin->Init();
-	uiManager->AddUI(playerCoin);
+    PlayerWallet* playerCoin = new PlayerWallet();
+    playerCoin->Init();
+    uiManager->AddUI(playerCoin);
 
-	PlayerHp* playerHp = new PlayerHp();
-	playerHp->Init();
-	playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
-	uiManager->AddUI(playerHp);
+    PlayerHp* playerHp = new PlayerHp();
+    playerHp->Init();
+    playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
+    uiManager->AddUI(playerHp);
 
 
     if (playerManager.lock())
@@ -56,13 +56,13 @@ HRESULT LobbyScene::Init()
     {
         monsterManager.lock()->SetPositionManager(positionManager);
         monsterManager.lock()->SetTileMap(map);
-		monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+        monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
     // Test
-   
 
-	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({3,3}, map->GetTilePos({ 3,3 }), ItemType::GOLD, 1));
+
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 3,3 }, map->GetTilePos({ 3,3 }), ItemType::GOLD, 1));
     EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 4,4 }, map->GetTilePos({ 4,4 }), ItemType::GOLD, 30));
     EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 5,5 }, map->GetTilePos({ 5,5 }), ItemType::GOLD, 100));
     EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 6,6 }, map->GetTilePos({ 6,6 }), ItemType::GOLD, 50));
@@ -72,14 +72,14 @@ HRESULT LobbyScene::Init()
     return S_OK;
 }
 
-void LobbyScene::Release()
+void LevelScene::Release()
 {
-	if (uiManager)
-	{
-		uiManager->Release();
-		delete uiManager;
-		uiManager = nullptr;
-	}
+    if (uiManager)
+    {
+        uiManager->Release();
+        delete uiManager;
+        uiManager = nullptr;
+    }
 
     if (map) {
         map->Release();
@@ -90,19 +90,19 @@ void LobbyScene::Release()
 
 }
 
-void LobbyScene::Update()
+void LevelScene::Update()
 {
     Camera::GetInstance()->Update();
 
-	if (uiManager)
-	{
-		uiManager->Update();
-	}
-	playerManager.lock()->Update();
-	monsterManager.lock()->Update();
+    if (uiManager)
+    {
+        uiManager->Update();
+    }
+    playerManager.lock()->Update();
+    monsterManager.lock()->Update();
 }
 
-void LobbyScene::Render(HDC hdc)
+void LevelScene::Render(HDC hdc)
 {
     FPOINT pos = playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1).lock()->GetPos();
     FPOINT cPos = Camera::GetInstance()->GetPos();
@@ -115,29 +115,28 @@ void LobbyScene::Render(HDC hdc)
     {
         map->Render(hdc);
     }
-    
-	if (positionManager)
-	{
-		positionManager->Render(hdc);
-	}
-
-	if (uiManager)
-	{
-		uiManager->Render(hdc);
-	}
-	playerManager.lock()->Render(hdc);
-	monsterManager.lock()->Render(hdc);
-
-}
-
-void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
-{
-    this->playerManager = playerManager;
-    
 
     if (positionManager)
     {
-		this->playerManager.lock()->SetPositionManager(positionManager);
+        positionManager->Render(hdc);
+    }
+
+    if (uiManager)
+    {
+        uiManager->Render(hdc);
+    }
+	playerManager.lock()->Render(hdc);
+	monsterManager.lock()->Render(hdc);
+}
+
+void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
+{
+    this->playerManager = playerManager;
+
+
+    if (positionManager)
+    {
+        this->playerManager.lock()->SetPositionManager(positionManager);
     }
     if (nullptr != map)
     {
@@ -145,16 +144,16 @@ void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
     }
 }
 
-void LobbyScene::SetMonsterManager(weak_ptr<MonsterManager> monsterManager)
+void LevelScene::SetMonsterManager(weak_ptr<MonsterManager> monsterManager)
 {
-	this->monsterManager = monsterManager;
-	if (positionManager)
-	{
-		this->monsterManager.lock()->SetPositionManager(positionManager);
-	}
-	if (nullptr != map)
-	{
-		this->monsterManager.lock()->SetTileMap(map);
-	}
+    this->monsterManager = monsterManager;
+    if (positionManager)
+    {
+        this->monsterManager.lock()->SetPositionManager(positionManager);
+    }
+    if (nullptr != map)
+    {
+        this->monsterManager.lock()->SetTileMap(map);
+    }
 }
 

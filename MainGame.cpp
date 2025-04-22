@@ -22,6 +22,7 @@
 #include "BeatManager.h"
 
 #include "LobbyScene.h"
+#include "LevelScene.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -68,6 +69,10 @@ void MainGame::ItemSpawnSimulation()
 	else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RSHIFT))
 	{
 		SceneManager::GetInstance()->ChangeScene("AstarScene", "Loading");
+	}
+	else if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
+	{
+			SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
 	}
 }
 
@@ -150,6 +155,10 @@ HRESULT MainGame::Init()
 	lobby->SetPlayerManager(playerManager);
 	lobby->SetMonsterManager(monsterManager);
 	SceneManager::GetInstance()->AddScene("LobbyScene", lobby);
+	LevelScene* level = new LevelScene();
+	level->SetPlayerManager(playerManager);
+	level->SetMonsterManager(monsterManager);
+	SceneManager::GetInstance()->AddScene("LevelScene", level);
 
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 
@@ -236,8 +245,8 @@ void MainGame::Update()
 	// SceneManager::GetInstance()->
 	//btn->Update();
 	
-	playerManager->Update();
-	monsterManager->Update();
+	/*playerManager->Update();
+	monsterManager->Update();*/
 	Camera::GetInstance()->Update();
 
 	UpdateCollisionInfo();
@@ -262,8 +271,9 @@ void MainGame::Render()
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 	
-	playerManager->Render(hBackBufferDC);
-	monsterManager->Render(hBackBufferDC);
+
+	//playerManager->Render(hBackBufferDC);
+	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{

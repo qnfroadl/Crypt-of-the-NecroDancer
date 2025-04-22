@@ -30,6 +30,7 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
     Tile* endTile = tilemap->GetTile({ end.y, end.x });
     if (endTile)
         endTile->SetTileNum(24);
+
     return tilemap;
 }
 Tilemap* TilemapGenerator::Generate(const string& zoneName)
@@ -170,9 +171,39 @@ RoomData TilemapGenerator::ParseMapFile(const string& path)
 
 void TilemapGenerator::ClearRooms()
 {
+    auto deleteRoomData = [](RoomData& room) {
+        for (auto& row : room.tiles) {
+            for (auto& tile : row) {
+                if (tile) {
+                    if (tile->GetBlock()) {
+                        delete tile->GetBlock();
+                        tile->SetBlock(nullptr);
+                    }
+                    tile->Release(); // 혹시 정의되어 있다면
+                    delete tile;
+                }
+            }
+        }
+        room.tiles.clear();
+        };
+
+    for (auto& pair : zoneNormalRooms) {
+        for (RoomData& r : pair.second) deleteRoomData(r);
+    }
+    for (auto& pair : zoneShopRooms) {
+        for (RoomData& r : pair.second) deleteRoomData(r);
+    }
+    for (auto& pair : zoneBossRoom) {
+        deleteRoomData(pair.second);
+    }
+    for (auto& pair : zoneLobbyRoom) {
+        deleteRoomData(pair.second);
+    }
+
     zoneNormalRooms.clear();
     zoneShopRooms.clear();
     zoneBossRoom.clear();
+    zoneLobbyRoom.clear();
 }
 
 void TilemapGenerator::SplitSpace(BSPNode* node, int depth)

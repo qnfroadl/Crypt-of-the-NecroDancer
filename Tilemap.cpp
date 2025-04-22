@@ -68,6 +68,7 @@ void Tilemap::Render(HDC hdc)
 
 Tile* Tilemap::GetTile(POINT index)
 {
+	if (tiles.empty()) return nullptr;
 	if (index.y >= 0 && index.y < tiles.size() && index.x >= 0 && index.x < tiles[index.y].size())
 	{
 		return tiles[index.y][index.x];
@@ -77,6 +78,7 @@ Tile* Tilemap::GetTile(POINT index)
 
 FPOINT Tilemap::GetTilePos(POINT index)
 {
+	
 	return tiles[index.y][index.x]->GetPos();
 }
 
@@ -92,6 +94,7 @@ bool Tilemap::Destory(int strong)
 
 bool Tilemap::CanMove(POINT index) 
 {
+	if (tiles.empty()) return false;
 	Tile* tile = GetTile(index);
 	return (tile && tile->GetBlock() == nullptr);
 }

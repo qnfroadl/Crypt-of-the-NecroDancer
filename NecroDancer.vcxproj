@@ -148,6 +148,7 @@
     <ClCompile Include="ItemGold.cpp" />
     <ClCompile Include="ItemNumUI.cpp" />
     <ClCompile Include="ItemSpawner.cpp" />
+    <ClCompile Include="LevelScene.cpp" />
     <ClCompile Include="LightingRenderer.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="ItemGold.h" />
     <ClInclude Include="ItemNumUI.h" />
     <ClInclude Include="ItemSpawner.h" />
+    <ClInclude Include="LevelScene.h" />
     <ClInclude Include="LightingRenderer.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="MonsterManager.h" />
