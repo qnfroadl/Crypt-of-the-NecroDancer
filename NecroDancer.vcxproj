@@ -143,6 +143,7 @@
     <ClCompile Include="BeatHeart.cpp" />
     <ClCompile Include="BeatManager.cpp" />
     <ClCompile Include="BeatMarkerManager.cpp" />
+    <ClCompile Include="BossMonster.cpp" />
     <ClCompile Include="IPlayerObserver.cpp" />
     <ClCompile Include="ItemBomb.cpp" />
     <ClCompile Include="ItemGold.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="BeatHeart.h" />
     <ClInclude Include="BeatManager.h" />
     <ClInclude Include="BeatMarkerManager.h" />
+    <ClInclude Include="BossMonster.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="IPlayerObserver.h" />

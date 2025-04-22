@@ -155,8 +155,8 @@
     </ClCompile>
     <ClCompile Include="TileActorRenderer.cpp" />
     <ClCompile Include="LightingRenderer.cpp" />
-    <ClCompile Include="LevelScene.cpp">
-      <Filter>Scene</Filter>
+    <ClCompile Include="BossMonster.cpp">
+      <Filter>Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -339,8 +339,8 @@
     </ClInclude>
     <ClInclude Include="TileActorRenderer.h" />
     <ClInclude Include="LightingRenderer.h" />
-    <ClInclude Include="LevelScene.h">
-      <Filter>Scene</Filter>
+    <ClInclude Include="BossMonster.h">
+      <Filter>Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

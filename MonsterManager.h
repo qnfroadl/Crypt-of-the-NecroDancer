@@ -1,10 +1,12 @@
 ﻿#pragma once
 #include"GameObject.h"
 #include "Monster.h"
-class Monster;
+#include "BossMonster.h"
+#include "BossMonster.h"
 class Tilemap;
 class PositionManager;
 class Player;
+class BossMonster;
 class MonsterManager :public GameObject
 {
 private:
@@ -21,7 +23,7 @@ public:
 	void Release() override;
 
 	shared_ptr<Monster> AddMonster(MONSTERTYPE _type);
-	
+	shared_ptr<BossMonster> AddBossMonster(BossType _type);
 	inline void SetMonsterNumber(int _monsterNumber) { monsterNumber = _monsterNumber; }
 	inline int GetMonsterNumber() { return monsterNumber; }
 
