@@ -95,7 +95,7 @@ void LevelScene::Release()
 void LevelScene::Update()
 {
     Camera::GetInstance()->Update();
-
+    map->UpdateVisuable();
     if (uiManager)
     {
         uiManager->Update();
