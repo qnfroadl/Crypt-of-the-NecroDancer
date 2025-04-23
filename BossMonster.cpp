@@ -35,8 +35,8 @@ void BossMonster::Init(BossType p)
 	isLeft = false;
 	isBlast = false;
 	isAttack = false;
-	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&BossMonster::OnBeat, this));
-	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&BossMonster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&BossMonster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&BossMonster::OnBeat, this));
 
 
 }
@@ -47,6 +47,11 @@ void BossMonster::Release()
 
 void BossMonster::Update()
 {
+	if (false == IsActive())
+	{
+		return;
+	}
+
 	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
 	if (isBlast)
 	{
@@ -252,6 +257,8 @@ bool BossMonster::FindWall(bool _isLeft)
 	{
 
 	}
+
+	return false;
 }
 
 

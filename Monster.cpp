@@ -48,6 +48,12 @@ void Monster::Release()
 
 void Monster::Update()
 {
+	if (false == IsActive())
+	{
+		return;
+	}
+
+
 	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
 	if (isAttack)
 	{
