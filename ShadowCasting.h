@@ -35,6 +35,8 @@ private:
 
 	vector<weak_ptr<Player>> players; // 2¿Œ ¥Î∫Ò
 
+	RECT cameraRect;
+
 public:
 	ShadowCasting();
 	~ShadowCasting();
@@ -52,8 +54,11 @@ public:
 	
 	void Scan(POINT origin, Row row, int dx, int dy);
 	void Reveal(shared_ptr<Tile> tile);
+	void UnReveal(shared_ptr<Tile> tile);
 	bool IsWall(shared_ptr<Tile> tile);
 	bool IsFloor(shared_ptr<Tile> tile);
 	bool IsSymmetric(Row row, POINT rowData);
+
+	bool IsOutOfRange(POINT pos);
 };
 
