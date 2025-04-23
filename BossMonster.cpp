@@ -63,8 +63,6 @@ void BossMonster::Update()
 			{
 				isBlast = false;
 				blastAnimFrame = 0;
-				
-
 				SettingFrame(bossType);
 			}
 		}
@@ -109,19 +107,20 @@ void BossMonster::Update()
 		}
 		break;
 	case BossState::ACTIVE:
+		
 		if (beatCount >= moveDelay)
 		{
 			textX = target.lock()->GetTileIndex().x - GetTileIndex().x;
 			textY = target.lock()->GetTileIndex().y - GetTileIndex().y;
 			if ((textX >= -5 && textX < 0) && textY == 0&&!isLeft)
 			{
-				FindWall(!isLeft);
+				
 				state = BossState::Skill;
 				break;
 			}
 			else if ((textX > 0 && textX <= 5) && textY == 0 && isLeft)
 			{
-				FindWall(isLeft);
+				
 				state = BossState::Skill;
 				break;
 			}
@@ -203,7 +202,7 @@ void BossMonster::SettingFrame(BossType _bm)
 void BossMonster::OnBeat()
 {
 	beatCount++;
-
+	FindWall(isLeft, 5);
 }
 
 void BossMonster::SettingImageFrameImage()
@@ -222,7 +221,7 @@ void BossMonster::FireImageRender(int index, HDC hdc, FPOINT pos, int animationF
 {
 	int frameWidth = fire[0]->GetWidth() / fire[0]->GetMaxFrameX();
 
-	for (int i = 0; i <= breathRange; i++) 
+	for (int i = 0; i < breathRange; i++) 
 	{
 		if (!isLeft)
 		{
@@ -251,13 +250,15 @@ void BossMonster::AttackTarget()
 	}
 }
 
-void BossMonster::FindWall(bool _isLeft)
+void BossMonster::FindWall(bool isLeft, int maxRange)
 {
+	/*breathRange = 0;
 	if (_isLeft)
 	{
 		for (int i = 0; i < 5; i++)
 		{
-			if(tileMap.lock()->GetTile({ GetTileIndex().x - i, GetTileIndex().y })->GetBlock()!=nullptr);
+
+			if(tileMap.lock()->GetTile({ GetTileIndex().x - i, GetTileIndex().y })->GetBlock()!=nullptr)
 			{
 				return;
 			}
@@ -268,16 +269,35 @@ void BossMonster::FindWall(bool _isLeft)
 	{
 		for (int i = 0; i < 5; i++)
 		{
-			
-			if (tileMap.lock()->GetTile({ GetTileIndex().x + i, GetTileIndex().y })->GetBlock() != nullptr);
+
+			if (tileMap.lock()->GetTile({ GetTileIndex().x + i, GetTileIndex().y })->GetBlock() != nullptr)
 			{
 				return;
 			}
 			breathRange++;
 		}
 	}
-}
+}*/
+	breathRange = 0;
 
+	auto map = tileMap.lock();
+	if (!map) return;
+
+	int direction = isLeft ? -1 : 1;
+	POINT current = GetTileIndex();
+
+	for (int i = 1; i <= maxRange; ++i)
+	{
+		POINT checkIndex = { current.x + direction * i, current.y };
+		auto tile = map->GetTile(checkIndex);
+
+		if (!tile || tile->GetBlock() != nullptr)
+			return;
+
+		breathRange++;
+	}
+	cout << "breathRange: " << breathRange << endl;
+}
 
 
 MonsterImageInfo BossMonster::FindImageInfo(BossType _bm)
