@@ -26,6 +26,14 @@ public:
 		}
 	}
 
+	void Notify()
+	{
+		if (onChanged)
+		{
+			onChanged(preValue, value);
+		}
+	}
+
 	T Get() const { return value; }
 
 	void Bind(std::function<void(const T& preValue, const T& value)> f) 

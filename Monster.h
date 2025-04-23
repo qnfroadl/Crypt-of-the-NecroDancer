@@ -16,10 +16,7 @@ enum class MONSTERTYPE
 	SLIME,
 	ARMERSKELETON,
 };
-enum class Direction
-{
-	UP, DOWN, LEFT, RIGHT
-};
+
 
 typedef struct MonsterImageInfo {
 	string keyName;

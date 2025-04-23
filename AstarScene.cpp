@@ -11,7 +11,6 @@ HRESULT AstarTile::Init()
 
 HRESULT AstarTile::Init(int idX, int idY)
 {
-
 	this->idX = idX;
 	this->idY = idY;
 
