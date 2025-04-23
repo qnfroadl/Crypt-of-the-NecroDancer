@@ -13,22 +13,31 @@ void BossMonster::Init(BossType p)
 		imageInfo.imageFrameX, imageInfo.ImageFrameY, true, RGB(255, 0, 255));
 	attackImage = ImageManager::GetInstance()->AddImage("Monster_Attack", TEXT("Image/Monster/swipe_enemy.bmp"), 135*3, 24*3,
 		5, 1, true, RGB(255, 0, 255));
+	
+	state=BossState::IDLE;
+	damage = 10;
+	
 	light = 0;
 	moveDelay = 3;
 	beatCount = 0;
-	elapsedTime = 0;
-	changeTime = 0;
+	
 	SettingFrame(p);
 	SetActive(true);
+
+
 	animationFrame = minFrame;
-	state=BossState::IDLE;
-	damage = 1;
+
+	attackAnimationFrame = 0;
+	blastAnimFrame = 0;
+	elapsedTime = 0;
+	changeTime = 0;
+	
+	isLeft = false;
 	isBlast = false;
 	isAttack = false;
-	blastAnimFrame = 0;
-	attackAnimationFrame = 0;
 	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&BossMonster::OnBeat, this));
 	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&BossMonster::OnBeat, this));
+
 
 }
 
@@ -48,6 +57,9 @@ void BossMonster::Update()
 			{
 				isBlast = false;
 				blastAnimFrame = 0;
+				
+
+				SettingFrame(bossType);
 			}
 		}
 	}
@@ -95,13 +107,14 @@ void BossMonster::Update()
 		{
 			textX = target.lock()->GetTileIndex().x - GetTileIndex().x;
 			textY = target.lock()->GetTileIndex().y - GetTileIndex().y;
-			if (((textX >= -5 && textX < 0) || (textX > 0 && textX <= 5)) && textY == 0)
+			if ((textX >= -5 && textX < 0) && textY == 0&&!isLeft)
 			{
 				state = BossState::Skill;
-				if ((textX >= -5 && textX < 0))
-					isLeft = false;
-				else if (textX > 0 && textX <= 5)
-					isLeft = true;
+				break;
+			}
+			else if ((textX > 0 && textX <= 5) && textY == 0 && isLeft)
+			{
+				state = BossState::Skill;
 				break;
 			}
 			else {
@@ -229,6 +242,19 @@ void BossMonster::AttackTarget()
 		}
 	}
 }
+
+bool BossMonster::FindWall(bool _isLeft)
+{
+	if (_isLeft)
+	{
+	}
+	else
+	{
+
+	}
+}
+
+
 
 MonsterImageInfo BossMonster::FindImageInfo(BossType _bm)
 {

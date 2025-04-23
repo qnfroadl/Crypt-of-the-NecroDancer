@@ -42,7 +42,7 @@ public:
 	void SettingImageFrameImage();
 	void FireImageRender(int index, HDC hdc, FPOINT pos, int animationFrame);
 	void AttackTarget();
-
+	bool FindWall(bool _isLeft);
 	MonsterImageInfo FindImageInfo(BossType _bm);
 	BossMonster();
 	virtual ~BossMonster();

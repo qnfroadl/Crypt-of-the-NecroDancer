@@ -12,17 +12,30 @@ int EventManager::GetPriority(EventType type)
 		case EventType::BEATHIT: 
 		case EventType::BEATMISS: 
 			priority = 1;
-
+			break;
 		case EventType::BEATEND: 
 			priority = 2;
+			break;
 	}
 
 	return priority;
 }
 
-void EventManager::BindEvent(EventType type, std::function<void(EventData*)> func)
+
+void EventManager::BindEvent(GameObject* _obj, EventType type, std::function<void(EventData*)> func)
 {
-	funcs[type].push_back(func); // std::move(func)
+	funcs[type].push_back(BoundFunc{ _obj, func});
+}
+
+void EventManager::UnbindEvent(GameObject* obj, EventType type)
+{
+	auto it = funcs[type].begin();
+	while (it != funcs[type].end())
+	{
+		
+	}
+	
+	
 }
 
 void EventManager::AddEvent(EventType type, EventData* data, bool now)
@@ -34,11 +47,10 @@ void EventManager::AddEvent(EventType type, EventData* data, bool now)
 
 	if (now)
 	{
-		// 족발-먹고싶다 이벤트
 		auto it = funcs[type].begin();
 		while (it != funcs[type].end())
 		{
-			(*it)(data);
+			(*it).func(data);
 			it++;
 		}
 
@@ -66,7 +78,7 @@ void EventManager::Update()
 		int count = 0;
 		while (it != funcs[event->type].end() && count < maxCount)
 		{
-			(*it)(event->data);
+			(*it).func(event->data);
 			
 			it++;
 			count++;
