@@ -17,19 +17,24 @@ void Monster::Init(MONSTERTYPE p)
 		imageInfo.imageFrameX, imageInfo.ImageFrameY, true, RGB(255, 0, 255));
 	attackImage = ImageManager::GetInstance()->AddImage("Monster_Attack", TEXT("Image/Monster/swipe_enemy.bmp"),135*3, 24*3,
 		5, 1, true, RGB(255, 0, 255));
+
 	state = MonsterState::IDLE;
+
 	light = 0;
+	damage = 0.5;
 	moveDelay = 3;
 	beatCount = 0;
 	monsterType = p;
+
+	SettingFrame(p);
+	SetActive(true);
+
 	isLeft = true;
 	elapsedTime = 0;
 	changeTime = 0;
-	SettingFrame(p);
-	SetActive(true);
-	damage = 0.5;
 	animationFrame = minFrame;
 	attackAnimationFrame = 0;
+	isAttack = false;
 
 	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&Monster::OnBeat, this));
 	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&Monster::OnBeat, this));

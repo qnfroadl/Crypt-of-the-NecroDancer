@@ -153,7 +153,7 @@ HRESULT MainGame::Init()
 
 	LobbyScene* lobby = new LobbyScene();
 	lobby->SetPlayerManager(playerManager);
-	lobby->SetMonsterManager(monsterManager);
+	
 	SceneManager::GetInstance()->AddScene("LobbyScene", lobby);
 
 	LevelScene* level = new LevelScene();
