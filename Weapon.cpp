@@ -144,7 +144,8 @@ HRESULT Weapon::Init()
 {
 	elapsedTime = 0.f;
 	curFrame = 0;
-	SetMaterial(new WeaponMaterial(WeaponMaterialType::NORMAL));
+	weaponType = WeaponType::BROADSWORD;
+	SetMaterial(WeaponMaterialType::NORMAL);
 	InitImage();
 	InitRange();
 	return S_OK;
@@ -152,11 +153,7 @@ HRESULT Weapon::Init()
 
 void Weapon::Release()
 {
-	if (material)
-	{
-		delete material;
-		material = nullptr;
-	}
+
 }
 
 void Weapon::Update()
@@ -209,9 +206,9 @@ void Weapon::SetWeaponType(DamageType damageType, WeaponType weaponType)
 	InitRange();
 }
 
-void Weapon::SetMaterial(WeaponMaterial* material)
+void Weapon::SetMaterial(WeaponMaterialType type)
 {
-	this->material = material;
+	material = std::make_shared<WeaponMaterial>(type);
 	InitImage();
 	InitRange();
 }

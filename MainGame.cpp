@@ -111,9 +111,9 @@ void MainGame::InitResource()
 	ImageManager::GetInstance()->AddImage("coin8", L"Image/Player/item/resource_coin8.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage("coin9", L"Image/Player/item/resource_coin9.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage("coin10", L"Image/Player/item/resource_coin10.bmp", 24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin30", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin50", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin100", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin30", L"Image/Player/item/resource_coin30.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin50", L"Image/Player/item/resource_coin50.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin100", L"Image/Player/item/resource_coin100.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 
 }
 

@@ -3,10 +3,7 @@
 #include "config.h"
 class Player;
 class Weapon;
-enum class WeaponMaterialType
-{
-	NORMAL, BLOOD, GLASS, GOLDEN, OBSIDIAN, TITANIUM
-};
+
 
 // 데미지 타입은 한번 정해지면 변하지 않음. 
 // 무기의 종류도 변하지 않음. 

@@ -8,16 +8,23 @@
 
 class EventData;
 class PositionManager;
+class Tilemap;
 class ItemSpawner : public GameActor
 {
 	
 private:
 	weak_ptr<PositionManager> positionManager;
+	weak_ptr<Tilemap> tileMap;
 
 	void OnSpawnItem(EventData* data);
+	void OnSpawnWeapon(EventData* data);
+
 public:
 
 	HRESULT Init() override;
-	void SpawnItem(POINT tileIndex, FPOINT pos, ItemType type, int value);
+	void Release() override;
+
+	void SpawnItem(POINT tileIndex,ItemType type, int value);
 	void SetPositionManager(weak_ptr<PositionManager> positionManager);
+	void SetTileMap(weak_ptr<Tilemap> _tileMap);
 };

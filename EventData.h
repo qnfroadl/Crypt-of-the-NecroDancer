@@ -30,15 +30,25 @@ class SpawnItemEventData : public EventData
 {
 public:
 	POINT index;
-	FPOINT pos;
 	ItemType type;
 	int value;	// 골드량 같은거 넣어줄 변수.
 
-	SpawnItemEventData(POINT index, FPOINT pos, ItemType type, int value)
-		: index(index), pos(pos), type(type), value(value) {};
+	SpawnItemEventData(POINT index, ItemType type, int value)
+		: index(index), type(type), value(value) {};
 
 };
 
+class SpawnWeaponEventdata : public EventData
+{
+public:
+	POINT index;
+
+	DamageType damageType;
+	WeaponMaterialType material;
+	WeaponType weaponType;
+};
+
+/*
 class TileActor;
 class TileActorPositionEventData : public EventData
 {
@@ -50,3 +60,4 @@ public:
 		: preIndex(preIndex), actor(actor) {};
 
 };
+*/

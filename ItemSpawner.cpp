@@ -4,23 +4,57 @@
 #include "ItemBomb.h"
 #include "EventManager.h"
 #include "PositionManager.h"
+#include "Tilemap.h"
+#include "Weapon.h"
+#include "EventData.h"
 
 void ItemSpawner::OnSpawnItem(EventData* data)
 {
 	if (data)
 	{
 		SpawnItemEventData* itemData = static_cast<SpawnItemEventData*>(data);
-		SpawnItem(itemData->index, itemData->pos, itemData->type, itemData->value);
+		switch (itemData->type)
+		{
+		case ItemType::GOLD:
+		case ItemType::DIAMOND:
+		case ItemType::BOMB:
+			SpawnItem(itemData->index, itemData->type, itemData->value);
+			break;
+		}
+		
 	}
+}
+
+void ItemSpawner::OnSpawnWeapon(EventData* data)
+{
+	if (data)
+	{
+		SpawnWeaponEventdata* weaponData = static_cast<SpawnWeaponEventdata*>(data);
+		shared_ptr<Weapon> item = make_shared<Weapon>();
+		item->SetWeaponType(weaponData->damageType, weaponData->weaponType);
+		item->SetMaterial()
+
+	}
+
+
 }
 
 HRESULT ItemSpawner::Init()
 {
 	EventManager::GetInstance()->BindEvent(this, EventType::SPAWNITEM, std::bind(&ItemSpawner::OnSpawnItem, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::SPAWNWEAPON, std::bind(&ItemSpawner::OnSpawnWeapon, this, std::placeholders::_1));
+
 	return S_OK;
 }
 
-void ItemSpawner::SpawnItem(POINT tileIndex, FPOINT pos, ItemType type, int value)
+void ItemSpawner::Release()
+{
+	EventManager::GetInstance()->UnbindEvent(this, EventType::SPAWNITEM);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::SPAWNWEAPON);
+
+}
+
+void ItemSpawner::SpawnItem(POINT tileIndex,ItemType type, int value)
 {
 	shared_ptr<TileItem> item = nullptr;
 	switch (type)
@@ -41,6 +75,8 @@ void ItemSpawner::SpawnItem(POINT tileIndex, FPOINT pos, ItemType type, int valu
 
 	if (item)
 	{
+		FPOINT pos = tileMap.lock()->GetTilePos(tileIndex);
+
 		item->SetTileIndex(tileIndex);
 		item->SetItemType(type);
 		item->SetPos(pos);
@@ -52,4 +88,9 @@ void ItemSpawner::SpawnItem(POINT tileIndex, FPOINT pos, ItemType type, int valu
 void ItemSpawner::SetPositionManager(weak_ptr<PositionManager> _positionManager)
 {
 	positionManager = _positionManager;
+}
+
+void ItemSpawner::SetTileMap(weak_ptr<Tilemap> _tileMap)
+{
+	tileMap = _tileMap;
 }
