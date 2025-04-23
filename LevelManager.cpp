@@ -1,7 +1,7 @@
 ﻿#include "LevelManager.h"
 #include "EventManager.h"
 #include "EventData.h"
-
+#include "SceneManager.h"
 
 HRESULT LevelManager::Init()
 {
@@ -21,5 +21,6 @@ void LevelManager::OnNextLevel(EventData* data)
 
 void LevelManager::OnEnterZone(EventData* data)
 {
-    
+    SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
+
 }

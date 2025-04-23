@@ -38,6 +38,11 @@ void BossMonster::Release()
 
 void BossMonster::Update()
 {
+	if (false == IsActive())
+	{
+		return;
+	}
+
 	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
 	if (isBlast)
 	{

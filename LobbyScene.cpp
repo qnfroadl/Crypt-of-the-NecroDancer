@@ -17,10 +17,18 @@
 
 #include "MonsterManager.h"
 #include "TilemapGenerator.h"
+
 HRESULT LobbyScene::Init()
 {
     // InitMap
 	SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
+
+    if (nullptr == levelManager)
+    {
+        levelManager = make_unique<LevelManager>();
+        levelManager->Init();
+    }
+
     map = make_shared<Tilemap>();
     map->Init(20, 20);
     map->Load("map/ZONE1_01.map");

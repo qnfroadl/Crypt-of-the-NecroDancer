@@ -45,7 +45,6 @@ HRESULT LevelScene::Init()
     playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
     uiManager->AddUI(playerHp);
 
-
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
@@ -59,16 +58,6 @@ HRESULT LevelScene::Init()
         monsterManager.lock()->SetTileMap(map);
         monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
-
-    // Test
-
-
-    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 3,3 }, map->GetTilePos({ 3,3 }), ItemType::GOLD, 1));
-    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 4,4 }, map->GetTilePos({ 4,4 }), ItemType::GOLD, 30));
-    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 5,5 }, map->GetTilePos({ 5,5 }), ItemType::GOLD, 100));
-    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 6,6 }, map->GetTilePos({ 6,6 }), ItemType::GOLD, 50));
-    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 7,7 }, map->GetTilePos({ 7,7 }), ItemType::GOLD, 4));
-    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 9,9 }, map->GetTilePos({ 9,9 }), ItemType::GOLD, 10));
 
     return S_OK;
 }

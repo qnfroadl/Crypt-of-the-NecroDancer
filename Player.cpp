@@ -313,8 +313,6 @@ void Player::Render(HDC hdc)
 			weapon->Render(hdc);
 		}
 	}
-	
-	
 
 }
 
@@ -329,8 +327,8 @@ void Player::SetTileIndex(const POINT& _index)
 	TileActor::SetTileIndex(_index);	// 타일 인덱스 업데이트
 	
 	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());	// 변경된 내용 포지션 매니저에 알리기.
-	EventManager::GetInstance()->AddEvent(EventType::PLAYERMOVED, nullptr);
 	tileMap.lock()->InteractTile(_index, this);
+	EventManager::GetInstance()->AddEvent(EventType::PLAYERMOVED, nullptr);
 
 }
 

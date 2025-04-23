@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "config.h"
 #include "GameObject.h"
+#include "LevelManager.h"
 
 class Tilemap;
 class PlayerManager;
@@ -11,6 +12,8 @@ class MonsterManager;
 class LobbyScene : public GameObject
 {
 private:
+    unique_ptr<LevelManager> levelManager;
+
     shared_ptr<Tilemap> map;
 	weak_ptr<PlayerManager> playerManager;
 	weak_ptr<MonsterManager> monsterManager;

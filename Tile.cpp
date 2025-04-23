@@ -5,7 +5,7 @@
 #include "Block.h"
 #include "Trap.h"
 #include "CommonFunction.h"
-#include "SceneManager.h"
+#include "EventManager.h"
 
 #define TILE_SIZE_SCALED (TILE_SIZE * TILE_SCALE)
 
@@ -91,7 +91,7 @@ void Tile::OnTile(TileActor* actor)
 	/*if (trap) trap->OnTriggered(actor);*/
 	if (tileNum == 24)
 	{
-		SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
+		EventManager::GetInstance()->AddEvent(EventType::ENTERZONE, nullptr);
 	}
 }
 
