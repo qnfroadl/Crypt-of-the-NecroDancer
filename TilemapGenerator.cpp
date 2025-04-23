@@ -12,6 +12,9 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
     placedStart = false;
     placedEnd = false;
     placedRects.clear();
+    shopRoomRects.clear();
+    startCandidate = { -1, -1 };
+    endCandidate = { -1, -1 };
 
     Tilemap* tilemap = new Tilemap();
     tilemap->Init(mapRows, mapCols);
@@ -31,17 +34,8 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
     if (endTile)
         endTile->SetTileNum(24);
 
-    if (startCandidate.x != -1)
-    {
-        tilemap->SetPlayerStartIndex(startCandidate);
-        placedStart = true;
-    }
-    if (endCandidate.x != -1)
-    {
-        tilemap->SetNextStageIndex(endCandidate);
-        placedEnd = true;
-    }
-	tilemap->GetTile(endCandidate)->SetTileNum(24);
+	FinalizeTilemap(tilemap);
+	CollectSpawnPoints(tilemap);
     return tilemap;
 }
 
@@ -343,6 +337,9 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
         leaf->roomRect = tryRect;
         placedRects.push_back(tryRect);
 
+		if (isShopRoom)
+			shopRoomRects.push_back(tryRect);
+
         for (int y = 0; y < rh; ++y)
         {
             for (int x = 0; x < rw; ++x)
@@ -564,6 +561,27 @@ void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT directio
     }
 }
 
+void TilemapGenerator::FinalizeTilemap(Tilemap* tilemap)
+{
+    if (startCandidate.x != -1)
+    {
+        tilemap->SetPlayerStartIndex(startCandidate);
+        placedStart = true;
+    }
+
+    if (endCandidate.x != -1)
+    {
+        tilemap->SetNextStageIndex(endCandidate);
+        placedEnd = true;
+    }
+
+    shared_ptr<Tile> endTile = tilemap->GetTile({ endCandidate.x, endCandidate.y });
+    if (endTile)
+    {
+        endTile->SetTileNum(24);
+    }
+}
+
 void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
 {
     int w = tilemap->GetWidth();
@@ -748,5 +766,52 @@ void TilemapGenerator::ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& roo
             shopConnected = true;
 
         merge(a, b);
+    }
+}
+
+void TilemapGenerator::CollectSpawnPoints(Tilemap* tilemap)
+{
+    // 시작 방 RECT 찾기
+    RECT startRoomRect = {};
+    for (const RECT& r : placedRects)
+    {
+        if (startCandidate.x >= r.left && startCandidate.x < r.right &&
+            startCandidate.y >= r.top && startCandidate.y < r.bottom)
+        {
+            startRoomRect = r;
+            break;
+        }
+    }
+
+    // spawnPoints 수집
+    for (int y = 0; y < tilemap->GetHeight(); ++y)
+    {
+        for (int x = 0; x < tilemap->GetWidth(); ++x)
+        {
+            // 시작 방이면 제외
+            if (x >= startRoomRect.left && x < startRoomRect.right &&
+                y >= startRoomRect.top && y < startRoomRect.bottom)
+                continue;
+
+            // 상점 방이면 제외
+            bool isInShop = false;
+            for (const RECT& shop : shopRoomRects)
+            {
+                if (x >= shop.left && x < shop.right &&
+                    y >= shop.top && y < shop.bottom)
+                {
+                    isInShop = true;
+                    break;
+                }
+            }
+            if (isInShop) continue;
+
+            // 조건에 맞으면 추가
+            shared_ptr<Tile> t = tilemap->GetTile({ x, y });
+            if (t && t->GetTileNum() == 0 && !t->GetBlock())
+            {
+				tilemap->AddSpawnPoint({ x, y });
+            }
+        }
     }
 }

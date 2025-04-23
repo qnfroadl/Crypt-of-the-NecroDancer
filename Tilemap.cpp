@@ -10,7 +10,7 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	mapRows = _mapRows;
 	mapColumns = _mapColumns;
 	tiles = vector<vector<shared_ptr<Tile>>>(_mapRows, vector<shared_ptr<Tile>>(_mapColumns, nullptr));
-
+	spawnPoints = {};
 	//leftTop = { Camera::GetInstance()->GetViewRect().left, Camera::GetInstance()->GetViewRect().top };
 	//rightBottom = { Camera::GetInstance()->GetViewRect().right, Camera::GetInstance()->GetViewRect().bottom };
 	leftTop = { 0, 0 };
@@ -37,6 +37,7 @@ void Tilemap::Release()
 		row.clear();
 	}
 	tiles.clear();
+	// 이벤트 언바인드 추가
 }
 
 void Tilemap::Update()
@@ -119,17 +120,12 @@ void Tilemap::Move(TileActor* actor, POINT index)
 
 POINT Tilemap::GetSpawnIndex()
 {
-	for (int i = 0; i < tiles.size(); ++i)
-	{
-		for (int j = 0; j < tiles[i].size(); ++j)
-		{
-			if (tiles[i][j] && tiles[i][j]->GetBlock() == nullptr)
-			{
-				return { j, i };
-			}
-		}
-	}
-	return { -1, -1 };
+	if (spawnPoints.empty()) return { -1, -1 };
+	srand(time(nullptr));
+	int randomIndex = rand() % spawnPoints.size();
+	POINT spawnPoint = spawnPoints[randomIndex];
+	spawnPoints.erase(spawnPoints.begin() + randomIndex);
+	return spawnPoint;
 }
 
 void Tilemap::Load(string filePath)
@@ -346,30 +342,26 @@ void Tilemap::UpdateActiveTiles(POINT playerIndex)
 
 void Tilemap::UpdateVisuable()
 {
-	FPOINT cameraPos = Camera::GetInstance()->GetPos();         // 카메라 중심 좌표 (픽셀)
-    RECT viewRect = Camera::GetInstance()->GetViewRect();       // 카메라 뷰 크기 (픽셀 기준)
-    float scaledTileSize = TILE_SIZE * TILE_SCALE;
+	FPOINT cameraPos = Camera::GetInstance()->GetPos();
+	RECT viewRect = Camera::GetInstance()->GetViewRect();
+	float scaledTileSize = TILE_SIZE * TILE_SCALE;
 
-    // 카메라 화면 크기 → 화면에 보이는 타일 개수
-    int tilesOnScreenX = static_cast<int>(ceil((viewRect.right - viewRect.left) / scaledTileSize));
-    int tilesOnScreenY = static_cast<int>(ceil((viewRect.bottom - viewRect.top) / scaledTileSize));
+	// 카메라 좌상단 좌표가 포함된 타일 인덱스
+	int leftTile = static_cast<int>(cameraPos.x / scaledTileSize);
+	int topTile = static_cast<int>(cameraPos.y / scaledTileSize);
 
-    // 중심 타일 인덱스 계산 (여기부터 이상함)
-    int centerTileX = static_cast<int>(cameraPos.x / scaledTileSize);
-    int centerTileY = static_cast<int>(cameraPos.y / scaledTileSize);
+	// 화면에 보이는 타일 개수 (뷰의 폭/높이를 타일 크기로 나눔)
+	int tilesOnScreenX = static_cast<int>(ceil((viewRect.right - viewRect.left) / scaledTileSize));
+	int tilesOnScreenY = static_cast<int>(ceil((viewRect.bottom - viewRect.top) / scaledTileSize));
 
-    // 화면 반타일 수 (좌우/상하)
-    int halfX = tilesOnScreenX / 2;
-    int halfY = tilesOnScreenY / 2;
+	// 마진
+	int marginX = 2;
+	int marginY = 2;
 
-    // 마진 타일 수
-    int marginX = 2;
-    int marginY = 2;
-
-    // 실제 화면에 보여줄 타일 범위 계산
-    leftTop.x = centerTileX - halfX - marginX;
-    leftTop.y = centerTileY - halfY - marginY;
-    rightBottom.x = centerTileX + halfX + marginX;
-    rightBottom.y = centerTileY + halfY + marginY;
+	// 보여줄 타일 범위 계산
+	leftTop.x = max(0, leftTile - marginX);
+	leftTop.y = max(0, topTile - marginY);
+	rightBottom.x = min(mapColumns - 1, leftTile + tilesOnScreenX + marginX);
+	rightBottom.y = min(mapRows - 1, topTile + tilesOnScreenY + marginY);
 	//cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
 }
