@@ -32,9 +32,13 @@ void EventManager::UnbindEvent(GameObject* obj, EventType type)
 	auto it = funcs[type].begin();
 	while (it != funcs[type].end())
 	{
-		
+		if (it->obj == obj)
+		{
+			it = funcs[type].erase(it);
+			continue;
+		}
+		it++;
 	}
-	
 	
 }
 

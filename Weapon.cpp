@@ -11,83 +11,85 @@
 void Weapon::InitResources()
 {
 	// 이렇게 로드하지말고, 필요 할 때만 로드하게 만들었으면 좋았을걸.
+	const float weaponScale = 2.0;
+	const float swipeScale = 2.0f;
 #pragma region WeaponResources
 	ImageManager::GetInstance()->AddImage("weapon_broadsword_blood",
-	TEXT("/Image/Player/weapon/weapon_broadsword_blood.bmp"), 24,48, 1, 2, true, RGB(255,0,255));
+	TEXT("Image/Player/weapon/weapon_broadsword_blood.bmp"), 24 * weaponScale,48 * weaponScale, 1, 2, true, RGB(255,0,255));
 
 	ImageManager::GetInstance()->AddImage("weapon_broadsword_glass",
-		TEXT("/Image/Player/weapon/weapon_broadsword_glass.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_broadsword_glass.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_broadsword_golden",
-		TEXT("/Image/Player/weapon/weapon_broadsword_golden.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_broadsword_golden.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_broadsword_normal",
-		TEXT("/Image/Player/weapon/weapon_broadsword_normal.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_broadsword_normal.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_broadsword_obsidian",
-		TEXT("/Image/Player/weapon/weapon_broadsword_obsidian.bmp"), 24, 48, 3, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_broadsword_obsidian.bmp"), 24 * weaponScale, 48 * weaponScale, 3, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_broadsword_titanium",
-		TEXT("/Image/Player/weapon/weapon_broadsword_titanium.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_broadsword_titanium.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_dagger_blood",
-		TEXT("/Image/Player/weapon/weapon_dagger_blood.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_dagger_blood.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_dagger_glass",
-		TEXT("/Image/Player/weapon/weapon_dagger_glass.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_dagger_glass.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_dagger_golden",
-		TEXT("/Image/Player/weapon/weapon_dagger_golden.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_dagger_golden.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_dagger_normal",
-		TEXT("/Image/Player/weapon/weapon_dagger_normal.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_dagger_normal.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_dagger_obsidian",
-		TEXT("/Image/Player/weapon/weapon_dagger_obsidian.bmp"), 24, 48, 3, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_dagger_obsidian.bmp"), 24 * weaponScale, 48 * weaponScale, 3, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_dagger_titanium",
-		TEXT("/Image/Player/weapon/weapon_dagger_titanium.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_dagger_titanium.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 
 	ImageManager::GetInstance()->AddImage("weapon_glass",
-		TEXT("/Image/Player/weapon/weapon_glass.bmp"), 24, 48, 1, 2, true, RGB(255, 0, 255));
+		TEXT("Image/Player/weapon/weapon_glass.bmp"), 24 * weaponScale, 48 * weaponScale, 1, 2, true, RGB(255, 0, 255));
 #pragma endregion
 
 #pragma region SwipeResources
 	ImageManager::GetInstance()->AddImage("swipe_broadsword_blood",
-		TEXT("Image/Player/swipe/swipe_broadsword_blood.bmp"), 72, 72, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_broadsword_blood.bmp"), 72 * swipeScale, 72 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_broadsword_glass",
-		TEXT("Image/Player/swipe/swipe_broadsword_glass.bmp"), 72, 72, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_broadsword_glass.bmp"), 72 * swipeScale, 72 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_broadsword_gold",
-		TEXT("Image/Player/swipe/swipe_broadsword_gold.bmp"), 72, 72, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_broadsword_gold.bmp"), 72 * swipeScale, 72 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_broadsword_normal",
-		TEXT("Image/Player/swipe/swipe_broadsword_normal.bmp"), 72, 72, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_broadsword_normal.bmp"), 72 * swipeScale, 72 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_broadsword_obsidian",
-		TEXT("Image/Player/swipe/swipe_broadsword_obsidian.bmp"), 72, 216, 3, 3, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_broadsword_obsidian.bmp"), 72 * swipeScale, 216 * swipeScale, 3, 3, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_broadsword_titanium",
-		TEXT("Image/Player/swipe/swipe_broadsword_titanium.bmp"), 72, 72, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_broadsword_titanium.bmp"), 72 * swipeScale, 72 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_dagger_blood",
-		TEXT("Image/Player/swipe/swipe_dagger_blood.bmp"), 72, 24, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_dagger_blood.bmp"), 72 * swipeScale, 24 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_dagger_glass",
-		TEXT("Image/Player/swipe/swipe_dagger_glass.bmp"), 72, 24, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_dagger_glass.bmp"), 72 * swipeScale, 24 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_dagger_golden",
-		TEXT("Image/Player/swipe/swipe_dagger_golden.bmp"), 72, 24, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_dagger_golden.bmp"), 72 * swipeScale, 24 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_dagger_normal",
-		TEXT("Image/Player/swipe/swipe_dagger_normal.bmp"), 72, 24, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_dagger_normal.bmp"), 72 * swipeScale, 24 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_dagger_obsidian",
-		TEXT("Image/Player/swipe/swipe_dagger_obsidian.bmp"), 72, 72, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_dagger_obsidian.bmp"), 72 * swipeScale, 72 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 	ImageManager::GetInstance()->AddImage("swipe_dagger_titanium",
-		TEXT("Image/Player/swipe/swipe_dagger_titanium.bmp"), 72, 24, 3, 1, true, RGB(255, 0, 255), true);
+		TEXT("Image/Player/swipe/swipe_dagger_titanium.bmp"), 72 * swipeScale, 24 * swipeScale, 3, 1, true, RGB(255, 0, 255), true);
 
 #pragma endregion
 
@@ -137,6 +139,7 @@ string Weapon::GetWeaponTypeName()
 Weapon::Weapon()
 	: damageType(DamageType::NORMAL), weaponType(WeaponType::DAGGER), bSwipe(false), elapsedTime(0), curFrame(0)
 {
+	SetItemType(ItemType::WEAPON);
 	InitResources();
 }
 
@@ -144,7 +147,10 @@ HRESULT Weapon::Init()
 {
 	elapsedTime = 0.f;
 	curFrame = 0;
-	SetMaterial(new WeaponMaterial(WeaponMaterialType::NORMAL));
+	weaponType = WeaponType::DAGGER;
+	material = std::make_shared<WeaponMaterial>();
+	SetMaterial(WeaponMaterialType::NORMAL);
+
 	InitImage();
 	InitRange();
 	return S_OK;
@@ -152,11 +158,7 @@ HRESULT Weapon::Init()
 
 void Weapon::Release()
 {
-	if (material)
-	{
-		delete material;
-		material = nullptr;
-	}
+
 }
 
 void Weapon::Update()
@@ -209,9 +211,9 @@ void Weapon::SetWeaponType(DamageType damageType, WeaponType weaponType)
 	InitRange();
 }
 
-void Weapon::SetMaterial(WeaponMaterial* material)
+void Weapon::SetMaterial(WeaponMaterialType type)
 {
-	this->material = material;
+	material->SetType(type);
 	InitImage();
 	InitRange();
 }

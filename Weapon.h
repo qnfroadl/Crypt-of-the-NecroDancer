@@ -7,15 +7,6 @@
 class Monster;
 class Player;
 
-enum class DamageType
-{
-    NORMAL, PIERCING, PHASING,
-};
-enum class WeaponType
-{
-	DAGGER, BROADSWORD,
-};
-
 class Weapon : public TileItem, public enable_shared_from_this<Weapon>
 {
 private:
@@ -31,7 +22,7 @@ private:
     DamageType damageType; 
 	WeaponType weaponType;
     vector<POINT> range;
-	WeaponMaterial* material;
+	shared_ptr<WeaponMaterial> material;
 
 	void InitResources();
 
@@ -49,7 +40,7 @@ public:
 	virtual void Render(HDC hdc);	// 프레임 단위로 출력(이미지, 텍스트 등)
 
 	void SetWeaponType(DamageType damageType, WeaponType weaponType);
-	void SetMaterial(WeaponMaterial* material);
+	void SetMaterial(WeaponMaterialType type);
 
 	void Interact(GameActor* actor) override;
 

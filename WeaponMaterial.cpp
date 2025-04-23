@@ -27,7 +27,7 @@ void WeaponMaterial::InitDamage()
 }
 
 WeaponMaterial::WeaponMaterial(WeaponMaterialType materialType)
-	: materialType(materialType), damage(damage)
+	: materialType(materialType)
 
 {
 	InitDamage();
@@ -64,4 +64,13 @@ void WeaponMaterial::OnPlayerHit(Player* player, Weapon* weapon)
 int WeaponMaterial::GetDamage()
 {
 	return damage;
+}
+
+void WeaponMaterial::SetType(WeaponMaterialType type)
+{
+	materialType = type;
+
+	// 이것저것 초기화.
+
+	InitDamage();
 }

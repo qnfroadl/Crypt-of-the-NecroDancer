@@ -424,7 +424,9 @@ void Player::AddWeapon(shared_ptr<Weapon> _weapon)
 	// 기존 무기를 떨어뜨리고, 새 무기를 장착 한다.
 	if (weapon)
 	{
+		FPOINT pos = tileMap.lock()->GetTilePos(GetTileIndex());
 		weapon->SetTileIndex(GetTileIndex());
+		weapon->SetPos(pos);
 		positionManager.lock()->AddTileActor(weapon);
 		weapon->Drop();
 	}
