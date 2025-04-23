@@ -93,6 +93,10 @@ void Tile::OnTile(TileActor* actor)
 	{
 		EventManager::GetInstance()->AddEvent(EventType::ENTERZONE, nullptr);
 	}
+	//if (tileNum == 25)
+	//{
+	//	EventManager::GetInstance()->AddEvent(EventType::NEXTLEVEL, nullptr);
+	//}
 }
 
 TileType Tile::GetTypeByTileNum(int tileNum)
@@ -119,10 +123,10 @@ void Tile::OnBeat(bool isCombo)
 		switch (type)
 		{
 		case TileType::BRIGHT_DIRT:
-			SetTileNum(0);
+			SetTileNum((index.x + index.y) % 2 == 0 ? 10 : 11);
 			break;
 		case TileType::DARK_DIRT:
-			SetTileNum((index.x + index.y) % 2 == 0 ? 10 : 11);
+			SetTileNum(1);
 			break;
 		case TileType::COMBO1_DIRT:
 		case TileType::COMBO2_DIRT:
@@ -137,12 +141,16 @@ void Tile::OnBeat(bool isCombo)
 		switch (type)
 		{
 		case TileType::BRIGHT_DIRT:
-		case TileType::COMBO2_DIRT:
 			SetTileNum(0);
 			break;
+		case TileType::COMBO2_DIRT:
+		SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
+			break;
 		case TileType::DARK_DIRT:
-		case TileType::COMBO1_DIRT:
 			SetTileNum(1);
+			break;
+		case TileType::COMBO1_DIRT:
+			SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
 			break;
 		default:
 			break;
