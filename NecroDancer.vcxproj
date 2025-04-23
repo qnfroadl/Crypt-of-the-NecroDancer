@@ -155,6 +155,7 @@
     <ClCompile Include="MonsterManager.cpp" />
     <ClCompile Include="PlayerHp.cpp" />
     <ClCompile Include="PlayerWallet.cpp" />
+    <ClCompile Include="ShadowCasting.cpp" />
     <ClCompile Include="Shovel.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Block.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="ObservableValue.h" />
     <ClInclude Include="PlayerHp.h" />
     <ClInclude Include="PlayerWallet.h" />
+    <ClInclude Include="ShadowCasting.h" />
     <ClInclude Include="Shovel.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Block.h" />
