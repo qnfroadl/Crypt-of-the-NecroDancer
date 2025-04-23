@@ -175,7 +175,7 @@ bool Monster::AttackTarget(POINT _nextIndex)
 	POINT playerIndex = target.lock()->GetTileIndex();
 	if (_nextIndex.x == playerIndex.x && _nextIndex.y == playerIndex.y)
 	{
-		bool isHit = isLeft;
+		
 		target.lock()->TakeDamage(damage);
 		return true;
 	}

@@ -297,7 +297,7 @@ void Player::TakeDamage(float damage)
 	{
 		dmamgedHp = 0;
 	}
-
+	cout << "damagedHp: " << dmamgedHp << endl;
 	hp.Set(dmamgedHp);
 	
 }

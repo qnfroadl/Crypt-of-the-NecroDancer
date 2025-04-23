@@ -21,6 +21,8 @@ private:
 	BossState state;
 	bool isBlast;
 	int blastAnimFrame;
+	int textX;
+	int textY;
 	unordered_map<BossType, MonsterImageInfo>MonsterInfoTable =
 	{
 		{ BossType::Dragon,		{ "Dragon",TEXT("Image/BossMonster/dragon_red.bmp"),427,102, 7,2}},
@@ -39,6 +41,8 @@ public:
 	void OnBeat();
 	void SettingImageFrameImage();
 	void FireImageRender(int index, HDC hdc, FPOINT pos, int animationFrame);
+	void AttackTarget();
+
 	MonsterImageInfo FindImageInfo(BossType _bm);
 	BossMonster();
 	virtual ~BossMonster();

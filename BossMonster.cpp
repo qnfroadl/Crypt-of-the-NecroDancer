@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include"EventManager.h"
 #include"Tilemap.h"
+#include "Player.h"
 void BossMonster::Init(BossType p)
 {
 	SettingImageFrameImage();
@@ -52,7 +53,9 @@ void BossMonster::Update()
 		if (animationFrame >= maxFrame)
 		{
 			if (state == BossState::Skill)
-			{
+			{	
+				
+				AttackTarget();
 				state = BossState::IDLE;
 				SettingFrame(bossType);
 			}
@@ -67,24 +70,36 @@ void BossMonster::Update()
 
 		if (beatCount >= moveDelay)
 		{
-			state = BossState::Skill;
+			state = BossState::ACTIVE;
 			beatCount = 0;
 		}
 		break;
 	case BossState::ACTIVE:
 		if (beatCount >= moveDelay)
 		{
-			POINT nextIndex = Trace();
-			FPOINT nextPos = tileMap.lock()->GetTilePos(nextIndex);
-			if (AttackTarget(nextIndex))
+			textX = target.lock()->GetTileIndex().x - GetTileIndex().x;
+			textY = target.lock()->GetTileIndex().y - GetTileIndex().y;
+			if (((textX >= -5 && textX < 0) || (textX > 0 && textX <= 5)) && textY == 0)
 			{
-				SetJumpData(GetPos().x, GetPos().y);
-
+				state = BossState::Skill;
+				if ((textX >= -5 && textX < 0))
+					isLeft = false;
+				else if (textX > 0 && textX <= 5)
+					isLeft = true;
+				break;
 			}
-			else
-			{
-				SetJumpData(nextPos.x, nextPos.y);
-				SetTileIndex(nextIndex);
+			else {
+				POINT nextIndex = Trace();
+				FPOINT nextPos = tileMap.lock()->GetTilePos(nextIndex);
+				if (Monster::AttackTarget(nextIndex))
+				{
+					SetJumpData(GetPos().x, GetPos().y);
+				}
+				else
+				{
+					SetJumpData(nextPos.x, nextPos.y);
+					SetTileIndex(nextIndex);
+				}
 			}
 		}
 
@@ -93,17 +108,13 @@ void BossMonster::Update()
 		JumpAnim();
 		break;
 	case BossState::Skill:
-		if (animationFrame ==5 )
+		
+		if (!isBlast&&animationFrame >=5 )
 		{
 			isBlast = true;
 		}
 		minFrame = 3;
 		maxFrame = image->GetMaxFrameX();
-		if (animationFrame >= maxFrame)
-		{
-			minFrame = 0;
-			state = BossState::IDLE;
-		}
 		break;
 	
 	default:
@@ -116,7 +127,7 @@ void BossMonster::Render(HDC hdc)
 	if (IsActive())
 	{
 		FPOINT pos = Camera::GetInstance()->GetScreenPos(FPOINT(GetPos()));
-		image->FrameRender(hdc, pos.x, pos.y - jumpData.height-30, animationFrame, 0,false);
+		image->FrameRender(hdc, pos.x, pos.y - jumpData.height-30, animationFrame, 0,isLeft);
 		if (isBlast)
 		{
 			FireImageRender(7, hdc, pos, blastAnimFrame);
@@ -149,24 +160,17 @@ void BossMonster::SettingFrame(BossType _bm)
 void BossMonster::OnBeat()
 {
 	beatCount++;
-	if (state == BossState::IDLE)
-	{
-		if (beatCount >= moveDelay)
-		{
-			state = BossState::Skill;
-			beatCount = 0;
-		}
-	}
+
 }
 
 void BossMonster::SettingImageFrameImage()
 {
-	ImageManager::GetInstance()->AddImage("fire0", L"Image/BossMonster/fire0.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("fire1", L"Image/BossMonster/fire1.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("fire2", L"Image/BossMonster/fire2.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("fire3", L"Image/BossMonster/fire3.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("fire4", L"Image/BossMonster/fire4.bmp", 168, 24*2, 7, 1, true, RGB(255, 0, 255));
-	for (int i = 0; i < 5; ++i) {
+	ImageManager::GetInstance()->AddImage("fire0", L"Image/BossMonster/fire0.bmp", 168*3, 24*2, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire1", L"Image/BossMonster/fire1.bmp", 168*3, 24*2, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire2", L"Image/BossMonster/fire2.bmp", 168*3, 24*2, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire3", L"Image/BossMonster/fire3.bmp", 168*3, 24*2, 7, 1, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("fire4", L"Image/BossMonster/fire4.bmp", 168*3, 24*2, 7, 1, true, RGB(255, 0, 255));
+	for (int i = 0; i < 5; ++i) {													  
 		fire[i] = ImageManager::GetInstance()->FindImage("fire" + std::to_string(i));
 	}
 }
@@ -177,16 +181,29 @@ void BossMonster::FireImageRender(int index, HDC hdc, FPOINT pos, int animationF
 
 	for (int i = 0; i < 5; i++) 
 	{
-		if (isLeft)
+		if (!isLeft)
 		{
 			if(i==0)
-				fire[i]->FrameRender(hdc, pos.x - (frameWidth * (i + 1)+42), pos.y - jumpData.height,animationFrame, 0, true);
+				fire[i]->FrameRender(hdc, pos.x - (frameWidth * (i + 1)), pos.y - jumpData.height,animationFrame, 0, true);
 			else
-				fire[i]->FrameRender(hdc, pos.x - (frameWidth * (i + 1)+40) , pos.y - jumpData.height, animationFrame, 0, false);
+				fire[i]->FrameRender(hdc, pos.x - (frameWidth * (i + 1)) , pos.y - jumpData.height, animationFrame, 0, false);
 		}
 		else
 		{
-			fire[i]->FrameRender(hdc, pos.x + (frameWidth * (i + 1))+30, pos.y - jumpData.height, animationFrame, 0, false);
+			fire[i]->FrameRender(hdc, pos.x + (frameWidth * (i + 1)), pos.y - jumpData.height, animationFrame, 0, false);
+		}
+	}
+}
+
+void BossMonster::AttackTarget()
+{
+	if (isBlast)
+	{
+		textX = target.lock()->GetTileIndex().x - this->GetTileIndex().x;
+		textY = target.lock()->GetTileIndex().y - this->GetTileIndex().y;
+		if (((textX >= -5 && textX < 0) || (textX > 0 && textX <= 5)) && textY == 0)
+		{
+			target.lock()->TakeDamage(damage);
 		}
 	}
 }
