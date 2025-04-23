@@ -11,6 +11,12 @@ void TileCharacter::SetJumpData(int dx, int dy)
 	jumpData.dy = dy;
 }
 
+void TileCharacter::ResetJumpData()
+{
+	jumpData.height = 0;
+
+}
+
 bool TileCharacter::JumpAnim()
 {
 	bool bRet = false;
