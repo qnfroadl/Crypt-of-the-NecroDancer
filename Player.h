@@ -45,7 +45,7 @@ private:
     Image* body;    
 
     // 무기, 갑옷, 삽, 횃불, 소모품
-    shared_ptr<TileItem> weapon;
+    shared_ptr<Weapon> weapon;
     shared_ptr<TileItem> armor;
     shared_ptr<Shovel> shovel;
     shared_ptr<TileItem> touch;
@@ -63,8 +63,8 @@ private:
     bool JumpAnim() override;
     void SetJumpData(InputKey key);
     void SetJumpData(int dx, int dy) override;
-    void CalcAttackRange(InputKey key, vector<POINT>& range);
-
+    void CalcAttackRange(Direction dir, vector<POINT>& range);
+    void NotifyAll();
 public:
     Player();
     virtual ~Player();
@@ -80,14 +80,14 @@ public:
     void SetPositionManager(weak_ptr<PositionManager> positionManager) { this->positionManager = positionManager; }
 	void Teleport(POINT index);
 
-	void AddObserver(IPlayerObserver* observer) { if (observer) {observers.push_back(observer); }}
+	void AddObserver(IPlayerObserver* observer);
     void BindRelease();
 
     void SetPlayerIndex(PlayerIndex index) { playerIndex = index;}
     PlayerIndex GetPlayerIndex() {return playerIndex;}
 	void SetName(string name) { this->name = name; }
 
-    void Attack();                    //  공격
+    bool Attack(POINT index, Direction dir);                    //  공격
     void UseItem();                   // 아이템 사용
 
     void TakeDamage(float damage);
@@ -109,5 +109,5 @@ public:
 	void AddWeapon(shared_ptr<Weapon> weapon);
 	
     void AddBomb(int bomb) { this->bombCount.Set(this->bombCount.Get() + bomb); }
-    
+   
 };

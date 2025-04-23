@@ -38,7 +38,7 @@ void Player::OnBeatMiss(EventData* data)
 
 	//cout << "on beat miss" << endl;
 	// 카메라 흔들기.	
-	//Camera::GetInstance()->Shake(0.5f, 10);
+	Camera::GetInstance()->Shake(0.2f, 10);
 }
 
 void Player::OnComboReset(EventData* data)
@@ -66,7 +66,7 @@ bool Player::JumpAnim()
 void Player::SetJumpData(InputKey key)
 {
 	bool isAttack = false;
-
+	Direction dir = Direction::RIGHT;
 	// 키 입력에 따라 점프 방향을 설정
 	POINT pIndex = GetTileIndex();
 	FPOINT tilePos = GetPos();
@@ -74,50 +74,30 @@ void Player::SetJumpData(InputKey key)
 	{
 	case InputKey::UP:
 		pIndex.y -= 1;
+		dir = Direction::UP;
 		break;
 	case InputKey::DOWN:
 		pIndex.y += 1;
+		dir = Direction::DOWN;
 		break;
 	case InputKey::LEFT:
 		pIndex.x -= 1;
 		isLeft = true;
+		dir = Direction::LEFT;
 		break;
 	case InputKey::RIGHT:
 		pIndex.x += 1;
 		isLeft = false;
+		dir = Direction::RIGHT;
 		break;
 	}
 	
-	// 무기가 있고, 공격 할 수 있는 몬스터가 범위내에 있는지 확인하고, 있으면 때리기.
-	if (weapon)
+	if (Attack(pIndex, dir))
 	{
-		shared_ptr<Weapon> wp = static_pointer_cast<Weapon>(weapon);
-		vector<POINT> range = wp->GetRange();
-		CalcAttackRange(key, range);
-
-		shared_ptr<TileActor> monster;
-
-		for (auto atkPoint : range)
-		{
-			monster = positionManager.lock()->GetActor(pIndex, ActorType::MONSTER);
-			if (monster)
-			{
-				weapon->Interact(monster.get());
-				isAttack = true;
-			}
-		}
-
-	}
-	
-	if (isAttack)
-	{
+		// 공격 했다면 턴 종료.
 		return;
 	}
 
-	// 공격 했다면 리턴.
-
-
-	// 사실 캔 무브 체크하기 전에. 공격체크부터 해야함.
 	if (tileMap.lock()->CanMove(pIndex))
 	{
 		// 다음 타일로 이동.
@@ -153,21 +133,21 @@ void Player::SetJumpData(int dx, int dy)
 	TileCharacter::SetJumpData(dx, dy);
 }
 
-void Player::CalcAttackRange(InputKey key, vector<POINT>& range)
+void Player::CalcAttackRange(Direction dir, vector<POINT>& range)
 {
 	for (auto& pt : range)
 	{
-		switch (key)
+		switch (dir)
 		{
-		case InputKey::RIGHT:
+		case Direction::RIGHT:
 			break;
-		case InputKey::DOWN:
+		case Direction::DOWN:
 			pt = {-pt.y, pt.x};
 			break;
-		case InputKey::LEFT:
+		case Direction::LEFT:
 			pt = {-pt.x, -pt.y};
 			break;
-		case InputKey::UP:
+		case Direction::UP:
 			pt = { pt.y, -pt.x };
 			break;
 		}
@@ -175,11 +155,21 @@ void Player::CalcAttackRange(InputKey key, vector<POINT>& range)
 
 }
 
+void Player::NotifyAll()
+{
+	gold.Notify();
+	goldMultiple.Notify();
+	hp.Notify();
+	maxHP.Notify();
+	diamond.Notify();
+	bombCount.Notify();
+}
+
 Player::Player()
 	: state{}, attack(1), name("Cadence"), curFrame(0), speed(20), isLeft(false), elapsedTime(0)
 {
-	hp.Set(100);
-	maxHP.Set(100);
+	hp.Set(3);
+	maxHP.Set(3);
 	diamond.Set(0);
 
 	SetType(ActorType::PLAYER);
@@ -211,8 +201,9 @@ HRESULT Player::Init()
 	shovel->Init();
 
 	// 기본무기
-	weapon = make_shared<Weapon>();
-	weapon->Init();
+	auto tempWeapon = make_shared<Weapon>();
+	tempWeapon->Init();
+	tempWeapon->Interact(this);
 
 	#pragma region Bind
 
@@ -271,6 +262,11 @@ HRESULT Player::Init()
 
 void Player::Update()
 {
+	if (false == IsActive())
+	{
+		return;
+	}
+
 	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
 
 	if (elapsedTime >= 0.1f)
@@ -290,22 +286,35 @@ void Player::Update()
 	case PlayerState::JUMP:
 		JumpAnim();
 		break;
+	}
 
+	if (weapon)
+	{
+		weapon->Update();
 	}
 }
 
 void Player::Render(HDC hdc)
 {
-	
-	FPOINT pos = Camera::GetInstance()->GetScreenPos(GetPos());
-	
-	RenderRectAtCenter(hdc, pos.x, pos.y, 80,80);
+	if (IsActive())
+	{
+		FPOINT pos = Camera::GetInstance()->GetScreenPos(GetPos());
 
-	// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
-	// 캐릭터 몸통
-	body->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
-	// 캐릭터 머리
-	image->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
+		RenderRectAtCenter(hdc, pos.x, pos.y, 80, 80);
+
+		// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
+		// 캐릭터 몸통
+		body->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
+		// 캐릭터 머리
+		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
+
+		if (weapon)
+		{
+			weapon->Render(hdc);
+		}
+	}
+	
+	
 
 }
 
@@ -319,7 +328,7 @@ void Player::SetTileIndex(const POINT& _index)
 	POINT preIndex = GetTileIndex();	// 이전 타일인덱스 가져오기.
 	TileActor::SetTileIndex(_index);	// 타일 인덱스 업데이트
 	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());	// 변경된 내용 포지션 매니저에 알리기.
-	
+	EventManager::GetInstance()->AddEvent(EventType::PLAYERMOVED, nullptr);
 }
 
 void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)
@@ -336,14 +345,51 @@ void Player::Teleport(POINT index)
 	SetTileIndex(index);
 }
 
+void Player::AddObserver(IPlayerObserver* observer)
+{
+	 if (observer) 
+	 { 
+		observers.push_back(observer);
+		NotifyAll();
+	 } 
+}
+
 void Player::BindRelease()
 {
 	observers.clear();
 }
 
-void Player::Attack()
+bool Player::Attack(POINT index, Direction dir)
 {
+	// 무기가 있고, 공격 할 수 있는 몬스터가 범위내에 있는지 확인하고, 있으면 때리기.
 
+	bool isAttack = false;
+
+	if (weapon)
+	{
+		shared_ptr<Weapon> wp = static_pointer_cast<Weapon>(weapon);
+		vector<POINT> range = wp->GetRange();
+		CalcAttackRange(dir, range);
+
+		shared_ptr<TileActor> monster;
+
+		for (auto atkPoint : range)
+		{
+			atkPoint.x += GetTileIndex().x;
+			atkPoint.y += GetTileIndex().y;
+
+			monster = positionManager.lock()->GetActor(atkPoint, ActorType::MONSTER);
+			if (monster)
+			{
+				weapon->Swipe(monster->GetPos(), dir);
+				weapon->Interact(monster.get());
+				isAttack = true;
+			}
+		}
+
+	}
+
+	return isAttack;
 }
 
 void Player::UseItem()
@@ -353,12 +399,15 @@ void Player::UseItem()
 
 void Player::TakeDamage(float damage)
 {
+	Camera::GetInstance()->Shake(0.2f, 10);
+
 	float dmamgedHp = hp.Get() - damage;
-	if (dmamgedHp < 0)
+	if (dmamgedHp <= 0)
 	{
 		dmamgedHp = 0;
+		SetActive(false);
 	}
-
+	
 	hp.Set(dmamgedHp);
 	
 }
