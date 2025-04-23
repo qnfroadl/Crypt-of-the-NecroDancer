@@ -11,6 +11,8 @@ void BossMonster::Init(BossType p)
 	imageInfo = FindImageInfo(p);
 	image = ImageManager::GetInstance()->AddImage(imageInfo.keyName, imageInfo.imagePath, imageInfo.width*3 , imageInfo.height*3 ,
 		imageInfo.imageFrameX, imageInfo.ImageFrameY, true, RGB(255, 0, 255));
+	attackImage = ImageManager::GetInstance()->AddImage("Monster_Attack", TEXT("Image/Monster/swipe_enemy.bmp"), 135*3, 24*3,
+		5, 1, true, RGB(255, 0, 255));
 	light = 0;
 	moveDelay = 3;
 	beatCount = 0;
@@ -22,7 +24,9 @@ void BossMonster::Init(BossType p)
 	state=BossState::IDLE;
 	damage = 10;
 	isBlast = false;
+	isAttack = false;
 	blastAnimFrame = 0;
+	attackAnimationFrame = 0;
 	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&BossMonster::OnBeat, this));
 	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&BossMonster::OnBeat, this));
 
@@ -44,6 +48,18 @@ void BossMonster::Update()
 			{
 				isBlast = false;
 				blastAnimFrame = 0;
+			}
+		}
+	}
+	if(isAttack)
+	{
+		if (elapsedTime > 0.09f)
+		{
+			attackAnimationFrame++;
+			if (attackAnimationFrame >= attackImage->GetMaxFrameX())
+			{
+				isAttack = false;
+				attackAnimationFrame = 0;
 			}
 		}
 	}
@@ -91,7 +107,7 @@ void BossMonster::Update()
 			else {
 				POINT nextIndex = Trace();
 				FPOINT nextPos = tileMap.lock()->GetTilePos(nextIndex);
-				if (Monster::AttackTarget(nextIndex))
+				if (isAttack=Monster::AttackTarget(nextIndex))
 				{
 					SetJumpData(GetPos().x, GetPos().y);
 				}
@@ -125,13 +141,19 @@ void BossMonster::Update()
 void BossMonster::Render(HDC hdc)
 {
 	if (IsActive())
-	{
+	{	
 		FPOINT pos = Camera::GetInstance()->GetScreenPos(FPOINT(GetPos()));
 		image->FrameRender(hdc, pos.x, pos.y - jumpData.height-30, animationFrame, 0,isLeft);
 		if (isBlast)
 		{
 			FireImageRender(7, hdc, pos, blastAnimFrame);
 		}
+		if (isAttack)
+		{
+			FPOINT attackPos = Camera::GetInstance()->GetScreenPos(FPOINT(target.lock()->GetPos()));
+			attackImage->FrameRender(hdc, attackPos.x, attackPos.y-10, attackAnimationFrame, 0, isLeft);
+		}
+		
 	}
 }
 
