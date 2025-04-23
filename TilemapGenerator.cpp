@@ -52,11 +52,11 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
     string path;
     if (zoneName == "BOSS") 
     {
-        path = "map/BOSS.map";
+        path = "map/ZONE1_BOSS.map";
     }
     else if (zoneName == "LOBBY") 
     {
-        path = "map/LOBBY.map";
+        path = "map/ZONE1_LOBBY.map";
     }
     else 
     {
@@ -99,6 +99,7 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
 
     tilemap->SetPlayerStartIndex(room.playerStart);
     tilemap->SetNextStageIndex(room.nextStage);
+    tilemap->GetTile(room.nextStage)->SetTileNum(24);
     return tilemap;
 }
 
