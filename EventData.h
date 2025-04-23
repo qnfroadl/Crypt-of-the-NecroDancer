@@ -46,6 +46,12 @@ public:
 	DamageType damageType;
 	WeaponMaterialType material;
 	WeaponType weaponType;
+
+	SpawnWeaponEventdata(POINT _index, DamageType dType, WeaponMaterialType mType, WeaponType wType)
+		:index(_index),damageType(dType), material(mType), weaponType(wType)
+	{
+
+	}
 };
 
 /*

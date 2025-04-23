@@ -27,16 +27,23 @@ void ItemSpawner::OnSpawnItem(EventData* data)
 
 void ItemSpawner::OnSpawnWeapon(EventData* data)
 {
+	shared_ptr<Weapon> item;
+	
 	if (data)
 	{
-		SpawnWeaponEventdata* weaponData = static_cast<SpawnWeaponEventdata*>(data);
-		shared_ptr<Weapon> item = make_shared<Weapon>();
+		item = make_shared<Weapon>();
+		item->Init();
+		SpawnWeaponEventdata* weaponData = static_cast<SpawnWeaponEventdata*>(data);	
 		item->SetWeaponType(weaponData->damageType, weaponData->weaponType);
-		item->SetMaterial()
+		item->SetMaterial(weaponData->material);
 
+		FPOINT pos = tileMap.lock()->GetTilePos(weaponData->index);
+		item->SetTileIndex(weaponData->index);
+		item->SetItemType(ItemType::WEAPON);
+		item->SetPos(pos);
+
+		positionManager.lock()->AddTileActor(item);		
 	}
-
-
 }
 
 HRESULT ItemSpawner::Init()

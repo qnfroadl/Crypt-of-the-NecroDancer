@@ -17,7 +17,7 @@ private:
 
 	void InitDamage();
 public:
-	WeaponMaterial(WeaponMaterialType materialType);
+	WeaponMaterial(WeaponMaterialType materialType = WeaponMaterialType::NORMAL);
 
 	virtual string GetMaterialName();
 	void OnEnemyKilled(Player* player);
@@ -26,4 +26,6 @@ public:
 	virtual ~WeaponMaterial() = default;
 
 	int GetDamage();
+
+	void SetType(WeaponMaterialType type);
 };
