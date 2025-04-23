@@ -61,7 +61,7 @@ void EventManager::AddEvent(EventType type, EventData* data, bool now)
 		queEvents.push(event);
 	}
 	
-	std::cout << "EventManager::AddEvent : " << (int)type << std::endl;
+	// std::cout << "EventManager::AddEvent : " << (int)type << std::endl;
 }
 
 void EventManager::Update()

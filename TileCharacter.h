@@ -58,6 +58,7 @@ public:
 	inline void SetAttack(float _attack) { attack = _attack; }
 
 	virtual void SetJumpData(int dx, int dy);
+	void ResetJumpData();
 
 };
 
