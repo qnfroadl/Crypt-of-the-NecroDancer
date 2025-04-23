@@ -1,4 +1,4 @@
-#include "BossMonster.h"
+﻿#include "BossMonster.h"
 #include "ImageManager.h"
 #include "TimerManager.h"
 #include "Camera.h"
@@ -22,7 +22,7 @@ void BossMonster::Init(BossType p)
 	SetActive(true);
 	animationFrame = minFrame;
 	state=BossState::IDLE;
-	damage = 10;
+	damage = 1;
 	isBlast = false;
 	isAttack = false;
 	blastAnimFrame = 0;
