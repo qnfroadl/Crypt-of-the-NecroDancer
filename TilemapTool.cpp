@@ -21,8 +21,8 @@ HRESULT TilemapTool::Init()
 
 	selectedTileLX = selectedTileLY = selectedTileRX = selectedTileRY = 0;
 
-	sampleTile = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"), 234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
-	sampleWall = ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
+	sampleTile = ImageManager::GetInstance()->AddImage("TILE", TEXT("../Image/Tiles.bmp"), 234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
+	sampleWall = ImageManager::GetInstance()->AddImage("WALL", TEXT("../Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
 
 	rcSampleTile = { TILEMAPTOOL_X - sampleTile->GetWidth(), 0, TILEMAPTOOL_X, sampleTile->GetHeight() };
 	rcSampleWall = { TILEMAPTOOL_X - sampleWall->GetWidth(), rcSampleTile.bottom + 10, TILEMAPTOOL_X, rcSampleTile.bottom + 10 + sampleWall->GetHeight() };

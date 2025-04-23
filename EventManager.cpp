@@ -1,5 +1,5 @@
 ﻿#include "EventManager.h"
-
+#include "config.h"
 #include <iostream>
 
 int EventManager::GetPriority(EventType type)
