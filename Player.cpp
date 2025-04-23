@@ -38,7 +38,7 @@ void Player::OnBeatMiss(EventData* data)
 
 	//cout << "on beat miss" << endl;
 	// 카메라 흔들기.	
-	//Camera::GetInstance()->Shake(0.5f, 10);
+	Camera::GetInstance()->Shake(0.2f, 10);
 }
 
 void Player::OnComboReset(EventData* data)
@@ -94,13 +94,10 @@ void Player::SetJumpData(InputKey key)
 	
 	if (Attack(pIndex, dir))
 	{
+		// 공격 했다면 턴 종료.
 		return;
 	}
 
-	// 공격 했다면 리턴.
-
-
-	// 사실 캔 무브 체크하기 전에. 공격체크부터 해야함.
 	if (tileMap.lock()->CanMove(pIndex))
 	{
 		// 다음 타일로 이동.
@@ -193,10 +190,10 @@ HRESULT Player::Init()
 		return E_FAIL;
 	}
 
-	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
-	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
 
-	EventManager::GetInstance()->BindEvent(EventType::BLOCKDESTROYFAILED, std::bind(&Player::OnComboReset, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::BLOCKDESTROYFAILED, std::bind(&Player::OnComboReset, this, std::placeholders::_1));
 
 
 	// 기본삽정도는 줘야지.
@@ -265,6 +262,11 @@ HRESULT Player::Init()
 
 void Player::Update()
 {
+	if (false == IsActive())
+	{
+		return;
+	}
+
 	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
 
 	if (elapsedTime >= 0.1f)
@@ -294,21 +296,24 @@ void Player::Update()
 
 void Player::Render(HDC hdc)
 {
-	
-	FPOINT pos = Camera::GetInstance()->GetScreenPos(GetPos());
-	
-	RenderRectAtCenter(hdc, pos.x, pos.y, 80,80);
-
-	// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
-	// 캐릭터 몸통
-	body->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
-	// 캐릭터 머리
-	image->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
-
-	if (weapon)
+	if (IsActive())
 	{
-		weapon->Render(hdc);
+		FPOINT pos = Camera::GetInstance()->GetScreenPos(GetPos());
+
+		RenderRectAtCenter(hdc, pos.x, pos.y, 80, 80);
+
+		// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
+		// 캐릭터 몸통
+		body->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
+		// 캐릭터 머리
+		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
+
+		if (weapon)
+		{
+			weapon->Render(hdc);
+		}
 	}
+	
 	
 
 }
@@ -322,8 +327,11 @@ void Player::SetTileIndex(const POINT& _index)
 {
 	POINT preIndex = GetTileIndex();	// 이전 타일인덱스 가져오기.
 	TileActor::SetTileIndex(_index);	// 타일 인덱스 업데이트
+	
 	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());	// 변경된 내용 포지션 매니저에 알리기.
 	EventManager::GetInstance()->AddEvent(EventType::PLAYERMOVED, nullptr);
+	tileMap.lock()->InteractTile(_index, this);
+
 }
 
 void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)
@@ -394,10 +402,13 @@ void Player::UseItem()
 
 void Player::TakeDamage(float damage)
 {
+	Camera::GetInstance()->Shake(0.2f, 10);
+
 	float dmamgedHp = hp.Get() - damage;
-	if (dmamgedHp < 0)
+	if (dmamgedHp <= 0)
 	{
 		dmamgedHp = 0;
+		SetActive(false);
 	}
 	
 	hp.Set(dmamgedHp);

@@ -16,6 +16,8 @@ private:
 	POINT startIndex;
 	POINT endIndex;
 
+	POINT leftTop;
+	POINT rightBottom;
 public:
 	HRESULT Init(int _mapRows, int _mapColumns);
 	void Release();
@@ -46,5 +48,10 @@ public:
 
 	vector<shared_ptr<TileActor>> GetRendableTileActors();
 	void UpdateActiveTiles(POINT playerIndex);
+	
+	POINT GetLeftTop() { return leftTop; }
+	POINT GetRightBottom() { return rightBottom; }
+
+	void UpdateVisuable();
 };
 

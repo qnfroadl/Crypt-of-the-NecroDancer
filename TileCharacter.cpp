@@ -9,7 +9,6 @@ void TileCharacter::SetJumpData(int dx, int dy)
 	jumpData.sy = GetPos().y;
 	jumpData.dx = dx;
 	jumpData.dy = dy;
-
 }
 
 bool TileCharacter::JumpAnim()

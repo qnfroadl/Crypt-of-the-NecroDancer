@@ -52,12 +52,7 @@ HRESULT LobbyScene::Init()
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
     }
 
-    if (monsterManager.lock())
-    {
-        monsterManager.lock()->SetPositionManager(positionManager);
-        monsterManager.lock()->SetTileMap(map);
-		monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
-    }
+   
 
     // Test
    
@@ -101,7 +96,7 @@ void LobbyScene::Update()
 		uiManager->Update();
 	}
 	playerManager.lock()->Update();
-	monsterManager.lock()->Update();
+	
 }
 
 void LobbyScene::Render(HDC hdc)
@@ -128,7 +123,7 @@ void LobbyScene::Render(HDC hdc)
 		uiManager->Render(hdc);
 	}
 	playerManager.lock()->Render(hdc);
-	monsterManager.lock()->Render(hdc);
+	
 
 }
 
@@ -147,16 +142,5 @@ void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
     }
 }
 
-void LobbyScene::SetMonsterManager(weak_ptr<MonsterManager> monsterManager)
-{
-	this->monsterManager = monsterManager;
-	if (positionManager)
-	{
-		this->monsterManager.lock()->SetPositionManager(positionManager);
-	}
-	if (nullptr != map)
-	{
-		this->monsterManager.lock()->SetTileMap(map);
-	}
-}
+
 
