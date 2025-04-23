@@ -371,5 +371,5 @@ void Tilemap::UpdateVisuable()
     leftTop.y = centerTileY - halfY - marginY;
     rightBottom.x = centerTileX + halfX + marginX;
     rightBottom.y = centerTileY + halfY + marginY;
-	cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
+	//cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
 }
