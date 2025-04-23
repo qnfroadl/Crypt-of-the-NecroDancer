@@ -4,26 +4,21 @@
 #include "Camera.h"
 
 /*
-* 
-	IRenableTileActor를 벡터로 갖고 있을거고.
-	IRenableTileActor를 추가 할 수 있는 함수도 필요 하겠지?
-	
-	TileActorRenderer 클래스에서 할 일은. 
-	 - 카메라에 보이는 곳의 객체들만 그릴건데. 카메라에 보이는 것보다 가로100, 세로100만큼 더 넓게 그릴거야 (active 변경 해줘야겠지)
-	 - 라이팅 렌더링 (플레이어 이동 or 벽돌 파괴 이벤트를 받으면 라이팅 계산 할거고) 
-	     -> 카메라에 보이는 객체들중 라이팅 컴포넌트를 가진 객체를 찾는다.
-	     -> 라이팅 컴포넌트
-
-
-	- 매 프레임 y축 기반으로 렌더링 순서를 정렬.
-
+* 타일맵이 그려져야 할 위치를 보고(시작, 끝)
+* 시작 부터 끝까지 타일맵을 렌더 해 나가면서, PositionManager의 TileActor들을 렌더링 한다
+* 이때 PositionManager의 TileActor들은. 각각의 z-order (렌더 순위)를 갖고 있으며. 이 z-order에 따라서.
+* 렌더하고 다음 타일로 이동한다.
 */
-
+class Tilemap;
 class LightingRenderer;
+class PositionManager;
+
 class TileActorRenderer : public GameActor
 {
 
 private:
+	Tilemap* tileMap;
+	shared_ptr<PositionManager> positionManager;
 	std::vector<std::shared_ptr<IRendableTileActor>> rendableActors;
 
 public:
