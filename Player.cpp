@@ -300,8 +300,6 @@ void Player::Render(HDC hdc)
 	{
 		FPOINT pos = Camera::GetInstance()->GetScreenPos(GetPos());
 
-		RenderRectAtCenter(hdc, pos.x, pos.y, 80, 80);
-
 		// 렌더 할 때 점프데이터의 높이만큼 빼서 렌더 해줘야 점프처럼 보인다
 		// 캐릭터 몸통
 		body->FrameRender(hdc, pos.x, pos.y - jumpData.height, curFrame, 0, isLeft, true);
@@ -340,10 +338,13 @@ void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)
 
 void Player::Teleport(POINT index)
 {
+	SetPlayerState(PlayerState::IDLE);
+
 	// 플레이어의 위치를 타일맵의 타일에 맞춰서 이동
 	FPOINT tilePos = tileMap.lock()->GetTilePos(index);
 	SetPos(tilePos.x, tilePos.y);
 	SetTileIndex(index);
+	cout << "Teleport : " << tilePos.x << ", " << tilePos.y << endl;
 }
 
 void Player::AddObserver(IPlayerObserver* observer)
@@ -423,11 +424,26 @@ void Player::AddWeapon(shared_ptr<Weapon> _weapon)
 	// 기존 무기를 떨어뜨리고, 새 무기를 장착 한다.
 	if (weapon)
 	{
+		FPOINT pos = tileMap.lock()->GetTilePos(GetTileIndex());
 		weapon->SetTileIndex(GetTileIndex());
+		weapon->SetPos(pos);
 		positionManager.lock()->AddTileActor(weapon);
 		weapon->Drop();
 	}
 	
 
 	weapon = _weapon;
+}
+
+void Player::SetPlayerState(PlayerState _state)
+{
+	if (state != _state && state == PlayerState::JUMP)
+	{
+		// 스테이트가 바뀌는데? 이전스테이트가 점프다.
+		// 점프 데이터 리셋.
+		ResetJumpData();
+	}
+
+
+	state = _state;
 }

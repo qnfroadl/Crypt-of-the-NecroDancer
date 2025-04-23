@@ -16,7 +16,7 @@ void BossMonster::Init(BossType p)
 		5, 1, true, RGB(255, 0, 255));
 	
 	state=BossState::IDLE;
-	damage = 10;
+	damage = 1;
 	
 	light = 0;
 	moveDelay = 3;

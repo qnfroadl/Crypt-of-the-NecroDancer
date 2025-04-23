@@ -53,7 +53,18 @@ enum class PlayerIndex
 	PLAYER1 = 0,
 	PLAYER2 = 1,
 };
-
+enum class DamageType
+{
+	NORMAL, PIERCING, PHASING,
+};
+enum class WeaponType
+{
+	DAGGER, BROADSWORD,
+};
+enum class WeaponMaterialType
+{
+	NORMAL, BLOOD, GLASS, GOLDEN, OBSIDIAN, TITANIUM
+};
 enum class ItemType
 {
 	DIAMOND, GOLD, BOMB, WEAPON, ARMOR, POTION, HEART, SHOVEL,

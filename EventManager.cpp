@@ -32,9 +32,13 @@ void EventManager::UnbindEvent(GameObject* obj, EventType type)
 	auto it = funcs[type].begin();
 	while (it != funcs[type].end())
 	{
-		
+		if (it->obj == obj)
+		{
+			it = funcs[type].erase(it);
+			continue;
+		}
+		it++;
 	}
-	
 	
 }
 
@@ -61,7 +65,7 @@ void EventManager::AddEvent(EventType type, EventData* data, bool now)
 		queEvents.push(event);
 	}
 	
-	std::cout << "EventManager::AddEvent : " << (int)type << std::endl;
+	// std::cout << "EventManager::AddEvent : " << (int)type << std::endl;
 }
 
 void EventManager::Update()

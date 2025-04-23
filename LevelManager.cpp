@@ -16,7 +16,7 @@ HRESULT LevelManager::Init()
 
 void LevelManager::OnNextLevel(EventData* data)
 {
-    
+    SceneManager::GetInstance()->GetCurrentScene()->Init();
 }
 
 void LevelManager::OnEnterZone(EventData* data)

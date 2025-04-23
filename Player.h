@@ -109,5 +109,6 @@ public:
 	void AddWeapon(shared_ptr<Weapon> weapon);
 	
     void AddBomb(int bomb) { this->bombCount.Set(this->bombCount.Get() + bomb); }
-   
+    
+    void SetPlayerState(PlayerState state);
 };
