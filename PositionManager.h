@@ -47,6 +47,7 @@ public:
     shared_ptr<TileActor> GetActor(POINT index, ActorType type);
 
     std::vector<std::shared_ptr<TileActor>> GetActorsAt(const POINT& pos);
+    std::vector<std::shared_ptr<TileActor>> GetActorsAt(const POINT& pos, ActorType type);
 
     void Render(HDC hdc);
 

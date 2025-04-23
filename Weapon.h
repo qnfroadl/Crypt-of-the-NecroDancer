@@ -20,7 +20,11 @@ class Weapon : public TileItem, public enable_shared_from_this<Weapon>
 {
 private:
 	int curFrame;
-	
+	float elapsedTime;
+	bool bSwipe;
+	FPOINT swipePos;
+	float swipeAngle;
+
     Image* dropedImage;
 	Image* swipeImage;
 
@@ -28,6 +32,8 @@ private:
 	WeaponType weaponType;
     vector<POINT> range;
 	WeaponMaterial* material;
+
+	void InitResources();
 
 	void InitRange();
 	void InitImage();
@@ -48,7 +54,7 @@ public:
 	void Interact(GameActor* actor) override;
 
 	void Attack(Monster* monster);
-	
+	void Swipe(FPOINT pos, Direction dir);
 	// 유리무기인 경우에는 유리조각 스폰.
 	void Destroy();
 

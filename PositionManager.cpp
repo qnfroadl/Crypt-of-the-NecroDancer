@@ -86,7 +86,7 @@ shared_ptr<TileActor> PositionManager::GetActor(POINT index, ActorType type)
     auto it = posMap[index].begin();
     while (it != posMap[index].end())
     {
-        if (type == (*it)->GetType())
+        if (type == (*it)->GetType() && (*it)->IsActive())
         {
             return *it;
         }
@@ -104,6 +104,25 @@ std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT
         return it->second;
     }
     return {};
+}
+
+std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT& pos, ActorType type)
+{
+    vector<shared_ptr<TileActor>> actors;
+
+    auto it = posMap.find(pos);
+    if (it != posMap.end())
+    {
+        for (auto actor : it->second)
+        {
+            if (type == actor->GetType())
+            {
+                actors.push_back(actor);
+            }
+        }
+    }
+
+    return actors;
 }
 
 void PositionManager::Render(HDC hdc)

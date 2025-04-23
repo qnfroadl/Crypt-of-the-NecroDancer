@@ -58,7 +58,10 @@ enum class ItemType
 {
 	DIAMOND, GOLD, BOMB, WEAPON, ARMOR, POTION, HEART, SHOVEL,
 };
-
+enum class Direction
+{
+	UP, DOWN, LEFT, RIGHT
+};
 enum class InputKey
 {
 	NONE = 0,
