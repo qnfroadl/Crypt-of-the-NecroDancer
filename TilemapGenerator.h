@@ -7,7 +7,7 @@ struct RoomData
     int rows, cols;
     POINT playerStart;
     POINT nextStage;
-    vector<vector<Tile*>> tiles;
+    vector<vector<shared_ptr<Tile>>> tiles;
 };
 
 class TilemapGenerator : public Singleton<TilemapGenerator>
@@ -36,6 +36,9 @@ private:
     bool placedStart = false;
     bool placedEnd = false;
     vector<RECT> placedRects;
+
+    POINT startCandidate = { -1, -1 };
+    POINT endCandidate = { -1, -1 };
 public:
     Tilemap* Generate(const string& zoneName, int mapRows, int mapCols);
     Tilemap* Generate(const string& zoneName);

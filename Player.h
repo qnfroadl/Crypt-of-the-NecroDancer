@@ -81,6 +81,8 @@ public:
 	void Teleport(POINT index);
 
 	void AddObserver(IPlayerObserver* observer) { if (observer) {observers.push_back(observer); }}
+    void BindRelease();
+
     void SetPlayerIndex(PlayerIndex index) { playerIndex = index;}
     PlayerIndex GetPlayerIndex() {return playerIndex;}
 	void SetName(string name) { this->name = name; }
