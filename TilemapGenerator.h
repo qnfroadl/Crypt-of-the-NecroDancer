@@ -36,6 +36,7 @@ private:
     bool placedStart = false;
     bool placedEnd = false;
     vector<RECT> placedRects;
+    vector<RECT> shopRoomRects;
 
     POINT startCandidate = { -1, -1 };
     POINT endCandidate = { -1, -1 };
@@ -55,6 +56,8 @@ private:
 
     void ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& rooms);
 
+    void CollectSpawnPoints(Tilemap* tilemap);
+
     void PlaceRoomsFromBSP(BSPNode* root, Tilemap* tilemap, const string& zoneName);
     void ConnectLeafRooms(Tilemap* tilemap, BSPNode* node);
 
@@ -62,4 +65,5 @@ private:
 
     void CreateCorridor(Tilemap* tilemap, POINT from, POINT to);
     void PlaceDoor(Tilemap* tilemap, POINT pos, POINT direction);
+    void FinalizeTilemap(Tilemap* tilemap);
 };

@@ -10,6 +10,7 @@ class Tilemap : public GameActor
 {
 private:
 	vector<vector<shared_ptr<Tile>>> tiles;
+	vector<POINT> spawnPoints;
 	int mapRows;
 	int mapColumns;
 	bool isCombo;
@@ -53,5 +54,14 @@ public:
 	POINT GetRightBottom() { return rightBottom; }
 
 	void UpdateVisuable();
+	void AddSpawnPoint(POINT spawn) { spawnPoints.push_back(spawn); }
+
+	void PrintSpawnPoints()
+	{
+		for (const auto& spawn : spawnPoints)
+		{
+			cout << "Spawn Point: (" << spawn.x << ", " << spawn.y << ")" << endl;
+		}
+	}
 };
 
