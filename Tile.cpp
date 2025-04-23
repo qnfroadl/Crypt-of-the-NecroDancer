@@ -5,6 +5,7 @@
 #include "Block.h"
 #include "Trap.h"
 #include "CommonFunction.h"
+#include "SceneManager.h"
 
 #define TILE_SIZE_SCALED (TILE_SIZE * TILE_SCALE)
 
@@ -87,7 +88,11 @@ void Tile::Render(HDC hdc, bool useCamera)
 
 void Tile::OnTile(TileActor* actor)
 {
-	if (trap) trap->OnTriggered(actor);
+	/*if (trap) trap->OnTriggered(actor);*/
+	if (tileNum == 24)
+	{
+		SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
+	}
 }
 
 TileType Tile::GetTypeByTileNum(int tileNum)
@@ -101,7 +106,10 @@ TileType Tile::GetTypeByTileNum(int tileNum)
 
 void Tile::Interact(GameActor* actor)
 {
-	// 인터랙션 필요 시 구현
+	if (actor->GetType() == ActorType::PLAYER)
+	{
+		OnTile(dynamic_cast<TileActor*>(actor));
+	}
 }
 
 void Tile::OnBeat(bool isCombo)
