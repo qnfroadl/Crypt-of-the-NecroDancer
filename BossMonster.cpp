@@ -5,6 +5,7 @@
 #include"EventManager.h"
 #include"Tilemap.h"
 #include "Player.h"
+#include"Tile.h"
 void BossMonster::Init(BossType p)
 {
 	SettingImageFrameImage();
@@ -24,7 +25,7 @@ void BossMonster::Init(BossType p)
 	SettingFrame(p);
 	SetActive(true);
 
-
+	breathRange = 0;
 	animationFrame = minFrame;
 
 	attackAnimationFrame = 0;
@@ -88,7 +89,7 @@ void BossMonster::Update()
 			if (state == BossState::Skill)
 			{	
 				
-				AttackTarget();
+				//AttackTarget();
 				state = BossState::IDLE;
 				SettingFrame(bossType);
 			}
@@ -114,11 +115,13 @@ void BossMonster::Update()
 			textY = target.lock()->GetTileIndex().y - GetTileIndex().y;
 			if ((textX >= -5 && textX < 0) && textY == 0&&!isLeft)
 			{
+				FindWall(!isLeft);
 				state = BossState::Skill;
 				break;
 			}
 			else if ((textX > 0 && textX <= 5) && textY == 0 && isLeft)
 			{
+				FindWall(isLeft);
 				state = BossState::Skill;
 				break;
 			}
@@ -219,7 +222,7 @@ void BossMonster::FireImageRender(int index, HDC hdc, FPOINT pos, int animationF
 {
 	int frameWidth = fire[0]->GetWidth() / fire[0]->GetMaxFrameX();
 
-	for (int i = 0; i < 5; i++) 
+	for (int i = 0; i <= breathRange; i++) 
 	{
 		if (!isLeft)
 		{
@@ -248,17 +251,31 @@ void BossMonster::AttackTarget()
 	}
 }
 
-bool BossMonster::FindWall(bool _isLeft)
+void BossMonster::FindWall(bool _isLeft)
 {
 	if (_isLeft)
 	{
+		for (int i = 0; i < 5; i++)
+		{
+			if(tileMap.lock()->GetTile({ GetTileIndex().x - i, GetTileIndex().y })->GetBlock()!=nullptr);
+			{
+				return;
+			}
+			breathRange++;
+		}
 	}
 	else
 	{
-
+		for (int i = 0; i < 5; i++)
+		{
+			
+			if (tileMap.lock()->GetTile({ GetTileIndex().x + i, GetTileIndex().y })->GetBlock() != nullptr);
+			{
+				return;
+			}
+			breathRange++;
+		}
 	}
-
-	return false;
 }
 
 
