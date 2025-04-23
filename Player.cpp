@@ -399,7 +399,7 @@ void Player::TakeDamage(float damage)
 	{
 		dmamgedHp = 0;
 	}
-
+	
 	hp.Set(dmamgedHp);
 	
 }

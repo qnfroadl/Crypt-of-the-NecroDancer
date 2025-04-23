@@ -52,15 +52,17 @@ protected:
 	int minFrame;
 	int maxFrame;
 	int animationFrame;
+	int attackAnimationFrame;
 	float elapsedTime;
 	float changeTime;
 	bool isLeft;
-	bool isFront;
+	bool isAttack;
 	float damage;
 	vector<POINT>dir = { {0,1},{0,-1},{-1,0},{1,0} };
 	weak_ptr<Player> target;
 	weak_ptr<Tilemap> tileMap;
 	weak_ptr<PositionManager> positionManager;
+	Image* attackImage;
 #pragma region Image Box
 #pragma endregion 이미지 정보 Table
 

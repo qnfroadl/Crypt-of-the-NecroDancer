@@ -15,6 +15,8 @@ void Monster::Init(MONSTERTYPE p)
 	imageInfo = FindImageInfo(p);
 	image = ImageManager::GetInstance()->AddImage(imageInfo.keyName, imageInfo.imagePath, imageInfo.width * 3, imageInfo.height * 3,
 		imageInfo.imageFrameX, imageInfo.ImageFrameY, true, RGB(255, 0, 255));
+	attackImage = ImageManager::GetInstance()->AddImage("Monster_Attack", TEXT("Image/Monster/swipe_enemy.bmp"),135*3, 24*3,
+		5, 1, true, RGB(255, 0, 255));
 	state = MonsterState::IDLE;
 	light = 0;
 	moveDelay = 3;
@@ -27,7 +29,7 @@ void Monster::Init(MONSTERTYPE p)
 	SetActive(true);
 	damage = 0.5;
 	animationFrame = minFrame;
-	
+	attackAnimationFrame = 0;
 
 	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Monster::OnBeat, this));
 	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Monster::OnBeat, this));
@@ -42,6 +44,19 @@ void Monster::Release()
 void Monster::Update()
 {
 	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
+	if (isAttack)
+	{
+		if (elapsedTime > 0.09f)
+		{
+			attackAnimationFrame++;
+			if (attackAnimationFrame >= attackImage->GetMaxFrameX())
+			{
+				isAttack = false;
+				attackAnimationFrame = 0;
+			}
+		}
+	}
+
 	if (elapsedTime > 0.1f)
 	{
 		animationFrame++;
@@ -55,9 +70,9 @@ void Monster::Update()
 	{
 	case MonsterState::IDLE:
 			
-			if (beatCount>=moveDelay)
+			if (beatCount>moveDelay)
 			{
-
+				state = MonsterState::ACTIVE;
 				beatCount = 0;
 				int imageFrame = image->GetMaxFrameX();
 				
@@ -74,7 +89,7 @@ void Monster::Update()
 		{
 			POINT nextIndex = Trace();
 			FPOINT nextPos = tileMap.lock()->GetTilePos(nextIndex);
-			if (AttackTarget(nextIndex))
+			if (isAttack=AttackTarget(nextIndex))
 			{
 				SetJumpData(GetPos().x, GetPos().y);
 				
@@ -105,6 +120,11 @@ void Monster::Render(HDC hdc)
 		FPOINT pos = Camera::GetInstance()->GetScreenPos(FPOINT(GetPos()));
 		
 		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, 0,isLeft);
+		if (isAttack)
+		{
+			FPOINT attackPos = Camera::GetInstance()->GetScreenPos(FPOINT(target.lock()->GetPos()));
+			attackImage->FrameRender(hdc, attackPos.x, attackPos.y, attackAnimationFrame, 0, isLeft);
+		}
 	}
 }
 
@@ -115,6 +135,7 @@ void Monster::SettingFrame(MONSTERTYPE _m)
 	else
 		maxFrame = image->GetMaxFrameX() / 2;
 	minFrame = 0;
+	beatCount = 0;
 }
 
 POINT Monster::Trace()
@@ -153,20 +174,12 @@ void Monster::Dead()
 {
 	SetActive(false);
 	state = MonsterState::DEAD;
+	positionManager.lock()->RemoveTileActor(shared_from_this(), true, GetTileIndex());
 }
 
 void Monster::OnBeat()
 {
 	beatCount++;
-	if (state == MonsterState::IDLE)
-	{
-		if (beatCount  >= moveDelay)
-		{
-			state = MonsterState::ACTIVE;
-		}
-	}
-	
-	
 }
 
 bool Monster::AttackTarget(POINT _nextIndex)
@@ -175,7 +188,7 @@ bool Monster::AttackTarget(POINT _nextIndex)
 	POINT playerIndex = target.lock()->GetTileIndex();
 	if (_nextIndex.x == playerIndex.x && _nextIndex.y == playerIndex.y)
 	{
-		bool isHit = isLeft;
+		
 		target.lock()->TakeDamage(damage);
 		return true;
 	}
