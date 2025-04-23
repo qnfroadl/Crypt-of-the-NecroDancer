@@ -27,8 +27,8 @@ void BossMonster::Init(BossType p)
 	isAttack = false;
 	blastAnimFrame = 0;
 	attackAnimationFrame = 0;
-	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&BossMonster::OnBeat, this));
-	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&BossMonster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&BossMonster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&BossMonster::OnBeat, this));
 
 }
 

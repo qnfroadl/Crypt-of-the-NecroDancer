@@ -11,7 +11,7 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	mapColumns = _mapColumns;
 	tiles = vector<vector<shared_ptr<Tile>>>(_mapRows, vector<shared_ptr<Tile>>(_mapColumns, nullptr));
 
-	EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
     //EventManager::GetInstance()->BindEvent(EventType::PLAYERMOVED, std::bind(&Tilemap::UpdateActiveTiles, this, Camera::GetInstance()->GetPos()));
 
 

@@ -190,10 +190,10 @@ HRESULT Player::Init()
 		return E_FAIL;
 	}
 
-	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
-	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
 
-	EventManager::GetInstance()->BindEvent(EventType::BLOCKDESTROYFAILED, std::bind(&Player::OnComboReset, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::BLOCKDESTROYFAILED, std::bind(&Player::OnComboReset, this, std::placeholders::_1));
 
 
 	// 기본삽정도는 줘야지.
@@ -327,8 +327,11 @@ void Player::SetTileIndex(const POINT& _index)
 {
 	POINT preIndex = GetTileIndex();	// 이전 타일인덱스 가져오기.
 	TileActor::SetTileIndex(_index);	// 타일 인덱스 업데이트
+	
 	positionManager.lock()->MovedTileActor(preIndex, shared_from_this());	// 변경된 내용 포지션 매니저에 알리기.
 	EventManager::GetInstance()->AddEvent(EventType::PLAYERMOVED, nullptr);
+	tileMap.lock()->InteractTile(_index, this);
+
 }
 
 void Player::SetTileMap(weak_ptr<Tilemap> _tileMap)

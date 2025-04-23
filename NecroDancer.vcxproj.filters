@@ -161,6 +161,7 @@
     <ClCompile Include="LevelScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="LevelManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -348,6 +349,7 @@
     <ClInclude Include="LevelScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="LevelManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">

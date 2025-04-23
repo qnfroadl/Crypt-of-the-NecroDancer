@@ -16,7 +16,7 @@ void ItemSpawner::OnSpawnItem(EventData* data)
 
 HRESULT ItemSpawner::Init()
 {
-	EventManager::GetInstance()->BindEvent(EventType::SPAWNITEM, std::bind(&ItemSpawner::OnSpawnItem, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::SPAWNITEM, std::bind(&ItemSpawner::OnSpawnItem, this, std::placeholders::_1));
 	return S_OK;
 }
 

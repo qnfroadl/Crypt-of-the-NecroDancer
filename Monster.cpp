@@ -31,8 +31,8 @@ void Monster::Init(MONSTERTYPE p)
 	animationFrame = minFrame;
 	attackAnimationFrame = 0;
 
-	EventManager::GetInstance()->BindEvent(EventType::BEATMISS, std::bind(&Monster::OnBeat, this));
-	EventManager::GetInstance()->BindEvent(EventType::BEATHIT, std::bind(&Monster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&Monster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&Monster::OnBeat, this));
 	
 }
 
