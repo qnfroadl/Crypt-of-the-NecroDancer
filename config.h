@@ -119,14 +119,17 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInstance;
 extern POINT g_ptMouse;
 
-struct pair_hash {
+struct pair_hash 
+{
 	template <class T1, class T2>
-	std::size_t operator () (std::pair<T1, T2> const& v) const {
+	std::size_t operator () (std::pair<T1, T2> const& v) const 
+	{
 		auto h1 = std::hash<T1>{}(v.first);
 		auto h2 = std::hash<T2>{}(v.second);
 		return h1 ^ h2;
 	}
 };
+
 extern unordered_map<pair<PlayerIndex, InputKey>, int, pair_hash> g_mapKey; // 플레이어의 인풋키 매핑
 
 //
