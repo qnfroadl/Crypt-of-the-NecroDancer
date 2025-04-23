@@ -1,0 +1,375 @@
+﻿#include "Tilemap.h"
+#include "Tile.h"
+#include "Block.h"
+#include <fstream>
+#include "EventManager.h"
+#include "Camera.h"
+
+HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
+{
+	mapRows = _mapRows;
+	mapColumns = _mapColumns;
+	tiles = vector<vector<shared_ptr<Tile>>>(_mapRows, vector<shared_ptr<Tile>>(_mapColumns, nullptr));
+
+	//leftTop = { Camera::GetInstance()->GetViewRect().left, Camera::GetInstance()->GetViewRect().top };
+	//rightBottom = { Camera::GetInstance()->GetViewRect().right, Camera::GetInstance()->GetViewRect().bottom };
+	leftTop = { 0, 0 };
+	rightBottom = { mapColumns - 1, mapRows - 1 };
+	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
+    //EventManager::GetInstance()->BindEvent(EventType::PLAYERMOVED, std::bind(&Tilemap::UpdateActiveTiles, this, Camera::GetInstance()->GetPos()));
+	//EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::UpdateVisuable, this));
+
+
+	return S_OK;
+}
+
+void Tilemap::Release()
+{
+	for (auto& row : tiles)
+	{
+		for (auto& tile : row)
+		{
+			if (tile)
+			{
+				tile->Release(); // 해제만 호출, delete 안 함
+			}
+		}
+		row.clear();
+	}
+	tiles.clear();
+}
+
+void Tilemap::Update()
+{
+	for (auto& row : tiles)
+	{
+		for (auto& tile : row)
+		{
+			if (tile)
+			{
+				tile->Update();
+			}
+		}
+	}
+}
+
+void Tilemap::Render(HDC hdc)
+{
+	//for (auto& row : tiles)
+	//{
+	//	for (auto& tile : row)
+	//	{
+	//		if (tile)
+	//		{
+	//			tile->Render(hdc);
+	//		}
+	//	}
+	//}
+	for (int y = leftTop.y; y <= rightBottom.y; ++y)
+	{
+		if (y < 0 || y >= mapRows) continue;
+
+		for (int x = leftTop.x; x <= rightBottom.x; ++x)
+		{
+			if (x < 0 || x >= mapColumns) continue;
+			tiles[y][x]->Render(hdc, true);
+		}
+	}
+}
+
+shared_ptr<Tile> Tilemap::GetTile(POINT index)
+{
+	if (index.y >= 0 && index.y < tiles.size() &&
+		index.x >= 0 && index.x < tiles[index.y].size())
+	{
+		return tiles[index.y][index.x];
+	}
+	return nullptr;
+}
+
+FPOINT Tilemap::GetTilePos(POINT index)
+{
+	return tiles[index.y][index.x]->GetPos();
+}
+
+bool Tilemap::Destory(Item* item)
+{
+	return false;
+}
+
+bool Tilemap::Destory(int strong)
+{
+	return false;
+}
+
+bool Tilemap::CanMove(POINT index)
+{
+	if (tiles.empty()) return false;
+	shared_ptr<Tile> tile = GetTile(index);
+	return (tile && tile->GetBlock() == nullptr);
+}
+
+void Tilemap::Move(TileActor* actor, POINT index)
+{
+	if (CanMove(index))
+	{
+		// 이동 처리
+	}
+}
+
+POINT Tilemap::GetSpawnIndex()
+{
+	for (int i = 0; i < tiles.size(); ++i)
+	{
+		for (int j = 0; j < tiles[i].size(); ++j)
+		{
+			if (tiles[i][j] && tiles[i][j]->GetBlock() == nullptr)
+			{
+				return { j, i };
+			}
+		}
+	}
+	return { -1, -1 };
+}
+
+void Tilemap::Load(string filePath)
+{
+	ifstream in(filePath);
+	if (!in.is_open()) 
+	{
+		MessageBoxA(nullptr, ("맵 파일 열기 실패: " + filePath).c_str(), "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	string header;
+	in >> header;
+	if (header != "TILEMAP") 
+	{
+		MessageBoxA(nullptr, "맵 파일 헤더가 'TILEMAP'이 아님", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	string sizeLabel;
+	int fileCols, fileRows;
+	in >> sizeLabel >> fileCols >> fileRows;
+	if (fileCols != mapColumns || fileRows != mapRows) 
+	{
+		MessageBoxA(nullptr, "맵 크기가 현재 설정과 다릅니다", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	// Tile을 새로 생성
+	for (int x = 0; x < mapColumns; ++x)
+	{
+		for (int y = 0; y < mapRows; ++y)
+		{
+			if (tiles[y][x])
+			{
+				tiles[y][x]->Release();
+			}
+
+			auto tile = make_shared<Tile>();
+			tile->Init(x, y);
+			tiles[y][x] = tile;
+		}
+	}
+
+	// PLAYER_START
+	string section;
+	int playerStartX, playerStartY;
+	in >> section;
+	if (section != "PLAYER_START") {
+		MessageBoxA(nullptr, "PLAYER_START 섹션 누락", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+	in >> playerStartX >> playerStartY;
+	startIndex = { playerStartX, playerStartY };
+
+	// NEXT_STAGE
+	int nextStageX, nextStageY;
+	in >> section;
+	if (section != "NEXT_STAGE") {
+		MessageBoxA(nullptr, "NEXT_STAGE 섹션 누락", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+	in >> nextStageX >> nextStageY;
+	endIndex = { nextStageX, nextStageY };
+
+	// FLOOR
+	in >> section;
+	if (section != "FLOOR") {
+		MessageBoxA(nullptr, "FLOOR 섹션 누락", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	for (int x = 0; x < mapColumns; ++x) {
+		for (int y = 0; y < mapRows; ++y) {
+			int tileNum;
+			in >> tileNum;
+
+			auto tile = tiles[y][x];
+			tile->SetTileNum(tileNum);
+
+			if (tileNum == 1 && (x + y) % 2 == 1)
+				tile->SetTileNum(0);
+		}
+	}
+
+	// WALL
+	in >> section;
+	if (section != "WALL") {
+		MessageBoxA(nullptr, "WALL 섹션 누락", "에러", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	for (int x = 0; x < mapColumns; ++x) {
+		for (int y = 0; y < mapRows; ++y) {
+			int wallNum;
+			in >> wallNum;
+
+			auto tile = tiles[y][x];
+
+			if (tile->GetBlock()) 
+			{
+				tile->SetBlock(nullptr);
+			}
+
+			if (wallNum >= 0) 
+			{
+				auto block = make_shared<Block>();
+				block->Init(tile->GetPos(), tile->GetTileIndex());
+				block->SetBlockNum(wallNum);
+				tile->SetBlock(block);
+			}
+		}
+	}
+
+	in.close();
+}
+
+void Tilemap::OnBeat(bool isCombo)
+{
+	for (auto& row : tiles)
+	{
+		for (auto& tile : row)
+		{
+			if (tile)
+			{
+				tile->OnBeat(isCombo);
+			}
+		}
+	}
+}
+
+bool Tilemap::InteractTile(POINT index, GameActor* actor)
+{
+	shared_ptr<Tile> tile = GetTile(index);
+	if (tile)
+	{
+		tile->Interact(actor);
+		actor->Interact(tile.get());
+		return true;
+	}
+	return false;
+}
+
+void Tilemap::SetTile(int row, int col, const shared_ptr<Tile>& tile)
+{
+	if (row < 0 || row >= mapRows || col < 0 || col >= mapColumns) return;
+
+	if (tiles[row][col])
+	{
+		tiles[row][col]->Release();
+	}
+
+	tiles[row][col] = tile;
+}
+
+vector<shared_ptr<TileActor>> Tilemap::GetRendableTileActors()
+{
+	vector<shared_ptr<TileActor>> result;
+
+	for (int y = 0; y < mapRows; ++y)
+	{
+		for (int x = 0; x < mapColumns; ++x)
+		{
+			auto tile = tiles[y][x];
+			if (!tile) continue;
+
+			auto tileActors = tile->GetRendableTileActors();
+			result.insert(result.end(), tileActors.begin(), tileActors.end());
+
+			auto block = tile->GetBlock();
+			if (block)
+			{
+				auto blockActors = block->GetRendableTileActors();
+				result.insert(result.end(), blockActors.begin(), blockActors.end());
+			}
+		}
+	}
+
+	return result;
+}
+
+
+void Tilemap::UpdateActiveTiles(POINT playerIndex)
+{
+	FPOINT cameraPos = Camera::GetInstance()->GetPos();
+	int camLeft = static_cast<int>(cameraPos.x);
+	int camTop = static_cast<int>(cameraPos.y);
+
+	int visibleCols = WINSIZE_X / TILE_SIZE;
+	int visibleRows = WINSIZE_Y / TILE_SIZE;
+
+	// +-2범위까지
+	int left = camLeft / TILE_SIZE - 2;
+	int top = camTop / TILE_SIZE - 2;
+	int right = camLeft / TILE_SIZE + visibleCols + 2;
+	int bottom = camTop / TILE_SIZE + visibleRows + 2;
+
+	for (int y = 0; y < mapRows; ++y)
+	{
+		for (int x = 0; x < mapColumns; ++x)
+		{
+			bool inView = (x >= left && x <= right && y >= top && y <= bottom);
+
+			shared_ptr<Tile> tile = tiles[y][x];
+			if (!tile) continue;
+
+			tile->SetActive(inView);
+
+			if (tile->GetBlock())
+				tile->GetBlock()->SetActive(inView);
+		}
+	}
+}
+
+void Tilemap::UpdateVisuable()
+{
+	FPOINT cameraPos = Camera::GetInstance()->GetPos();         // 카메라 중심 좌표 (픽셀)
+    RECT viewRect = Camera::GetInstance()->GetViewRect();       // 카메라 뷰 크기 (픽셀 기준)
+    float scaledTileSize = TILE_SIZE * TILE_SCALE;
+
+    // 카메라 화면 크기 → 화면에 보이는 타일 개수
+    int tilesOnScreenX = static_cast<int>(ceil((viewRect.right - viewRect.left) / scaledTileSize));
+    int tilesOnScreenY = static_cast<int>(ceil((viewRect.bottom - viewRect.top) / scaledTileSize));
+
+    // 중심 타일 인덱스 계산 (여기부터 이상함)
+    int centerTileX = static_cast<int>(cameraPos.x / scaledTileSize);
+    int centerTileY = static_cast<int>(cameraPos.y / scaledTileSize);
+
+    // 화면 반타일 수 (좌우/상하)
+    int halfX = tilesOnScreenX / 2;
+    int halfY = tilesOnScreenY / 2;
+
+    // 마진 타일 수
+    int marginX = 2;
+    int marginY = 2;
+
+    // 실제 화면에 보여줄 타일 범위 계산
+    leftTop.x = centerTileX - halfX - marginX;
+    leftTop.y = centerTileY - halfY - marginY;
+    rightBottom.x = centerTileX + halfX + marginX;
+    rightBottom.y = centerTileY + halfY + marginY;
+	//cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
+}

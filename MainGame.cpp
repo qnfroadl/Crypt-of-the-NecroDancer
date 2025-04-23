@@ -16,6 +16,13 @@
 #include "Camera.h"
 #include "EventManager.h"
 #include "PlayerManager.h"
+#include "MonsterManager.h"
+
+#include "SoundManager.h"
+#include "BeatManager.h"
+
+#include "LobbyScene.h"
+#include "LevelScene.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -49,9 +56,23 @@ void MainGame::ItemSpawnSimulation()
 	{
 		SceneManager::GetInstance()->ChangeScene("TilemapTool", "Loading");
 	}
+	else if (KeyManager::GetInstance()->IsOnceKeyDown('Q'))
+	{
+		LobbyScene* scene = static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene("LobbyScene"));
+		if (scene)
+		{
+			SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
+		}
+		
+
+	}
 	else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RSHIFT))
 	{
 		SceneManager::GetInstance()->ChangeScene("AstarScene", "Loading");
+	}
+	else if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
+	{
+			SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
 	}
 }
 
@@ -80,34 +101,87 @@ void MainGame::InitResource()
 	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_HEAD, L"Image/Player/cadence_heads.bmp", 96 * BASE_SCALE,  48 * BASE_SCALE, 4, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage(EImageKey::CADENCE_BODY, L"Image/Player/cadence_bodys.bmp", 96 * BASE_SCALE , 240 * BASE_SCALE, 4, 10, true, RGB(255, 0, 255));
 
+	ImageManager::GetInstance()->AddImage("coin1", L"Image/Player/item/resource_coin1.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin2", L"Image/Player/item/resource_coin2.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin3", L"Image/Player/item/resource_coin3.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin4", L"Image/Player/item/resource_coin4.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin5", L"Image/Player/item/resource_coin5.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin6", L"Image/Player/item/resource_coin6.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin7", L"Image/Player/item/resource_coin7.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin8", L"Image/Player/item/resource_coin8.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin9", L"Image/Player/item/resource_coin9.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin10", L"Image/Player/item/resource_coin10.bmp", 24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin30", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin50", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin100", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+
+}
+
+void MainGame::InitKeyMapping()
+{
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::UP }, VK_UP });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::DOWN }, VK_DOWN });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::LEFT }, VK_LEFT });
+	g_mapKey.insert({ { PlayerIndex::PLAYER1, InputKey::RIGHT }, VK_RIGHT });
+
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::UP }, 'W' });
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::DOWN }, 'S'});
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::LEFT }, 'A'});
+	g_mapKey.insert({ { PlayerIndex::PLAYER2, InputKey::RIGHT }, 'D'});
 }
 
 HRESULT MainGame::Init()
 {
 	InitResource();
+	InitKeyMapping();
 
 	CollisionManager::GetInstance()->Init();
 	KeyManager::GetInstance()->Init();
 	ImageManager::GetInstance()->Init();
 	SceneManager::GetInstance()->Init();
 
+	playerManager = std::make_shared<PlayerManager>();
+	playerManager->Init();
+	monsterManager = std::make_shared<MonsterManager>();
+	monsterManager->Init();
+
+
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
+	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
+
+	LobbyScene* lobby = new LobbyScene();
+	lobby->SetPlayerManager(playerManager);
+	
+	SceneManager::GetInstance()->AddScene("LobbyScene", lobby);
+
+	LevelScene* level = new LevelScene();
+	level->SetPlayerManager(playerManager);
+	level->SetMonsterManager(monsterManager);
+	SceneManager::GetInstance()->AddScene("LevelScene", level);
+
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 
-	SceneManager::GetInstance()->ChangeScene("AstarScene");
-
 	//Init Camera
-	Camera::GetInstance()->SetSize(SIZE{600, 600});
+	Camera::GetInstance()->SetSize(SIZE{SCENE_WIDTH, SCENE_HEIGHT});
 
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
 
-	playerManager = new PlayerManager();
-	playerManager->Init();
+	// Test. SoundManager
+	SoundManager::GetInstance()->Init();
+	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
+	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
+	BeatManager::GetInstance()->Init();
+	BeatManager::GetInstance()->StartBeat(true);
+
+	
+
+	
+
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 
 	FPS = 144;
@@ -119,9 +193,14 @@ HRESULT MainGame::Init()
 	//
 	//btn->Bind(std::bind(&TilemapTool::Load, tool));
 	
+	// 로비 씬 로딩.
+	
+	SceneManager::GetInstance()->ChangeScene("LobbyScene");
+	//SceneManager::GetInstance()->ChangeScene("LevelScene");
+
 
 	backBuffer = new Image();
-	if (FAILED(backBuffer->Init(WINSIZE_X, WINSIZE_Y)))
+	if (FAILED(backBuffer->Init(SCENE_WIDTH, SCENE_HEIGHT)))
 	{
 		MessageBox(g_hWnd, TEXT("백버퍼 생성 실패"), TEXT("경고"), MB_OK);
 
@@ -138,6 +217,17 @@ void MainGame::Release()
 	ImageManager::GetInstance()->Release();
 	SceneManager::GetInstance()->Release();
 
+
+	// Test. SoundManager
+	SoundManager::GetInstance()->Release();
+	BeatManager::GetInstance()->Release();
+
+	if (btn)
+	{
+		btn->Release();
+	}
+
+
 	if (backBuffer)
 	{
 		backBuffer->Release();
@@ -150,13 +240,15 @@ void MainGame::Release()
 
 void MainGame::Update()
 {
+	KeyManager::GetInstance()->Update();
+
 	CollisionManager::GetInstance()->Update();
 	SceneManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
 	//btn->Update();
 	
-	playerManager->Update();
-
+	/*playerManager->Update();
+	monsterManager->Update();*/
 	Camera::GetInstance()->Update();
 
 	UpdateCollisionInfo();
@@ -164,6 +256,14 @@ void MainGame::Update()
 
 	//test 
 	EventManager::GetInstance()->Update();
+	
+	// Test. SoundManager
+	SoundManager::GetInstance()->Update();
+	if (KeyManager::GetInstance()->IsOnceKeyDown('M'))
+	{
+		SoundManager::GetInstance()->ChangeSoundBgmShopkeeper();
+	}
+	BeatManager::GetInstance()->Update();
 }
 
 void MainGame::Render()
@@ -172,16 +272,23 @@ void MainGame::Render()
 	HDC hBackBufferDC = backBuffer->GetMemDC();
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
+	
 
-	playerManager->Render(hBackBufferDC);
-
+	//playerManager->Render(hBackBufferDC);
+	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
 	if (bRenderCollision)
 	{
-		CollisionManager::GetInstance()->Render(hBackBufferDC);
-		wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
-		TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
+		// CollisionManager::GetInstance()->Render(hBackBufferDC);
+		// wsprintf(szText, TEXT("CollCount: %d, Active: %d Check: %d"), collCount, activeCollCount, collCheckCount);
+		// TextOut(hBackBufferDC, 5, 10, szText, wcslen(szText));
+
+		swprintf_s(szFPS, TEXT("FPS: %d, deltaTime: %lf"), TimerManager::GetInstance()->GetFPS(), TimerManager::GetInstance()->GetDeltaTime());
+		TextOut(hBackBufferDC, 5, 10, szFPS, wcslen(szFPS));
+
 	}
+
+	BeatManager::GetInstance()->Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);

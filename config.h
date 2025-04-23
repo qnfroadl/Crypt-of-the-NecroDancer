@@ -7,6 +7,9 @@
 #include <iostream>
 #include <unordered_map>
 
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+
 #include "ActorDef.h"
 
 using namespace std;
@@ -14,6 +17,9 @@ using namespace std;
 /*
 	컴파일러에서 해당 코드를 뒤에 정의된 코드로 변경한다. 
 */
+
+#define SCENE_WIDTH 1920
+#define SCENE_HEIGHT 1080
 
 #define TILEMAPTOOL_X 1200
 #define TILEMAPTOOL_Y 800
@@ -30,14 +36,36 @@ using namespace std;
 
 #define ANIM_FRAME_MS 0.1f
 
+#define SAMPLE_TILE_X 9
+#define SAMPLE_TILE_Y 6
+
+#define SAMPLE_WALL_X 9
+#define SAMPLE_WALL_Y 7
+
+#define TILE_SIZE 26
+#define WALL_TILE_WIDTH 24
+#define WALL_TILE_HEIGHT 48
+
+#define TILE_SCALE 3
+
 enum class PlayerIndex
 {
 	PLAYER1 = 0,
 	PLAYER2 = 1,
 };
 
+enum class ItemType
+{
+	DIAMOND, GOLD, BOMB, WEAPON, ARMOR, POTION, HEART, SHOVEL,
+};
+enum class Direction
+{
+	UP, DOWN, LEFT, RIGHT
+};
 enum class InputKey
 {
+	NONE = 0,
+
 	UP = 1 , 
 	DOWN = 2,  //1 << 1, 
 	LEFT = 4,  //1 << 2, 
@@ -45,8 +73,10 @@ enum class InputKey
 	
 	UPDOWN = UP | DOWN,			//3
 	DOWNLEFT = DOWN | LEFT,		//6
+	DOWNRIGHT = DOWN | RIGHT,	//10
 	UPLEFT = UP | LEFT,			//5	
 	UPRIGHT = UP | RIGHT,		//9
+	LEFTRIGHT = LEFT | RIGHT,	//12
 };
 inline InputKey operator|(InputKey a, InputKey b)
 {
@@ -91,3 +121,22 @@ typedef struct tagFPOINT
 extern HWND g_hWnd;
 extern HINSTANCE g_hInstance;
 extern POINT g_ptMouse;
+
+struct pair_hash 
+{
+	template <class T1, class T2>
+	std::size_t operator () (std::pair<T1, T2> const& v) const 
+	{
+		auto h1 = std::hash<T1>{}(v.first);
+		auto h2 = std::hash<T2>{}(v.second);
+		return h1 ^ h2;
+	}
+};
+
+extern unordered_map<pair<PlayerIndex, InputKey>, int, pair_hash> g_mapKey; // 플레이어의 인풋키 매핑
+
+//
+// 테스트용 콘솔창 띄우기
+#ifdef _DEBUG
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif

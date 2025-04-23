@@ -1,9 +1,13 @@
-#include "KeyManager.h"
+ï»¿#include "KeyManager.h"
+#include "conio.h"
+#include "TimerManager.h"
 
 HRESULT KeyManager::Init()
 {
-	keyUp.set();		// true·Î ¼¼ÆÃ.
-	keyDown.reset();	// false·Î ¼¼ÆÃ.
+	keyUp.set();		// trueë¡œ ì„¸íŒ….
+	keyDown.reset();	// falseë¡œ ì„¸íŒ….
+
+	expireTime = 0.05f;
 
 	return S_OK;
 }
@@ -13,17 +17,36 @@ void KeyManager::Release()
 	Singleton::ReleaseInstance();
 }
 
+void KeyManager::Update()
+{
+	// í”Œë ˆì´ì–´ì˜ ìž…ë ¥í‚¤ì— ëŒ€í•´ì„œë§Œ í‚¤ë²„í¼ì— ì €ìž¥
+	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
+
+	for (auto key : g_mapKey)
+	{
+		if (IsOnceKeyDown(key.second))
+		{
+			keyBuffer.push_back({ elapsedTime,key.second });
+		}
+	}
+
+	while (!keyBuffer.empty() && (elapsedTime > keyBuffer.front().first + expireTime * 2.f))
+	{
+		keyBuffer.pop_front();
+	}
+}
+
 bool KeyManager::IsOnceKeyDown(int key)
 {
-	// ÇÔ¼ö È£Ãâ ½ÃÁ¡¿¡ °¡»óÅ° VK_??? °¡ ¾î¶² »óÅÂÀÎÁö È®ÀÎ.
-	// 1. 0x0000: ÀÌÀü ÇÁ·¹ÀÓ¿¡ ´©¸¥ÀûÀÌ ¾ø°í È£Ãâ ½ÃÁ¡¿¡µµ ´­·ÁÀÖÁö ¾ÊÀ½.
-	// 2. 0x0001: ÀÌÀü ÇÁ·¹ÀÓ¿¡ ´©¸¥ÀûÀÌ ÀÖ°í, È£Ãâ ½ÃÁ¡¿¡´Â ´­·ÁÀÖÁö ¾ÊÀ½.
-	// 3. 0x8000: ÀÌÀü ÇÁ·¹ÀÓ¿¡ ´©¸¥ÀûÀÌ ¾ø°í, È£Ãâ ½ÃÁ¡¿¡´Â ´­·ÁÀÖÀ½.
-	// 4. 0x8001: ÀÌÀü ÇÁ·¹ÀÓ¿¡ ´©¸¥ÀûÀÌ ÀÖ°í, È£Ãâ ½ÃÁ¡¿¡´Â ´­·ÁÀÖÀ½.
+	// í•¨ìˆ˜ í˜¸ì¶œ ì‹œì ì— ê°€ìƒí‚¤ VK_??? ê°€ ì–´ë–¤ ìƒíƒœì¸ì§€ í™•ì¸.
+	// 1. 0x0000: ì´ì „ í”„ë ˆìž„ì— ëˆ„ë¥¸ì ì´ ì—†ê³  í˜¸ì¶œ ì‹œì ì—ë„ ëˆŒë ¤ìžˆì§€ ì•ŠìŒ.
+	// 2. 0x0001: ì´ì „ í”„ë ˆìž„ì— ëˆ„ë¥¸ì ì´ ìžˆê³ , í˜¸ì¶œ ì‹œì ì—ëŠ” ëˆŒë ¤ìžˆì§€ ì•ŠìŒ.
+	// 3. 0x8000: ì´ì „ í”„ë ˆìž„ì— ëˆ„ë¥¸ì ì´ ì—†ê³ , í˜¸ì¶œ ì‹œì ì—ëŠ” ëˆŒë ¤ìžˆìŒ.
+	// 4. 0x8001: ì´ì „ í”„ë ˆìž„ì— ëˆ„ë¥¸ì ì´ ìžˆê³ , í˜¸ì¶œ ì‹œì ì—ëŠ” ëˆŒë ¤ìžˆìŒ.
 	
 	if (GetAsyncKeyState(key) & 0x8000)
 	{
-		// ÇöÀç ´­·ÁÀÖ´Ù.
+		// í˜„ìž¬ ëˆŒë ¤ìžˆë‹¤.
 		if (false == keyDown[key])
 		{
 			keyDown[key] = true;
@@ -71,4 +94,53 @@ bool KeyManager::IsStayKeyDown(int key)
 	}
 	
 	return false;
+}
+
+InputKey KeyManager::GetInputKey(int up, int down, int left, int right)
+{
+	if (keyBuffer.empty()) return InputKey::NONE;
+	if (keyBuffer.back().first + expireTime >= elapsedTime) return InputKey::NONE;
+
+	InputKey keys[4]{};
+	int index[4]{ -1,-1,-1,-1 };
+	int cnt{};
+
+	for (int i = 0; i < keyBuffer.size(); ++i)
+	{
+		if (keyBuffer[i].second == up)
+		{
+			keys[cnt] = InputKey::UP;
+			index[cnt] = i;
+			cnt++;
+		}
+		else if (keyBuffer[i].second == down)
+		{
+			keys[cnt] = InputKey::DOWN;
+			index[cnt] = i;
+			cnt++;
+		}
+		else if (keyBuffer[i].second == left)
+		{
+			keys[cnt] = InputKey::LEFT;
+			index[cnt] = i;
+			cnt++;
+		}
+		else if (keyBuffer[i].second == right)
+		{
+			keys[cnt] = InputKey::RIGHT;
+			index[cnt] = i;
+			cnt++;
+		}
+		if (cnt == 4) break;
+	}
+
+	for (int i = 3; i >= 0; --i)
+	{
+		if (index[i] != -1)
+		{
+			keyBuffer.erase(keyBuffer.begin() + index[i]);
+		}
+	}
+	
+	return keys[0] | keys[1];
 }

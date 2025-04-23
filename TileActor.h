@@ -5,13 +5,15 @@
 class TileActor : public GameActor
 {
 	
-private:
+protected:
 	POINT index;
 
 public:
-	void Update() override;
 	void Render(HDC hdc) override;
 
 	virtual void Interact(GameActor* actor) override;
+
+	const POINT& GetTileIndex();
+	virtual void SetTileIndex(const POINT& index);
 };
 

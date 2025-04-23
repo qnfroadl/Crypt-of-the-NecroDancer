@@ -1,43 +1,71 @@
-#pragma once
+ï»¿#pragma once
+
 #include "config.h"
+#include "TileActor.h"
+#include "IRendableTileActor.h"
 
 enum class TileType
 {
 	NONE,
-	NORMAL,
+	BRIGHT_DIRT,
+	DARK_DIRT,
+	COMBO1_DIRT,
+	COMBO2_DIRT,
 };
+
 class Block;
 class Trap;
-class GameActor;
-class Tile
+class Image;
+
+class Tile : public TileActor, public IRendableTileActor, public enable_shared_from_this<Tile>
 {
 private:
 	TileType type;
-	Block* block;
-	Trap* trap;
+	shared_ptr<Block> block;
+	shared_ptr<Trap> trap;
+	Image* tileImage;
+
 	float light;
 	int tileNum;
-	RECT rcTile;
 
 public:
-	void Init();
-	void Render(HDC hdc);
-	void OnTile(GameActor* actor);
+	Tile() { SetType(ActorType::TILE);}
+	~Tile() {}
 
-	// ¹Ù´Ú
+	HRESULT Init();
+	HRESULT Init(int x, int y);
+	void Release();
+	void Render(HDC hdc, bool useCamera = true);
+	void OnTile(TileActor* actor);
+	void OnBeat(bool isCombo);
+	virtual void Interact(GameActor* actor) override;
+
+	// ë°”ë‹¥ ë²ˆí˜¸
 	int GetTileNum() { return tileNum; }
-	void SetTileNum(int _tileNum) { tileNum = _tileNum; }
+	void SetTileNum(int _tileNum) {
+		tileNum = _tileNum;
+		type = GetTypeByTileNum(tileNum);
+	}
 
-	// À§Ä¡
-	RECT GetRcTile() { return rcTile; }
-	void SetRcTile(RECT _rcTile) { rcTile = _rcTile; }
-
-	// ºí·Ï (º®)
-	Block* GetBlock() { return block; }
-	void SetBlock(Block* _block) { block = _block; }
-
-	// ¹Ù´Ú Å¸ÀÔ
+	// íƒ€ì¼ íƒ€ì…
 	TileType GetType() { return type; }
-	void SetType(TileType _type) { type = _type; }
-};
+	TileType GetTypeByTileNum(int tileNum);
 
+	// Block
+	shared_ptr<Block> GetBlock() { return block; }
+	void SetBlock(const shared_ptr<Block>& _block) { block = _block; }
+
+	// Trap
+	shared_ptr<Trap> GetTrap() { return trap; }
+	void SetTrap(const shared_ptr<Trap>& _trap) { trap = _trap; }
+
+	//// TileImage
+	//Image* GetTileImage() const { return tileImage; }
+	//void SetTileImage(Image* _image) { tileImage = _image; }
+
+	// íƒ€ì¼ ì¸ë±ìŠ¤
+	POINT GetTileIndex() { return index; }
+
+	// ë Œë”ë§ ëŒ€ìƒ ë°˜í™˜
+	virtual vector<shared_ptr<TileActor>> GetRendableTileActors() override;
+};

@@ -1,61 +1,63 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
-
-// 샘플 타일 정보
-// 640 * 288
-#define SAMPLE_TILE_X 9
-#define SAMPLE_TILE_Y 6
-
-#define SAMPLE_WALL_X 9
-#define SAMPLE_WALL_Y 8
-
-#define TILE_SIZE 26
-#define WALL_TILE_WIDTH 24
-#define WALL_TILE_HEIGHT 48
-
-#define TILE_X 20
-#define TILE_Y 20
+#include <memory>
+#include <vector>
 
 enum class SelectedLayer {
-	FLOOR,  // 바닥을 선택
-	WALL    // 벽을 선택
+	FLOOR,
+	WALL
+};
+
+enum class ToolType {
+	NONE,
+	FLOOR_TILE,
+	WALL_TILE,
+	FLOOR_ERASER,
+	WALL_ERASER,
+	SET_PLAYER_START,
+	SET_NEXT_STAGE
 };
 
 class Image;
 class Tile;
+
 class TilemapTool : public GameObject
 {
 private:
 	Image* sampleTile;
 	Image* sampleWall;
-	vector<vector<Tile*>> tiles;
+	vector<vector<shared_ptr<Tile>>> tiles;
 
-	RECT rcSampleTile;
-	RECT rcSampleWall;
-	RECT rcMapTile;
+	RECT rcSampleTile, rcSampleWall, rcLeftClick, rcRightClick;
+	RECT rcFloorEraser, rcWallEraser, rcMapTile;
+	RECT rcSaveBtn;
+	RECT rcLoadBtn;
+	RECT rcResizeBtn;
 
-	int selectedTileLX;
-	int selectedTileLY;
+	int selectedTileLX, selectedTileLY, selectedTileRX, selectedTileRY;
+	int mapSize;
 
-	int selectedTileRX;
-	int selectedTileRY;
-
+	RECT rcSizeUpBtn;
+	RECT rcSizeDownBtn;
 	SelectedLayer selectedLayer;
+	ToolType currentTool;
+	int playerStartX = 0, playerStartY = 0;
+	int nextStageX = 0, nextStageY = 0;
+	RECT rcPlayerStartBtn;
+	RECT rcNextStageBtn;
+
 public:
 	TilemapTool();
 	virtual ~TilemapTool();
 
 	HRESULT Init() override;
-	void Release()  override;
-	void Update()  override;
-	void Render(HDC hdc)  override;
+	void Release() override;
+	void Update() override;
+	void Render(HDC hdc) override;
 
 	void Save(string filePath);
 	void Load(string filePath);
 
 	void LoadDialog();
 	void SaveDialog();
-
-		
 };
-

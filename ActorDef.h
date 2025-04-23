@@ -2,7 +2,5 @@
 
 enum class ActorType
 {
-
-	NONE, PLAYER, MONSTER, ITEM, TRAP, BLOCK,
-
+	NONE, PLAYER, MONSTER, ITEM, TILE, BLOCK, TRAP,
 };

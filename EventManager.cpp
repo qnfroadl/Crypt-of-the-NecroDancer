@@ -1,4 +1,6 @@
 ﻿#include "EventManager.h"
+#include "config.h"
+#include <iostream>
 
 int EventManager::GetPriority(EventType type)
 {
@@ -10,29 +12,56 @@ int EventManager::GetPriority(EventType type)
 		case EventType::BEATHIT: 
 		case EventType::BEATMISS: 
 			priority = 1;
-
+			break;
 		case EventType::BEATEND: 
 			priority = 2;
-
+			break;
 	}
 
 	return priority;
 }
 
-void EventManager::BindEvent(EventType type, std::function<void(EventData*)> func)
+
+void EventManager::BindEvent(GameObject* _obj, EventType type, std::function<void(EventData*)> func)
 {
-	funcs[type].push_back(func); // std::move(func)
+	funcs[type].push_back(BoundFunc{ _obj, func});
 }
 
-void EventManager::AddEvent(EventType type, EventData* data)
+void EventManager::UnbindEvent(GameObject* obj, EventType type)
 {
-	// ObjectPool 사용 To do - 출발준비
+	auto it = funcs[type].begin();
+	while (it != funcs[type].end())
+	{
+		
+	}
+	
+	
+}
+
+void EventManager::AddEvent(EventType type, EventData* data, bool now)
+{
 	Event* event = new Event();
 	event->type = type;
 	event->data = data;
 	event->priority = GetPriority(type);
 
-	queEvents.push(event);
+	if (now)
+	{
+		auto it = funcs[type].begin();
+		while (it != funcs[type].end())
+		{
+			(*it).func(data);
+			it++;
+		}
+
+		delete event;
+	}
+	else 
+	{
+		queEvents.push(event);
+	}
+	
+	// std::cout << "EventManager::AddEvent : " << (int)type << std::endl;
 }
 
 void EventManager::Update()
@@ -49,7 +78,9 @@ void EventManager::Update()
 		int count = 0;
 		while (it != funcs[event->type].end() && count < maxCount)
 		{
-			(*it)(event->data);
+			(*it).func(event->data);
+			
+			it++;
 			count++;
 		}
 		

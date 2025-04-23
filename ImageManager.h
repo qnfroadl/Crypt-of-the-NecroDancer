@@ -18,7 +18,7 @@ enum class EImageKey
 	CADENCE = 0, 
 	CADENCE_HEAD = CADENCE + 1,
 	CADENCE_BODY = CADENCE + 2,
-	
+
 };
 
 class Image;
@@ -38,6 +38,9 @@ public:
 
 	Image* AddImage(const string& key, const wchar_t* filePath, int width, int height,
 		int maxFrameX, int maxFrameY, bool isTransparent = FALSE, COLORREF transColor = FALSE);
+
+	Image* AddImage(const string& key, const wchar_t* filePath, int width, int height,
+		int maxFrameX, int maxFrameY, bool isTransparent, COLORREF transColor, bool gdiActive);
 
 	void DeleteImage(const string& key);
 

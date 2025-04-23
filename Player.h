@@ -1,52 +1,70 @@
 ﻿#pragma once
 
+#include "ObservableValue.h"
 #include "TileCharacter.h"
-typedef struct _stJump
-{
-    // 출발 위치.
-	float sx; 
-	float sy; 
+#include "IPlayerObserver.h"
 
-    // 점프중인 높이.
-    float height = 0;   // 이만큼 렌더할때 빼줘야함.
-    float animCurtime = 0.0f;    // 애니메이션 진행 시간
-    float totalAnimTime = 0.2f;  // 총 점프 시간.
-    // 도착 위치
-    float ex;
-    float ey;
-}stJump;
+class Weapon;
+class ItemBomb;
 
+class IPlayerObserver;
 enum class PlayerState
 {
-	IDLE, JUMP, THROWREADY, THROW, 
+	IDLE, JUMP, THROWREADY, THROW, DEAD,
 };
 
 class EventData;
-class Player : public TileCharacter
+class Tilemap;
+class TileItem;
+class Shovel;
+
+class Player : public TileCharacter, public enable_shared_from_this<Player>
 {
 
 private:
-    PlayerState state;
-	stJump jumpData; // 점프 데이터
+	vector<IPlayerObserver*> observers;
     
+    PlayerIndex playerIndex;
+    PlayerState state;
+	
     float elapsedTime;
     int curFrame;
 
-	// Player의 상태   
+	// Player의 상태
     string name;
-    float hp;
-    float maxHP;
+    ObservableValue<int> goldMultiple;  
+    ObservableValue<float> hp;
+    ObservableValue<float> maxHP;
+    ObservableValue<int> diamond;
+	ObservableValue<int> bombCount;
+
 	float attack;
     float speed;
-    int diamond;
     bool isLeft;
 
     Image* body;    
 
+    // 무기, 갑옷, 삽, 횃불, 소모품
+    shared_ptr<Weapon> weapon;
+    shared_ptr<TileItem> armor;
+    shared_ptr<Shovel> shovel;
+    shared_ptr<TileItem> touch;
+    shared_ptr<TileItem> consumableItem;
+
+    // 참조
+    weak_ptr<Tilemap> tileMap;
+	weak_ptr<PositionManager> positionManager;
+
     void OnBeatHit(EventData* data);             // 비트 성공 시
     void OnBeatMiss(EventData* data);            // 비트 실패 시
+    void OnComboReset(EventData* data);         // 콤보 리셋.
+    void OnComboUp(EventData* data);            // 콤보 업
 
-	void AnimJump();                            // 점프 동작
+    bool JumpAnim() override;
+    void SetJumpData(InputKey key);
+    void SetJumpData(int dx, int dy) override;
+    void CalcAttackRange(Direction dir, vector<POINT>& range);
+    void NotifyAll();
 public:
     Player();
     virtual ~Player();
@@ -56,28 +74,41 @@ public:
     void Render(HDC hdc) override;
     void Release() override;
 
+	void SetTileIndex(const POINT& _index) override;
+
+    void SetTileMap(weak_ptr<Tilemap> _tileMap);
+    void SetPositionManager(weak_ptr<PositionManager> positionManager) { this->positionManager = positionManager; }
+	void Teleport(POINT index);
+
+	void AddObserver(IPlayerObserver* observer);
+    void BindRelease();
+
+    void SetPlayerIndex(PlayerIndex index) { playerIndex = index;}
+    PlayerIndex GetPlayerIndex() {return playerIndex;}
 	void SetName(string name) { this->name = name; }
 
-    void Attack();                    //  공격
+    bool Attack(POINT index, Direction dir);                    //  공격
     void UseItem();                   // 아이템 사용
 
     void TakeDamage(float damage);
     bool IsDead();
 
-	void SetHP(float hp) { this->hp = hp; }
-	float GetHP() { return this->hp; }
+	void SetHP(float hp) { this->hp.Set(hp); }
+	float GetHP() { return this->hp.Get(); }
 
-    void SetMaxHP(float maxHP) { this->maxHP = maxHP; }
-	float GetMaxHP() { return this->maxHP; }
+    void SetMaxHP(float maxHP) { this->maxHP.Set(maxHP); }
+	float GetMaxHP() { return this->maxHP.Get(); }
 
 	float GetAttack() { return this->attack; }
 	void SetAttack(float attack) { this->attack = attack; }
 
-	void SetDiamond(int diamond) { this->diamond = diamond; }
-    void AddDiamond(int diamond) { this->diamond += diamond; }
-	int GetDiamond() { return this->diamond; }
+	void SetDiamond(int diamond) { this->diamond.Set(diamond); }
+    void AddDiamond(int diamond) { this->diamond.Set(this->diamond.Get() + diamond); }
+	int GetDiamond() { return this->diamond.Get(); }
 	
+	void AddWeapon(shared_ptr<Weapon> weapon);
 	
-    void Jump(int x, int y);            // 점프 (이 기능을 만들어두면 타일에서도 가능함)
+    void AddBomb(int bomb) { this->bombCount.Set(this->bombCount.Get() + bomb); }
     
+    void SetPlayerState(PlayerState state);
 };
