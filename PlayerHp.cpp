@@ -1,4 +1,4 @@
-#include "PlayerHp.h"
+ï»¿#include "PlayerHp.h"
 #include "Image.h"
 #include "ImageManager.h"
 #include "TimerManager.h"
@@ -51,7 +51,7 @@ void PlayerHp::Render(HDC hdc)
 			heartContainerCount -= x;
 			for (int j = 0; j < x; ++j)
 			{
-				// ÇÏÆ® ÀÌ¹ÌÁö °áÁ¤ ²Ë, ¹Ý, ºó
+				// í•˜íŠ¸ ì´ë¯¸ì§€ ê²°ì • ê½‰, ë°˜, ë¹ˆ
 				if (hp >= 1.f)
 				{
 					frameIndex = 0;
@@ -64,7 +64,7 @@ void PlayerHp::Render(HDC hdc)
 				}
 				else frameIndex = 2;
 
-				// À§Ä¡ °áÁ¤
+				// ìœ„ì¹˜ ê²°ì •
 				int heartX = position.x + image->GetFrameHeight() * size.y * 1.15f * (j + 5 - x);
 				int heartY = position.y + image->GetFrameHeight() * size.y * 1.15f * i;
 
@@ -102,7 +102,7 @@ void PlayerHp::AdjustSize()
 	float heartWidth = (float)image->GetFrameWidth() * size.x;
 	float heartHeight = (float)image->GetFrameHeight() * size.y;
 
-	// position Àº ÇÏÆ®ÀÇ ½ÃÀÛÀ§Ä¡(ÁÂ»ó´Ü)
+	// position ì€ í•˜íŠ¸ì˜ ì‹œìž‘ìœ„ì¹˜(ì¢Œìƒë‹¨)
 	position = { clientWidth - heartWidth * 1.3f * 6.5f, heartHeight * 0.7f };
 }
 
@@ -130,10 +130,10 @@ void PlayerHp::LoadBeats()
 void PlayerHp::CheckBeats()
 {
 	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
-	if (beats.size() > 0)
+	if (beats.size() > 0 && 0 < (int)ceil(curHp))
 	{
 		int beat = beats.front();
-		// Á¤¹Ú
+		// ì •ë°•
 		if (abs((int)curPosition - (int)beat) <= 30.f)
 		{
 			beatAnim = true;

@@ -63,6 +63,7 @@ private:
     bool JumpAnim() override;
     void SetJumpData(InputKey key);
     void SetJumpData(int dx, int dy) override;
+    void CalcAttackRange(InputKey key, vector<POINT>& range);
 
 public:
     Player();
@@ -103,7 +104,7 @@ public:
     void AddDiamond(int diamond) { this->diamond.Set(this->diamond.Get() + diamond); }
 	int GetDiamond() { return this->diamond.Get(); }
 	
-	void AddWeapon(Weapon* weapon);
+	void AddWeapon(shared_ptr<Weapon> weapon);
 	
     void AddBomb(int bomb) { this->bombCount.Set(this->bombCount.Get() + bomb); }
     

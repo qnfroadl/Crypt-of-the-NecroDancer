@@ -210,7 +210,7 @@ void Monster::Patrol(int _pos, MONSTERTYPE _m)
 		case Direction::UP:
 			mIndex.y -= 1;
 			break;
-		case Direction::DOWM:
+		case Direction::DOWN:
 			mIndex.y += 1;
 			break;
 		case Direction::RIGHT:
@@ -292,9 +292,26 @@ MonsterImageInfo Monster::FindImageInfo(MONSTERTYPE _m)
 }
 
 Monster::Monster()
+	:curHP(1), maxHP(1)
 {
+	SetType(ActorType::MONSTER);
 }
 
 Monster::~Monster()
 {
+}
+
+void Monster::TakeDamage(int damage)
+{
+	curHP -= damage;
+	if (curHP <= 0)
+	{
+		curHP = 0;
+		Dead();
+	}
+}
+
+bool Monster::IsDead()
+{
+	return MonsterState::DEAD == state ? true : false;
 }
