@@ -39,7 +39,7 @@ HRESULT LobbyScene::Init()
 
     //map = make_shared<Tilemap>();
     map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("LOBBY")));
-	
+    map->PrintTorchSpots();
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
 	positionManager = make_shared<PositionManager>();
@@ -131,6 +131,10 @@ void LobbyScene::Release()
 
 void LobbyScene::Update()
 {
+    if (map)
+    {
+		map->Update();
+    }
 	if (uiManager)
 	{
 		uiManager->Update();

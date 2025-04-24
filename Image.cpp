@@ -332,6 +332,9 @@ void Image::FrameRender(HDC hdc, float destX, float destY, int frameX, int frame
     if (imageInfo->gdiBitmap == nullptr) return;
 
     Gdiplus::Graphics graphics(hdc);
+    graphics.SetInterpolationMode(Gdiplus::InterpolationModeNearestNeighbor);
+    graphics.SetSmoothingMode(Gdiplus::SmoothingModeNone);
+    graphics.SetCompositingQuality(Gdiplus::CompositingQualityHighSpeed);
 
     int width = imageInfo->gdiBitmap->GetWidth();
     int height = imageInfo->gdiBitmap->GetHeight();

@@ -5,6 +5,7 @@
 #include "EventManager.h"
 #include "Camera.h"
 #include "EventData.h"
+#include "Torch.h"
 
 void Tilemap::OnInteract(EventData* data)
 {
@@ -28,19 +29,20 @@ void Tilemap::OnInteract(EventData* data)
 	}
 }
 
+
 HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 {
 	mapRows = _mapRows;
 	mapColumns = _mapColumns;
 	tiles = vector<vector<shared_ptr<Tile>>>(_mapRows, vector<shared_ptr<Tile>>(_mapColumns, nullptr));
 	spawnPoints = {};
-	//leftTop = { Camera::GetInstance()->GetViewRect().left, Camera::GetInstance()->GetViewRect().top };
-	//rightBottom = { Camera::GetInstance()->GetViewRect().right, Camera::GetInstance()->GetViewRect().bottom };
+
 	leftTop = { 0, 0 };
 	rightBottom = { mapColumns - 1, mapRows - 1 };
 	isCombo = false;
 	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, placeholders::_1));
 	EventManager::GetInstance()->BindEvent(this, EventType::INTERACT, std::bind(&Tilemap::OnInteract, this, placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::PLAYERMOVED, std::bind(&Tilemap::UpdateVisuable, this));
 
 
 	// EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::UpdateVisuable, this));
@@ -52,6 +54,7 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	//		this->OnBeat(isCombo);
 	//	}
 	//);
+
 
 
 	return S_OK;
@@ -74,19 +77,24 @@ void Tilemap::Release()
 	// 이벤트 언바인드 추가
 	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
 	EventManager::GetInstance()->UnbindEvent(this, EventType::INTERACT);
+	EventManager::GetInstance()->UnBindEvent(this, EventType::PLAYERMOVED);
+
 
 }
 
 void Tilemap::Update()
 {
-	for (auto& row : tiles)
+	// 나중에 이벤트로 바꿔야 함
+	// UpdateVisuable();
+
+	for (int y = leftTop.y; y <= rightBottom.y; ++y)
 	{
-		for (auto& tile : row)
+		if (y < 0 || y >= mapRows) continue;
+
+		for (int x = leftTop.x; x <= rightBottom.x; ++x)
 		{
-			if (tile)
-			{
-				tile->Update();
-			}
+			if (x < 0 || x >= mapColumns) continue;
+			tiles[y][x]->Update();
 		}
 	}
 }
@@ -383,13 +391,109 @@ void Tilemap::UpdateVisuable()
 	int tilesOnScreenY = static_cast<int>(ceil((viewRect.bottom - viewRect.top) / scaledTileSize));
 
 	// 마진
-	int marginX = 2;
-	int marginY = 2;
+	int marginX = 0;
+	int marginY = 0;
 
 	// 보여줄 타일 범위 계산
 	leftTop.x = max(0, leftTile - marginX);
 	leftTop.y = max(0, topTile - marginY);
 	rightBottom.x = min(mapColumns - 1, leftTile + tilesOnScreenX + marginX);
 	rightBottom.y = min(mapRows - 1, topTile + tilesOnScreenY + marginY);
-	//cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
+	
+	
+	cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
+}
+
+void Tilemap::ApplyTorchLighting()
+{
+	for (const auto& torch : torchSpots)
+	{
+		for (int dy = -3; dy <= 3; ++dy)
+		{
+			for (int dx = -3; dx <= 3; ++dx)
+			{
+				int nx = torch.x + dx;
+				int ny = torch.y + dy;
+
+				if (nx < 0 || ny < 0 || nx >= mapColumns || ny >= mapRows)
+					continue;
+
+				int dist = abs(dx) + abs(dy);
+				if (dist > 3) continue;
+
+				float lightAdd = 0.0f;
+				switch (dist)
+				{
+				case 0: lightAdd = 1.0f; break;
+				case 1: lightAdd = 0.6f; break;
+				case 2: lightAdd = 0.3f; break;
+				case 3: lightAdd = 0.1f; break;
+				}
+
+				shared_ptr<Tile> tile = tiles[ny][nx];
+				if (!tile) continue;
+
+				tile->SetStaticBrightness(tile->GetStaticBrightness() + lightAdd);
+
+				if (shared_ptr<Block> block = tile->GetBlock())
+				{
+					block->SetStaticBrightness(block->GetStaticBrightness() + lightAdd);
+
+					if (shared_ptr<Torch> torch = block->GetTorch())
+					{
+						torch->SetStaticBrightness(torch->GetStaticBrightness() + lightAdd);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Tilemap::RemoveTorchLightingAt(POINT torchIndex)
+{
+	for (int dy = -3; dy <= 3; ++dy)
+	{
+		for (int dx = -3; dx <= 3; ++dx)
+		{
+			int nx = torchIndex.x + dx;
+			int ny = torchIndex.y + dy;
+
+			if (nx < 0 || ny < 0 || nx >= mapColumns || ny >= mapRows)
+				continue;
+
+			int dist = abs(dx) + abs(dy);
+			if (dist > 3) continue;
+
+			float lightSub = 0.0f;
+			switch (dist)
+			{
+			case 0: lightSub = 1.0f; break;
+			case 1: lightSub = 0.6f; break;
+			case 2: lightSub = 0.3f; break;
+			case 3: lightSub = 0.1f; break;
+			}
+
+			shared_ptr<Tile> tile = tiles[ny][nx];
+			if (!tile) continue;
+
+			tile->SetStaticBrightness(tile->GetStaticBrightness() - lightSub);
+
+			if (shared_ptr<Block> block = tile->GetBlock())
+			{
+				block->SetStaticBrightness(block->GetStaticBrightness() - lightSub);
+
+				if (shared_ptr<Torch> torch = block->GetTorch())
+				{
+					torch->SetStaticBrightness(torch->GetStaticBrightness() - lightSub);
+				}
+			}
+		}
+	}
+	torchSpots.erase(
+		std::remove_if(torchSpots.begin(), torchSpots.end(),
+			[&](const POINT& pt) {
+				return pt.x == torchIndex.x && pt.y == torchIndex.y;
+			}),
+		torchSpots.end()
+	);
 }

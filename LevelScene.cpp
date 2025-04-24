@@ -139,6 +139,10 @@ void LevelScene::Release()
 
 void LevelScene::Update()
 {
+    if (map)
+    {
+		map->Update();
+    }
     if (uiManager)
     {
         uiManager->Update();
