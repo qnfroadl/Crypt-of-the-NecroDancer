@@ -24,6 +24,8 @@ enum class EventType
 	COMBOFAILED,	// 콤보 실패.
 
 	LIGHTINGUPDATED,	// 라이팅이 업데이트 되었음을 알림.
+
+	INTERACT, 
 };
 
 

@@ -43,7 +43,8 @@ void Monster::Init(MONSTERTYPE p)
 
 void Monster::Release()
 {
-
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATMISS);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATHIT);
 }
 
 void Monster::Update()

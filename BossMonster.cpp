@@ -43,6 +43,8 @@ void BossMonster::Init(BossType p)
 
 void BossMonster::Release()
 {
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATMISS);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATHIT);
 }
 
 void BossMonster::Update()

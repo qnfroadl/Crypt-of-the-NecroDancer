@@ -8,21 +8,15 @@ class ItemBomb : public TileItem, public enable_shared_from_this<ItemBomb>
 
 private:
 	Image* image;
-	float damage;	// 플레이어는 절반 타격.
-	int step;		// 폭발 단계.
-	bool isExplode;
-
+	
 public:
-	ItemBomb(int value = 0);
-	virtual ~ItemBomb();
+	ItemBomb();
+	~ItemBomb();
 
-	HRESULT Init();			// 멤버 변수의 초기화, 메모리 할당
-	void Update();
-	void Render(HDC hdc);	// 프레임 단위로 출력(이미지, 텍스트 등)
-	void Release();
-
-	float GetDamage() { return damage; }
+	HRESULT Init() override;			// 멤버 변수의 초기화, 메모리 할당
+	void Render(HDC hdc)  override;	// 프레임 단위로 출력(이미지, 텍스트 등)
+	void Release() override;
 
 	void Interact(GameActor* actor) override;
-};
 
+};

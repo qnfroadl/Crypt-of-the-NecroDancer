@@ -14,6 +14,12 @@ HRESULT LevelManager::Init()
     return S_OK;
 }
 
+void LevelManager::Release()
+{
+    EventManager::GetInstance()->UnbindEvent(this, EventType::ENTERZONE);
+    EventManager::GetInstance()->UnbindEvent(this, EventType::NEXTLEVEL);
+}
+
 void LevelManager::OnNextLevel(EventData* data)
 {
     SceneManager::GetInstance()->GetCurrentScene()->Init();

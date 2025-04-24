@@ -156,7 +156,6 @@
     </ClCompile>
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="ShadowCasting.cpp" />
-
     <ClCompile Include="MultipleGoldUI.cpp">
       <Filter>InputSystem &amp; UI\UI</Filter>
     </ClCompile>
@@ -178,6 +177,12 @@
     <ClCompile Include="MainMenuScene.cpp">
       <Filter>Scene\IntroScene</Filter>
     </ClCompile>
+    <ClCompile Include="BombAttack.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectManager.cpp" />
+    <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="BombEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -381,6 +386,12 @@
     <ClInclude Include="MainMenuScene.h">
       <Filter>Scene\IntroScene</Filter>
     </ClInclude>
+    <ClInclude Include="BombAttack.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectManager.h" />
+    <ClInclude Include="Effect.h" />
+    <ClInclude Include="BombEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">

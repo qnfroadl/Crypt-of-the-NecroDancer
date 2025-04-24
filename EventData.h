@@ -66,16 +66,14 @@ public:
 
 };
 
-/*
+
 class TileActor;
-class TileActorPositionEventData : public EventData
+class InteractEventData : public EventData
 {
 public:
-	POINT preIndex;						// 이전 위치.
 	shared_ptr<TileActor> actor;		// 현 위치는 액터가 갖고있것지.
 	
-	TileActorPositionEventData(POINT preIndex, shared_ptr<TileActor> actor)
-		: preIndex(preIndex), actor(actor) {};
+	InteractEventData(shared_ptr<TileActor> actor)
+		:  actor(actor) {};
 
 };
-*/

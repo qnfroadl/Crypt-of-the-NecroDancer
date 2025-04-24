@@ -53,6 +53,8 @@ void ShadowCasting::Init(vector<vector<shared_ptr<Tile>>> _tiles)
 
 void ShadowCasting::Release()
 {
+	EventManager::GetInstance()->UnbindEvent(this, EventType::PLAYERMOVED);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BLOCKDESTROYED);
 }
 
 void ShadowCasting::Update()

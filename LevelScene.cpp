@@ -130,21 +130,18 @@ void LevelScene::Release()
 
 void LevelScene::Update()
 {
-    map->UpdateVisuable();
     if (uiManager)
     {
         uiManager->Update();
     }
 
+    positionManager->Update();
 
-    playerManager.lock()->Update();
-    monsterManager->Update();
-
-    if (KeyManager::GetInstance()->IsOnceKeyDown('O'))
+    if (KeyManager::GetInstance()->IsOnceKeyDown(VK_F3))
     {
         SoundManager::GetInstance()->SetTempo(0.8f);
     }
-    if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
+    if (KeyManager::GetInstance()->IsOnceKeyDown(VK_F4))
     {
         SoundManager::GetInstance()->SetTempo(1.2f);
     }

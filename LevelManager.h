@@ -14,7 +14,7 @@ private:
 
 public:
 	HRESULT Init() override;
-	
+	void Release() override;
 	void OnNextLevel(EventData* data);
 	void OnEnterZone(EventData* data);
 
