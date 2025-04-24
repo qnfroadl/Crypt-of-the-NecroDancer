@@ -13,7 +13,6 @@ enum class EventType
 	BEAT, BEATHIT, BEATMISS, BEATEND, 
 	SPAWNITEM, SPAWNWEAPON,
 
-	LIGHTINGUPDATE,		// 라이팅 업데이트.
 	PLAYERMOVED,	// 플레이어 이동 됨 이벤트. 
 	BLOCKDESTROYED,	// 벽돌 파괴 됨 이벤트.
 	BLOCKDESTROYFAILED,	// 벽돌 파괴 실패 이벤트.
@@ -23,6 +22,8 @@ enum class EventType
 
 	CCOMBOSTART,	// 콤보 시작.
 	COMBOMFAILED,	// 콤보 실패.
+
+	LIGHTINGUPDATED,	// 라이팅이 업데이트 되었음을 알림.
 };
 
 
