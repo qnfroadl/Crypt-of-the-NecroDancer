@@ -144,6 +144,7 @@
     <ClCompile Include="BeatManager.cpp" />
     <ClCompile Include="BeatMarkerManager.cpp" />
     <ClCompile Include="BossMonster.cpp" />
+    <ClCompile Include="IntroScene.cpp" />
     <ClCompile Include="IPlayerObserver.cpp" />
     <ClCompile Include="ItemBomb.cpp" />
     <ClCompile Include="ItemGold.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="LevelScene.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
+    <ClCompile Include="MainMenuScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
     <ClCompile Include="MultipleGoldUI.cpp" />
     <ClCompile Include="PlayerHp.cpp" />
@@ -209,6 +211,7 @@
     <ClInclude Include="BossMonster.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="IntroScene.h" />
     <ClInclude Include="IPlayerObserver.h" />
     <ClInclude Include="IRendableTileActor.h" />
     <ClInclude Include="ItemBomb.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="LevelScene.h" />
     <ClInclude Include="LobbyScene.h" />
+    <ClInclude Include="MainMenuScene.h" />
     <ClInclude Include="MonsterManager.h" />
     <ClInclude Include="MultipleGoldUI.h" />
     <ClInclude Include="ObservableValue.h" />

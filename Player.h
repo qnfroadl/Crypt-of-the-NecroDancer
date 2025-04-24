@@ -50,7 +50,7 @@ private:
     shared_ptr<Shovel> shovel;
     shared_ptr<TileItem> touch;
     shared_ptr<TileItem> consumableItem;
-
+    
     // 참조
     weak_ptr<Tilemap> tileMap;
 	weak_ptr<PositionManager> positionManager;
@@ -109,8 +109,7 @@ public:
 	int GetDiamond() { return this->diamond.Get(); }
 	
 	void AddWeapon(shared_ptr<Weapon> weapon);
-	
-    void AddBomb(int bomb) { this->bombCount.Set(this->bombCount.Get() + bomb); }
+	void AddBomb(shared_ptr<ItemBomb> bomb, int count);
     
     void SetPlayerState(PlayerState state);
 };

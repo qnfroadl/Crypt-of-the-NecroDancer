@@ -21,6 +21,8 @@
 #include "SoundManager.h"
 #include "BeatManager.h"
 
+#include "IntroScene.h"
+#include "MainMenuScene.h"
 #include "LobbyScene.h"
 #include "LevelScene.h"
 #include "LevelManager.h"
@@ -149,6 +151,9 @@ HRESULT MainGame::Init()
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
 
+	SceneManager::GetInstance()->AddScene("IntroScene", new IntroScene());
+	SceneManager::GetInstance()->AddScene("MainMenuScene", new MainMenuScene());
+
 	LobbyScene* lobby = new LobbyScene();
 	lobby->SetPlayerManager(playerManager);
 	
@@ -192,7 +197,9 @@ HRESULT MainGame::Init()
 	
 	// 로비 씬 로딩.
 	
-	SceneManager::GetInstance()->ChangeScene("LobbyScene");
+	SceneManager::GetInstance()->ChangeScene("IntroScene");
+
+	//SceneManager::GetInstance()->ChangeScene("LobbyScene");
 	//SceneManager::GetInstance()->ChangeScene("LevelScene");
 
 

@@ -11,6 +11,7 @@
 #include "PositionManager.h"
 #include "Shovel.h"
 #include "Tile.h"
+#include "ItemBomb.h"
 #include "SoundManager.h"
 
 void Player::OnBeatHit(EventData* data)
@@ -448,6 +449,16 @@ void Player::AddWeapon(shared_ptr<Weapon> _weapon)
 	}
 	
 	weapon = _weapon;
+}
+
+void Player::AddBomb(shared_ptr<ItemBomb> bomb, int count)
+{
+	if (positionManager.lock())
+	{
+		positionManager.lock()->RemoveTileActor(bomb);
+	}
+
+	this->bombCount.Set(this->bombCount.Get() + count);
 }
 
 void Player::SetPlayerState(PlayerState _state)

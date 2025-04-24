@@ -101,9 +101,6 @@
     <ClCompile Include="BeatHeart.cpp">
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
     </ClCompile>
-    <ClCompile Include="LobbyScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Tilemap.cpp">
       <Filter>TileSystem</Filter>
     </ClCompile>
@@ -157,9 +154,6 @@
     <ClCompile Include="BossMonster.cpp">
       <Filter>Monster</Filter>
     </ClCompile>
-    <ClCompile Include="LevelScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="ShadowCasting.cpp" />
 
@@ -168,6 +162,21 @@
     </ClCompile>
     <ClCompile Include="Torch.cpp">
       <Filter>TileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroScene.cpp">
+      <Filter>Scene\IntroScene</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelScene.cpp">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuScene.cpp">
+      <Filter>Scene\IntroScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -297,9 +306,6 @@
     </ClInclude>
     <ClInclude Include="IPlayerObserver.h" />
     <ClInclude Include="ObservableValue.h" />
-    <ClInclude Include="LobbyScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Tilemap.h">
       <Filter>TileSystem</Filter>
     </ClInclude>
@@ -352,9 +358,6 @@
     <ClInclude Include="BossMonster.h">
       <Filter>Monster</Filter>
     </ClInclude>
-    <ClInclude Include="LevelScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="ShadowCasting.h" />
     <ClInclude Include="MultipleGoldUI.h">
@@ -362,6 +365,21 @@
     </ClInclude>
     <ClInclude Include="Torch.h">
       <Filter>TileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="IntroScene.h">
+      <Filter>Scene\IntroScene</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyScene.h">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelScene.h">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuScene.h">
+      <Filter>Scene\IntroScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -406,6 +424,42 @@
     </Filter>
     <Filter Include="InputSystem &amp; UI\UI\PlayerHp">
       <UniqueIdentifier>{ec7eb17e-bc77-4493-af48-f5e38ca8622a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShadowCasting">
+      <UniqueIdentifier>{d3c61cff-6808-4575-8851-ed460f807ee4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputSystem &amp; UI\BeatManager">
+      <UniqueIdentifier>{af665398-191f-44cd-8be9-f5af0637e26c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Framework\ImageManager">
+      <UniqueIdentifier>{1978390e-73c6-430f-9d73-aac79542c268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Framework\TimerManager">
+      <UniqueIdentifier>{97cc1134-8424-4a68-934d-3c06531e99ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Framework\GameObject">
+      <UniqueIdentifier>{4a87551b-b6a1-4ec6-8726-2eede9ff3a23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Framework\SoundManager">
+      <UniqueIdentifier>{655fb900-86b0-4b6d-b24f-a9a91a47bfa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Framework\SceneManager">
+      <UniqueIdentifier>{e7831c83-e7ec-41b6-9852-fe764ce19a6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Framework\Camera">
+      <UniqueIdentifier>{a8eaf1de-3362-459e-a856-eb0bf9d92ce4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Framework\CollisionManager">
+      <UniqueIdentifier>{24b79efa-e342-47f0-a867-6690d7b4e0c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Framework\KeyManager">
+      <UniqueIdentifier>{d40b88ed-16e9-42cc-9933-4854b0625d6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\IntroScene">
+      <UniqueIdentifier>{5a82e0ae-715c-48e9-89ea-f5ba84677a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\GamePlayScene">
+      <UniqueIdentifier>{11c5a51b-188c-4447-b226-b007256b8822}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -82,7 +82,8 @@ HRESULT LevelScene::Init()
     
 
 
-    SoundManager::GetInstance()->PlaySoundBgm(soundKey[0].first, soundKey[0].second);
+    SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
+
 	beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(true);
@@ -181,11 +182,6 @@ void LevelScene::Render(HDC hdc)
         pos.x - cPos.x, pos.y - cPos.y,
         SCENE_WIDTH, SCENE_HEIGHT);
 
-    if (map)
-    {
-        map->Render(hdc);
-    }
-
     // 타일, 액터들 렌더링.
     if (renderer)
     {
@@ -201,8 +197,6 @@ void LevelScene::Render(HDC hdc)
     {
         uiManager->Render(hdc);
     }
-
-    
 
 }
 
