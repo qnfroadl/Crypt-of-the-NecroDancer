@@ -153,6 +153,7 @@
     <ClCompile Include="LevelScene.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
+    <ClCompile Include="MultipleGoldUI.cpp" />
     <ClCompile Include="PlayerHp.cpp" />
     <ClCompile Include="PlayerWallet.cpp" />
     <ClCompile Include="ShadowCasting.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="LevelScene.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="MonsterManager.h" />
+    <ClInclude Include="MultipleGoldUI.h" />
     <ClInclude Include="ObservableValue.h" />
     <ClInclude Include="PlayerHp.h" />
     <ClInclude Include="PlayerWallet.h" />

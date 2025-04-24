@@ -57,9 +57,6 @@ HRESULT LobbyScene::Init()
 	playerHp->Init();
 	uiManager->AddUI(playerHp);
 
-
-
-
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
 
@@ -127,13 +124,13 @@ void LobbyScene::Release()
 
 void LobbyScene::Update()
 {
-    Camera::GetInstance()->Update();
-
 	if (uiManager)
 	{
 		uiManager->Update();
 	}
-	playerManager.lock()->Update();
+
+    positionManager->Update();
+	// playerManager.lock()->Update();
 
     if (KeyManager::GetInstance()->IsOnceKeyDown('O'))
     {
@@ -158,6 +155,9 @@ void LobbyScene::Render(HDC hdc)
     // 검은색 배경으로 초기화    (플레이어의 스크린보스를 중심으로)
     RenderFillRectAtCenter(hdc, blackBrush, pos.x - cPos.x, pos.y - cPos.y, SCENE_WIDTH, SCENE_HEIGHT);
 
+    // 타일, 액터들 렌더링.
+    renderer->Render(hdc);
+
     if (beatManager)
     {
         beatManager->Render(hdc);
@@ -168,16 +168,12 @@ void LobbyScene::Render(HDC hdc)
 		uiManager->Render(hdc);
 	}
 
-    // 타일, 액터들 렌더링.
-    renderer->Render(hdc);
-
 }
 
 void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
     
-
     if (positionManager)
     {
 		this->playerManager.lock()->SetPositionManager(positionManager);
@@ -187,6 +183,3 @@ void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
         this->playerManager.lock()->SetTileMap(map);
     }
 }
-
-
-
