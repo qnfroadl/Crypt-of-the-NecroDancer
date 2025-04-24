@@ -17,6 +17,13 @@
 
 #include "MonsterManager.h"
 #include "TilemapGenerator.h"
+
+#include "ShadowCasting.h"
+#include "KeyManager.h"
+
+#include "SoundManager.h"
+#include "BeatManager.h"
+
 HRESULT LevelScene::Init()
 {
     // InitMap
@@ -33,7 +40,7 @@ HRESULT LevelScene::Init()
     itemSpawner->Init();
     itemSpawner->SetPositionManager(positionManager);
 
-    uiManager = new UIManager();
+    uiManager = make_shared<UIManager>();
     uiManager->Init();
 
     PlayerWallet* playerCoin = new PlayerWallet();
@@ -45,11 +52,15 @@ HRESULT LevelScene::Init()
     playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
     uiManager->AddUI(playerHp);
 
+    shadowCasting = make_shared<ShadowCasting>();
+    shadowCasting->Init(map->GetTiles());
+
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
         playerManager.lock()->SetTileMap(map);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+        shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
     if (monsterManager.lock())
@@ -59,6 +70,12 @@ HRESULT LevelScene::Init()
         monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
+
+    SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
+	beatManager = make_shared<BeatManager>();
+    beatManager->Init();
+    beatManager->StartBeat(true);
+
     return S_OK;
 }
 
@@ -67,13 +84,18 @@ void LevelScene::Release()
     if (uiManager)
     {
         uiManager->Release();
-        delete uiManager;
         uiManager = nullptr;
     }
 
     if (map) {
         map->Release();
         map = nullptr;
+    }
+
+    if (beatManager)
+    {
+        beatManager->Release();
+        beatManager = nullptr;
     }
 
 	playerManager.lock()->BindRelease();
@@ -90,6 +112,17 @@ void LevelScene::Update()
     }
     playerManager.lock()->Update();
     monsterManager.lock()->Update();
+
+    // test (actually update when (playermoved, blockdestroyed event) occurs)
+    if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
+    {
+        shadowCasting->Update();
+    }
+
+    if (beatManager)
+    {
+        beatManager->Update();
+    }
 }
 
 void LevelScene::Render(HDC hdc)
@@ -111,12 +144,20 @@ void LevelScene::Render(HDC hdc)
         positionManager->Render(hdc);
     }
 
+    if (beatManager)
+    {
+        beatManager->Render(hdc);
+    }
+
     if (uiManager)
     {
         uiManager->Render(hdc);
     }
 	playerManager.lock()->Render(hdc);
 	monsterManager.lock()->Render(hdc);
+
+    // test render
+    shadowCasting->Render(hdc);
 }
 
 void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
