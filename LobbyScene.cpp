@@ -32,8 +32,7 @@ HRESULT LobbyScene::Init()
 	SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
 
    
-
-    //map = make_shared<Tilemap>();
+   //map = make_shared<Tilemap>();
     map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("LOBBY")));
 	
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));

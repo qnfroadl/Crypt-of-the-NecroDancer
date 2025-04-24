@@ -140,6 +140,35 @@ void Monster::Render(HDC hdc)
 	}
 }
 
+void Monster::imageInit(const MonsterImageInfo& _p)
+{
+	image = ImageManager::GetInstance()->AddImage(_p.keyName, _p.imagePath, _p.width * 3, _p.height * 3,
+		_p.imageFrameX, _p.ImageFrameY, true, RGB(255, 0, 255));
+	attackImage = ImageManager::GetInstance()->AddImage("Monster_Attack", TEXT("Image/Monster/swipe_enemy.bmp"), 135 * 3, 24 * 3,
+		5, 1, true, RGB(255, 0, 255));
+
+	
+	damage = 0.5;
+	moveDelay = 3;
+	beatCount = 0;
+	monsterType = MONSTERTYPE::SKELETON;
+
+	SettingFrame(MONSTERTYPE::SKELETON);
+	SetActive(true);
+
+	isLeft = true;
+	elapsedTime = 0;
+	changeTime = 0;
+	animationFrame = minFrame;
+	attackAnimationFrame = 0;
+	isAttack = false;
+
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&Monster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&Monster::OnBeat, this));
+
+
+}
+
 void Monster::SettingFrame(MONSTERTYPE _m)
 {
 	if (_m == MONSTERTYPE::SLIME)
@@ -276,7 +305,7 @@ void Monster::SetTileIndex(const POINT& _index)
 void Monster::SetTileMap(weak_ptr<Tilemap> _tileMap)
 {
 	tileMap = _tileMap;
-	Teleport(POINT{ 6, 5 });
+	Teleport(tileMap.lock()->GetSpawnIndex());
 
 }
 

@@ -71,6 +71,8 @@ public:
 	void Update()override;
 	void Render(HDC hdc)override;
 
+	void imageInit(const MonsterImageInfo& _p);
+	
 	POINT Trace();
 	void Dead();
 	void OnBeat();

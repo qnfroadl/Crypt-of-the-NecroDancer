@@ -1,0 +1,10 @@
+
+	
+		{
+		"keyName": "skeleton",
+		"imagePath": "Image/Monster/skeleton_Normal.bmp",
+		"width": 195,
+		"height": 25,
+		"imageFrameX": 8,
+		"imageFrameY": 1
+		}
