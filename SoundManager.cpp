@@ -1,4 +1,5 @@
 #include "SoundManager.h"
+#include "TimerManager.h"
 
 map<ESoundKey, string> bgmPath = {
 	{ESoundKey::LOBBY, "Sound/Bgm/lobby"},
@@ -18,6 +19,10 @@ void SoundManager::Init()
 
 	bgmVolume = 1.f;
 	effectVolume = 1.f;
+
+	tempo = 1.f;
+	elapsedTime = 0.f;
+	maxTempoChangeTime = 5.f;
 
 #pragma region AddSound
 	AddSound(ESoundKey::LOBBY, "Sound/Bgm/lobby.ogg", true);
@@ -69,6 +74,12 @@ void SoundManager::Release()
 void SoundManager::Update()
 {
 	system->update();
+
+	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
+	if (elapsedTime > maxTempoChangeTime)
+	{
+		RecoverTempo();
+	}
 }
 
 FMOD::Sound* SoundManager::AddSound(ESoundKey key, const char* filePath, bool loop)
@@ -202,4 +213,35 @@ bool SoundManager::IsBgmEnd()
 		return !isPlaying;
 	}
 	return true;
+}
+
+void SoundManager::SetTempo(float _tempo)
+{
+	tempo = _tempo;
+	elapsedTime = 0.f;
+
+	if (channelBgm)
+	{
+		channelBgm->setPitch(tempo);
+	}
+
+	if (channelBgmShopkeeper)
+	{
+		channelBgmShopkeeper->setPitch(tempo);
+	}
+}
+
+void SoundManager::RecoverTempo()
+{
+	tempo = 1.f;
+
+	if (channelBgm)
+	{
+		channelBgm->setPitch(tempo);
+	}
+
+	if (channelBgmShopkeeper)
+	{
+		channelBgmShopkeeper->setPitch(tempo);
+	}
 }

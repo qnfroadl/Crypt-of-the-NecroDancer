@@ -60,6 +60,10 @@ private:
 	ESoundKey keyBgm;
 	ESoundKey keyBgmShopkeeper;
 
+	float tempo;
+	float elapsedTime;
+	float maxTempoChangeTime;
+
 public:
 	void Init();
 	void Release();
@@ -79,4 +83,8 @@ public:
 	ESoundKey GetCurrentKeyBgm();
 	unsigned int GetBgmPosition();
 	bool IsBgmEnd();
+
+	void SetTempo(float _tempo);
+	void RecoverTempo();
+	float GetTempo() { return tempo; }
 };

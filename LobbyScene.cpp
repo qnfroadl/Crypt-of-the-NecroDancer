@@ -122,11 +122,14 @@ void LobbyScene::Update()
 	}
 	playerManager.lock()->Update();
 
-    // test (actually update when (playermoved, blockdestroyed event) occurs)
-	if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
-	{
-	    shadowCasting->Update();
-	}
+    if (KeyManager::GetInstance()->IsOnceKeyDown('O'))
+    {
+        SoundManager::GetInstance()->SetTempo(0.8f);
+    }
+    if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
+    {
+        SoundManager::GetInstance()->SetTempo(1.2f);
+    }
 
     if (beatManager)
     {

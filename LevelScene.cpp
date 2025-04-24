@@ -113,10 +113,13 @@ void LevelScene::Update()
     playerManager.lock()->Update();
     monsterManager.lock()->Update();
 
-    // test (actually update when (playermoved, blockdestroyed event) occurs)
-    if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
+    if (KeyManager::GetInstance()->IsOnceKeyDown('O'))
     {
-        shadowCasting->Update();
+        SoundManager::GetInstance()->SetTempo(0.8f);
+    }
+    if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
+    {
+        SoundManager::GetInstance()->SetTempo(1.2f);
     }
 
     if (beatManager)
