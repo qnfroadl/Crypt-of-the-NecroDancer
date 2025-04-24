@@ -12,7 +12,7 @@
 class Tilemap;
 class LightingRenderer;
 class PositionManager;
-
+class EventData;
 class TileActorRenderer : public GameActor
 {
 
@@ -23,7 +23,6 @@ private:
 	Tilemap* tileMap;
 	shared_ptr<PositionManager> positionManager;
 	std::vector<std::shared_ptr<IRendableTileActor>> rendableActors;
-	vector<vector<bool>> sightMap;
 
 	void OnChangedSightMap(EventData* data);
 public:
