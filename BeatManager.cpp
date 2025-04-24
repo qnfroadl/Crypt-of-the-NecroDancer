@@ -24,8 +24,6 @@ void BeatManager::Release()
 		delete markerManager;
 		markerManager = nullptr;
 	}
-
-	ReleaseInstance();
 }
 
 void BeatManager::Update()

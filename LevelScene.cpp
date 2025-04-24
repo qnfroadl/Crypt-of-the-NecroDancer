@@ -21,6 +21,9 @@
 #include "ShadowCasting.h"
 #include "KeyManager.h"
 
+#include "SoundManager.h"
+#include "BeatManager.h"
+
 HRESULT LevelScene::Init()
 {
     // InitMap
@@ -37,7 +40,7 @@ HRESULT LevelScene::Init()
     itemSpawner->Init();
     itemSpawner->SetPositionManager(positionManager);
 
-    uiManager = new UIManager();
+    uiManager = make_shared<UIManager>();
     uiManager->Init();
 
     PlayerWallet* playerCoin = new PlayerWallet();
@@ -67,6 +70,12 @@ HRESULT LevelScene::Init()
         monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
+
+    SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
+	beatManager = make_shared<BeatManager>();
+    beatManager->Init();
+    beatManager->StartBeat(true);
+
     return S_OK;
 }
 
@@ -75,13 +84,18 @@ void LevelScene::Release()
     if (uiManager)
     {
         uiManager->Release();
-        delete uiManager;
         uiManager = nullptr;
     }
 
     if (map) {
         map->Release();
         map = nullptr;
+    }
+
+    if (beatManager)
+    {
+        beatManager->Release();
+        beatManager = nullptr;
     }
 
 	playerManager.lock()->BindRelease();
@@ -104,6 +118,11 @@ void LevelScene::Update()
     {
         shadowCasting->Update();
     }
+
+    if (beatManager)
+    {
+        beatManager->Update();
+    }
 }
 
 void LevelScene::Render(HDC hdc)
@@ -123,6 +142,11 @@ void LevelScene::Render(HDC hdc)
     if (positionManager)
     {
         positionManager->Render(hdc);
+    }
+
+    if (beatManager)
+    {
+        beatManager->Render(hdc);
     }
 
     if (uiManager)

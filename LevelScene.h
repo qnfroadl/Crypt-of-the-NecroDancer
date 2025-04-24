@@ -9,17 +9,19 @@ class PositionManager;
 class ItemSpawner;
 class MonsterManager;
 class ShadowCasting;
+class BeatManager;
 class LevelScene : public GameObject
 {
 private:
     shared_ptr<Tilemap> map;
     weak_ptr<PlayerManager> playerManager;
     weak_ptr<MonsterManager> monsterManager;
-    UIManager* uiManager;
+    shared_ptr<UIManager> uiManager;
     shared_ptr<PositionManager> positionManager;
     shared_ptr<ItemSpawner> itemSpawner;
 
     shared_ptr<ShadowCasting> shadowCasting;
+    shared_ptr<BeatManager> beatManager;
 
     // 검정 배경
     HBRUSH blackBrush;
