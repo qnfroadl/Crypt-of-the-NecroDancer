@@ -11,8 +11,9 @@ UIBase::~UIBase()
 {
 }
 
-void UIBase::Init()
+HRESULT UIBase::Init()
 {
+	return S_OK;
 }
 
 void UIBase::Release()

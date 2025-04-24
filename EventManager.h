@@ -10,7 +10,7 @@
 class EventData;
 enum class EventType
 {
-	BEAT, BEATHIT, BEATMISS, BEATEND, 
+	BEAT/*정박 타이밍 시작*/, BEATEND/*정박 타이밍 끝*/, BEATHIT, BEATMISS, SONGEND,
 	SPAWNITEM, SPAWNWEAPON,
 
 	PLAYERMOVED,	// 플레이어 이동 됨 이벤트. 

@@ -3,6 +3,7 @@
 #include "ImageManager.h"
 #include "TimerManager.h"
 #include "SoundManager.h"
+#include "EventManager.h"
 
 #include <fstream>
 
@@ -15,25 +16,28 @@ PlayerHp::~PlayerHp()
 {
 }
 
-void PlayerHp::Init()
+HRESULT PlayerHp::Init()
 {
 	image = ImageManager::GetInstance()->AddImage("heart", L"Image/UI/heart_sheet.bmp", 72, 22, 3, 1, true, RGB(255, 0, 255));
 
 	maxHp = 7.f;
 	curHp = 6.5f;
 
-	LoadBeats();
+	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&PlayerHp::BeatStart, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATEND, std::bind(&PlayerHp::BeatEnd, this));
+
+	return S_OK;
 }
 
 void PlayerHp::Release()
 {
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATEND);
 }
 
 void PlayerHp::Update()
 {
 	AdjustSize();
-
-	CheckBeats();
 }
 
 void PlayerHp::Render(HDC hdc)
@@ -106,46 +110,3 @@ void PlayerHp::AdjustSize()
 	position = { clientWidth - heartWidth * 1.3f * 6.5f, heartHeight * 0.7f };
 }
 
-void PlayerHp::LoadBeats()
-{
-	queue<unsigned int> beatQueue;
-
-	string beatFileStr = bgmPath[SoundManager::GetInstance()->GetCurrentKeyBgm()] + ".txt";
-	ifstream beatFile{ beatFileStr };
-
-	int beatBefore{};
-	if (beatFile)
-	{
-		int beat{};
-		while (!beatFile.eof())
-		{
-			beatFile >> beat;
-			beatQueue.push(beat);
-
-		}
-		beats = beatQueue;
-	}
-}
-
-void PlayerHp::CheckBeats()
-{
-	unsigned int curPosition = SoundManager::GetInstance()->GetBgmPosition();
-	if (beats.size() > 0 && 0 < (int)ceil(curHp))
-	{
-		int beat = beats.front();
-		// 정박
-		if (abs((int)curPosition - (int)beat) <= 30.f)
-		{
-			beatAnim = true;
-		}
-
-		if (curPosition > beat + 30.f)
-		{
-			beats.pop();
-
-			beatAnim = false;
-			beatAnimIndex++;
-			beatAnimIndex %= (int)ceil(curHp);
-		}
-	}
-}

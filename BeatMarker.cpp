@@ -1,6 +1,7 @@
 #include "BeatMarker.h"
 #include "Image.h"
 #include "ImageManager.h"
+#include "SoundManager.h"
 
 BeatMarker::BeatMarker()
 	: dead{ true }, red{}, beatPosition{}, speed{ 3000.f }
@@ -58,7 +59,7 @@ void BeatMarker::Render(HDC hdc)
 
 void BeatMarker::LocateMarker(unsigned int curPosition)
 {
-	float diff = (float)(beatPosition - curPosition) / speed;
+	float diff = (float)(beatPosition - curPosition) / (speed * SoundManager::GetInstance()->GetTempo());
 	diff = max(0.f, min(1.f, diff));
 
 	RECT client;
