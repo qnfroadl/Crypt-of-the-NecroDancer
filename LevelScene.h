@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "config.h"
 #include "GameObject.h"
-
+class TileActorRenderer;
 class Tilemap;
 class PlayerManager;
 class UIManager;
@@ -13,6 +13,7 @@ class BeatManager;
 class LevelScene : public GameObject
 {
 private:
+    shared_ptr<TileActorRenderer> renderer;
     shared_ptr<Tilemap> map;
     weak_ptr<PlayerManager> playerManager;
     shared_ptr<MonsterManager> monsterManager;

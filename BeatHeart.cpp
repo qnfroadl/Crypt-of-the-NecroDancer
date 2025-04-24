@@ -1,7 +1,8 @@
-#include "BeatHeart.h"
+﻿#include "BeatHeart.h"
 #include "Image.h"
 #include "ImageManager.h"
 #include "EventManager.h"
+#include "ItemNumUI.h"
 
 BeatHeart::BeatHeart()
 	: frameIndex{}
@@ -20,6 +21,7 @@ HRESULT BeatHeart::Init()
 
 	frameIndex = 0;
 
+
 	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&BeatHeart::BeatStart, this));
 	EventManager::GetInstance()->BindEvent(this, EventType::BEATEND, std::bind(&BeatHeart::BeatEnd, this));
 
@@ -30,6 +32,7 @@ void BeatHeart::Release()
 {
 	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
 	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATEND);
+
 }
 
 void BeatHeart::Update()
@@ -39,7 +42,15 @@ void BeatHeart::Update()
 
 void BeatHeart::Render(HDC hdc)
 {
-	if (image) image->FrameRender(hdc, position.x, position.y, frameIndex, 0, size.x, size.y, false, true);
+	int height = 0;
+	int width = 0;
+	if (image) 
+	{
+		image->FrameRender(hdc, position.x, position.y, frameIndex, 0, size.x, size.y, false, true);
+		height = image->GetFrameHeight();
+		width = image->GetFrameWidth() / 2;
+	}
+
 }
 
 void BeatHeart::LocateOnCenter()

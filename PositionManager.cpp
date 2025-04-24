@@ -97,7 +97,7 @@ shared_ptr<TileActor> PositionManager::GetActor(POINT index, ActorType type)
     return nullptr;
 }
 
-std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT& pos)
+const std::vector<std::shared_ptr<TileActor>>& PositionManager::GetActorsAt(const POINT& pos)
 {
     auto it = posMap.find(pos);
     if (it != posMap.end())
@@ -126,19 +126,37 @@ std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT
     return actors;
 }
 
-void PositionManager::Render(HDC hdc)
+void PositionManager::Update()
 {
-    // 테스트용.
+    // 포지션 매니저에 등록된 애들만 업데이트.
     auto it = posMap.begin();
     while (it != posMap.end())
     {
-		auto& vec = it->second;
-		for (auto& actor : vec)
-		{
-			actor->Render(hdc);
-		}
-		it++;
+        auto& vec = it->second;
+        for (auto& actor : vec)
+        {
+            if (actor->IsActive())
+            {
+                actor->Update();
+            }
+        }
+        it++;
     }
+}
+
+void PositionManager::Render(HDC hdc)
+{
+    // 테스트용.
+    // auto it = posMap.begin();
+    // while (it != posMap.end())
+    // {
+	// 	auto& vec = it->second;
+	// 	for (auto& actor : vec)
+	// 	{
+	// 		actor->Render(hdc);
+	// 	}
+	// 	it++;
+    // }
 
 }
 

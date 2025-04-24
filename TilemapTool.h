@@ -15,7 +15,8 @@ enum class ToolType {
 	FLOOR_ERASER,
 	WALL_ERASER,
 	SET_PLAYER_START,
-	SET_NEXT_STAGE
+	SET_NEXT_STAGE,
+	PLACE_TORCH
 };
 
 class Image;
@@ -45,6 +46,7 @@ private:
 	int nextStageX = 0, nextStageY = 0;
 	RECT rcPlayerStartBtn;
 	RECT rcNextStageBtn;
+	RECT rcTorchBtn;
 
 public:
 	TilemapTool();
