@@ -148,6 +148,7 @@
     <ClCompile Include="..\TilemapTool.cpp" />
     <ClCompile Include="..\Timer.cpp" />
     <ClCompile Include="..\TimerManager.cpp" />
+    <ClCompile Include="..\Torch.cpp" />
     <ClCompile Include="..\Trap.cpp" />
     <ClCompile Include="toolmain.cpp" />
     <ClCompile Include="toolMainGame.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="..\TilemapTool.h" />
     <ClInclude Include="..\Timer.h" />
     <ClInclude Include="..\TimerManager.h" />
+    <ClInclude Include="..\Torch.h" />
     <ClInclude Include="..\Trap.h" />
     <ClInclude Include="toolMainGame.h" />
   </ItemGroup>

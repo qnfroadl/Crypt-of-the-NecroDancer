@@ -18,7 +18,6 @@ HRESULT Tile::Init()
 	tileNum = -1;
 	block = nullptr;
 	trap = nullptr;
-	light = 0.0f;
 
 	return S_OK;
 }
@@ -32,7 +31,6 @@ HRESULT Tile::Init(int x, int y)
 	tileNum = 0;
 	block = nullptr;
 	trap = nullptr;
-	light = 0.0f;
 
 	pos = {
 		x * TILE_SIZE * TILE_SCALE + (TILE_SIZE * TILE_SCALE) / 2.0f,
@@ -84,6 +82,11 @@ void Tile::Render(HDC hdc, bool useCamera)
 
 	if (trap) trap->Render(hdc, useCamera);
 	if (block) block->Render(hdc, useCamera);
+}
+
+void Tile::Update()
+{
+	if (block) block->Update();
 }
 
 void Tile::OnTile(TileActor* actor)

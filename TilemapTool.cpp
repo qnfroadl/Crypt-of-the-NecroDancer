@@ -7,6 +7,7 @@
 #include "Block.h"
 #include <commdlg.h>
 #include <fstream>
+#include "Torch.h"
 
 TilemapTool::TilemapTool()
 	: sampleTile(nullptr), sampleWall(nullptr), currentTool(ToolType::NONE),
@@ -23,6 +24,7 @@ HRESULT TilemapTool::Init()
 
 	sampleTile = ImageManager::GetInstance()->AddImage("TILE", TEXT("../Image/Tiles.bmp"), 234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
 	sampleWall = ImageManager::GetInstance()->AddImage("WALL", TEXT("../Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("TORCH", TEXT("../Image/Torch.bmp"), 24, 24, 4, 1, true, RGB(255, 0, 255));
 
 	rcSampleTile = { TILEMAPTOOL_X - sampleTile->GetWidth(), 0, TILEMAPTOOL_X, sampleTile->GetHeight() };
 	rcSampleWall = { TILEMAPTOOL_X - sampleWall->GetWidth(), rcSampleTile.bottom + 10, TILEMAPTOOL_X, rcSampleTile.bottom + 10 + sampleWall->GetHeight() };
@@ -36,7 +38,7 @@ HRESULT TilemapTool::Init()
 	rcMapTile = { 0, 0, mapSize * TILE_SIZE, mapSize * TILE_SIZE };
 	rcPlayerStartBtn = { 50, rcSizeDownBtn.bottom + 40, 150, rcSizeDownBtn.bottom + 80 };
 	rcNextStageBtn = { 200, rcSizeDownBtn.bottom + 40, 300, rcSizeDownBtn.bottom + 80 };
-
+	rcTorchBtn = { 50, rcNextStageBtn.bottom + 40, 150, rcNextStageBtn.bottom + 80 };
 
 	tiles = vector<vector<shared_ptr<Tile>>>(mapSize, vector<shared_ptr<Tile>>(mapSize, nullptr));
 
@@ -144,6 +146,15 @@ void TilemapTool::Update()
 				nextStageX = x;
 				nextStageY = y;
 				break;
+			case ToolType::PLACE_TORCH: {
+				auto block = tiles[y][x]->GetBlock();
+				if (block) {
+					auto torch = make_shared<Torch>();
+					torch->Init(tiles[y][x]->GetPos(), tiles[y][x]->GetTileIndex());
+					block->SetTorch(torch);
+				}
+				break;
+			}
 			default:
 				break;
 			}
@@ -169,6 +180,10 @@ void TilemapTool::Update()
 	else if (PtInRect(&rcNextStageBtn, g_ptMouse) && leftClick) {
 		currentTool = ToolType::SET_NEXT_STAGE;
 	}
+	else if (PtInRect(&rcTorchBtn, g_ptMouse) && leftClick) {
+		currentTool = ToolType::PLACE_TORCH;
+	}
+
 }
 
 void TilemapTool::Render(HDC hdc)
@@ -250,6 +265,10 @@ void TilemapTool::Render(HDC hdc)
 	Rectangle(hdc, rcLoadBtn.left, rcLoadBtn.top, rcLoadBtn.right, rcLoadBtn.bottom);
 	DrawText(hdc, TEXT("불러오기"), -1, &rcLoadBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
+	// Render()에서 버튼 표시
+	Rectangle(hdc, rcTorchBtn.left, rcTorchBtn.top, rcTorchBtn.right, rcTorchBtn.bottom);
+	DrawText(hdc, TEXT("횃불 배치"), -1, &rcTorchBtn, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
 }
 
 
@@ -283,6 +302,16 @@ void TilemapTool::Save(string filePath)
 			auto block = tiles[j][i]->GetBlock();
 			if (block) out << block->GetBlockNum() << " ";
 			else out << -1 << " ";
+		}
+		out << endl;
+	}
+
+	out << "TORCH" << endl;
+	for (int j = 0; j < mapSize; j++) {
+		for (int i = 0; i < mapSize; i++) {
+			auto block = tiles[j][i]->GetBlock();
+			if (block && block->GetTorch()) out << 1 << " ";
+			else out << 0 << " ";
 		}
 		out << endl;
 	}
@@ -371,8 +400,24 @@ void TilemapTool::Load(string filePath)
 				{
 					auto block = make_shared<Block>();
 					block->Init(tiles[j][i]->GetPos(), tiles[j][i]->GetTileIndex());
-					block->SetBlockNum(wallNum);
+					block->SetBlockNum(wallNum);	
 					tiles[j][i]->SetBlock(block);
+				}
+			}
+		}
+	}
+
+	in >> section;
+	if (section == "TORCH") {
+		for (int j = 0; j < newHeight; j++) {
+			for (int i = 0; i < newWidth; i++) {
+				int torchFlag;
+				in >> torchFlag;
+				auto block = tiles[j][i]->GetBlock();
+				if (torchFlag == 1 && block) {
+					auto torch = make_shared<Torch>();
+					torch->Init(tiles[j][i]->GetPos(), tiles[j][i]->GetTileIndex());
+					block->SetTorch(torch);
 				}
 			}
 		}

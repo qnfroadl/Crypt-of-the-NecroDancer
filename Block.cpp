@@ -2,12 +2,14 @@
 #include "Camera.h"
 #include "Image.h"
 #include "ImageManager.h"
+#include "Torch.h"
 
 #define TILE_SIZE_SCALED (TILE_SIZE * TILE_SCALE)
 
 HRESULT Block::Init()
 {
 	blocklImage = ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
+	torch = nullptr;
 	return S_OK;
 }
 
@@ -16,6 +18,7 @@ HRESULT Block::Init(FPOINT _pos, POINT _index)
 	blocklImage= ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
 	pos = _pos;
 	index = _index;
+	torch = nullptr;
 	return S_OK;
 }
 
@@ -53,6 +56,13 @@ void Block::Render(HDC hdc, bool useCamera)
 			false, true  // 중심 기준
 		);
 	}
+	if (torch)
+		torch->Render(hdc, useCamera);
+}
+void Block::Update()
+{
+	if (torch)
+		torch->Update();
 }
 void Block::Destroy()
 {

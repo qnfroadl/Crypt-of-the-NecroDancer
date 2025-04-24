@@ -17,7 +17,7 @@ enum class BlockType
 
 class Item;
 class Image;
-
+class Torch;
 class Block : public TileActor, public IRendableTileActor, public enable_shared_from_this<Block>
 {
 private:
@@ -26,6 +26,7 @@ private:
 	int hp;
 	BlockType type;
 	Image* blocklImage;
+	shared_ptr<Torch> torch;
 
 public:
 	Block() { SetType(ActorType::BLOCK); }
@@ -34,6 +35,7 @@ public:
 	HRESULT Init();
 	HRESULT Init(FPOINT _pos, POINT _index);
 	void Render(HDC hdc, bool useCamera = true);
+	void Update() override;	
 
 	void Destroy();
 	bool Destroy(int strength);
@@ -48,4 +50,7 @@ public:
 
 	// 렌더링 대상 반환
 	virtual vector<shared_ptr<TileActor>> GetRendableTileActors() override;
+
+	void SetTorch(shared_ptr<Torch> t) { torch = t; }
+	shared_ptr<Torch> GetTorch() const { return torch; }
 };
