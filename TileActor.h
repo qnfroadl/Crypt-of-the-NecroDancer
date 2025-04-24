@@ -8,6 +8,8 @@ class TileActor : public GameActor
 	
 protected:
 	SightInfo sightInfo;
+	BrightnessInfo brightnessInfo;
+
 	POINT index;
 	
 public:
@@ -20,8 +22,11 @@ public:
 	const POINT& GetTileIndex();
 	virtual void SetTileIndex(const POINT& index);
 
-	void SetSightInfo(const SightInfo& sightInfot);
+	void SetSightInfo(const SightInfo& info);
 	const SightInfo& GetSightInfo();
+
+	void SetBrightnessInfo(const BrightnessInfo& info);
+	const BrightnessInfo& GetBrightnessInfoInfo();
 
 };
 

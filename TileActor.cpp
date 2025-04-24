@@ -40,6 +40,15 @@ void TileActor::SetSightInfo(const SightInfo& _sightInfot)
 
 const SightInfo& TileActor::GetSightInfo()
 {
-	// TODO: 여기에 return 문을 삽입합니다.
 	return sightInfo;
+}
+
+void TileActor::SetBrightnessInfo(const BrightnessInfo& info)
+{
+	brightnessInfo = info;
+}
+
+const BrightnessInfo& TileActor::GetBrightnessInfoInfo()
+{
+	return brightnessInfo;
 }

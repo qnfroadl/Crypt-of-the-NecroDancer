@@ -24,7 +24,6 @@ void Player::OnBeatHit(EventData* data)
 		{
 			Move(beatData->inputKey);
 			//cout << "beat hit" << endl;
-
 		}
 		else
 		{
@@ -65,6 +64,11 @@ bool Player::JumpAnim()
 
 void Player::Move(InputKey key)
 {
+	if (PlayerState::JUMP == state)
+	{
+		return;
+	}
+
 	bool isAttack = false;
 	Direction dir = Direction::RIGHT;
 	// 키 입력에 따라 점프 방향을 설정

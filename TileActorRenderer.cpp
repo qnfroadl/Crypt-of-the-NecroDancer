@@ -6,6 +6,16 @@ void TileActorRenderer::AddRendableSource(std::shared_ptr<IRendableTileActor> so
     rendableActors.push_back(source);
 }
 
+void TileActorRenderer::OnChangedSightMap(EventData* data)
+{
+    data = dynamic_cast<ShadowCastingEventData*>(data);
+    
+    if (data)
+    {
+
+    }
+}
+
 HRESULT TileActorRenderer::Init()
 {
     
@@ -19,8 +29,15 @@ void TileActorRenderer::Render(HDC hdc)
 
 
 
-   
+}
 
+void TileActorRenderer::SetTileMap(weak_ptr<Tilemap> tileMap)
+{
+
+}
+
+void TileActorRenderer::SetPositionManager(weak_ptr<PositionManager> positionManager)
+{
 }
 
 void TileActorRenderer::OnPlayerMoved()
