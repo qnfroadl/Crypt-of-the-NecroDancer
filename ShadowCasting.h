@@ -1,5 +1,5 @@
 #pragma once
-#include "config.h"
+#include "GameObject.h"
 
 // Tile and Monster need this
 //struct SightInfo
@@ -25,7 +25,7 @@ public:
 
 class Tile;
 class Player;
-class ShadowCasting
+class ShadowCasting : public GameObject
 {
 private:
 	int maxRow;

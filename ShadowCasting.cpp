@@ -45,8 +45,8 @@ void ShadowCasting::Init(vector<vector<shared_ptr<Tile>>> _tiles)
 	maxCol = tiles.at(0).size();
 	sightMap.resize(maxRow, vector<bool>(maxCol, false));
 
-	EventManager::GetInstance()->BindEvent(EventType::PLAYERMOVED, std::bind(&ShadowCasting::Update, this));
-	EventManager::GetInstance()->BindEvent(EventType::BLOCKDESTROYED, std::bind(&ShadowCasting::Update, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::PLAYERMOVED, std::bind(&ShadowCasting::Update, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BLOCKDESTROYED, std::bind(&ShadowCasting::Update, this));
 
 	cameraRect = { 0, 0, maxCol - 1, maxRow - 1 };
 }
