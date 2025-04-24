@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "UIBase.h"
 #include "GameObject.h"
 
@@ -8,6 +8,7 @@ class BeatHeart : public UIBase
 {
 private:
 	int frameIndex;
+	int goldMultiple;
 
 public:
 	BeatHeart();
@@ -21,6 +22,9 @@ public:
 	void BeatStart() { frameIndex = 1; }
 	void BeatEnd() { frameIndex = 0; }
 
-	void LocateOnCenter(); // È­¸é Å©±â°¡ º¯°æµÅµµ °¡¿îµ¥¿¡ À§Ä¡ÇÏµµ·Ï
+	void LocateOnCenter(); // í™”ë©´ í¬ê¸°ê°€ ë³€ê²½ë¼ë„ ê°€ìš´ë°ì— ìœ„ì¹˜í•˜ë„ë¡
+
+	void OnPlayerGoldMultipleChanged(int multiple) override { goldMultiple = multiple; }
+
 };
 

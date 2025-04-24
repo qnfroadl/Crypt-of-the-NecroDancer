@@ -167,7 +167,6 @@ void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
 
-
     if (positionManager)
     {
         this->playerManager.lock()->SetPositionManager(positionManager);
