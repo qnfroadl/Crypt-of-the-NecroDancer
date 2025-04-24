@@ -102,6 +102,8 @@ public:
 	float GetAttack() { return this->attack; }
 	void SetAttack(float attack) { this->attack = attack; }
 
+    void AddGold(int _gold);
+
 	void SetDiamond(int diamond) { this->diamond.Set(diamond); }
     void AddDiamond(int diamond) { this->diamond.Set(this->diamond.Get() + diamond); }
 	int GetDiamond() { return this->diamond.Get(); }

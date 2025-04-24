@@ -66,7 +66,7 @@ void Shovel::Interact(GameActor* actor)
 		{
 			// 벽돌이 너무 튼튼해서, 실패 이벤트.	
 			SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
-			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYFAILED, nullptr, true);
+			EventManager::GetInstance()->AddEvent(EventType::COMBOFAILED, nullptr, false);
 			Camera::GetInstance()->Shake(0.2, 5);
 
 		}

@@ -7,6 +7,7 @@
 #include "Monster.h"
 #include "ImageManager.h"
 #include "TimerManager.h"
+#include "EventManager.h"
 
 void Weapon::InitResources()
 {
@@ -238,7 +239,7 @@ void Weapon::Attack(Monster* monster)
 	
 	if (monster->IsDead())
 	{
-		// 추가 로 뭔가 해야해.
+		EventManager::GetInstance()->AddEvent(EventType::COMBOSTART,nullptr, false);
 	}
 
 }

@@ -32,6 +32,11 @@ public:
 	void SetVisible(bool visible);
 	const SightInfo& GetSightInfo();
 
+	void SetDynamicBrightness(float brightness);
+	void SetStaticBrightness(float brightness);
+	float GetDynamicBrightness();
+	float GetStaticBrightness();
+
 	void SetBrightnessInfo(const BrightnessInfo& info);
 	const BrightnessInfo& GetBrightnessInfoInfo();
 

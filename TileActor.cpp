@@ -68,6 +68,27 @@ const SightInfo& TileActor::GetSightInfo()
 	return sightInfo;
 }
 
+void TileActor::SetDynamicBrightness(float brightness)
+{
+	brightnessInfo.dynamicBrightness = brightness;
+}
+
+void TileActor::SetStaticBrightness(float brightness)
+{
+	brightnessInfo.staticBrightness = brightness;
+
+}
+
+float TileActor::GetDynamicBrightness()
+{
+	return brightnessInfo.dynamicBrightness;
+}
+
+float TileActor::GetStaticBrightness()
+{
+	return brightnessInfo.staticBrightness;
+}
+
 void TileActor::SetBrightnessInfo(const BrightnessInfo& info)
 {
 	brightnessInfo = info;

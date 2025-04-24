@@ -20,8 +20,8 @@ enum class EventType
 	ENTERZONE,	// 어떤 존에 입장하는지. 이벤트.
 	NEXTLEVEL,	// 다음층으로 이동하는 이벤트.
 
-	CCOMBOSTART,	// 콤보 시작.
-	COMBOMFAILED,	// 콤보 실패.
+	COMBOSTART,	// 콤보 시작.
+	COMBOFAILED,	// 콤보 실패.
 
 	LIGHTINGUPDATED,	// 라이팅이 업데이트 되었음을 알림.
 };

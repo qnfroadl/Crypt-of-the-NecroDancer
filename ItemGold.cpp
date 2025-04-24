@@ -29,7 +29,6 @@ void ItemGold::Render(HDC hdc)
 		return;
 	}
 
-
 	if (IsActive())
 	{
 		FPOINT screenPos = Camera::GetInstance()->GetScreenPos(GetPos());

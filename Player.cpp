@@ -34,19 +34,17 @@ void Player::OnBeatHit(EventData* data)
 
 void Player::OnBeatMiss(EventData* data)
 {
-
-	//cout << "on beat miss" << endl;
 	// 카메라 흔들기.	
 	Camera::GetInstance()->Shake(0.2f, 10);
 }
 
 void Player::OnComboReset(EventData* data)
 {
-	goldMultiple.Set(2);	// 최소 값 2.
+	goldMultiple.Set(1);	// 최소 값 1.
 }
 void Player::OnComboUp(EventData* data)
 {
-	if (goldMultiple.Get() < 4)
+	if (goldMultiple.Get() < 3)
 	{
 		goldMultiple.Set(goldMultiple.Get() + 1);
 	}
@@ -124,7 +122,7 @@ void Player::Move(InputKey key)
 		{
 			// 삽도 없는데 부시려고 함. 실패 이벤트.
 			SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
-			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYFAILED, nullptr, true);
+			EventManager::GetInstance()->AddEvent(EventType::COMBOFAILED, nullptr, false);
 			Camera::GetInstance()->Shake(0.2, 5);
 		}
 	}
@@ -174,6 +172,7 @@ Player::Player()
 	hp.Set(3);
 	maxHP.Set(3);
 	diamond.Set(0);
+	goldMultiple.Set(1);	// 최소 배수.1
 
 	SetType(ActorType::PLAYER);
 }
@@ -196,8 +195,8 @@ HRESULT Player::Init()
 	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&Player::OnBeatHit, this, std::placeholders::_1));
 	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&Player::OnBeatMiss, this, std::placeholders::_1));
 
-	EventManager::GetInstance()->BindEvent(this, EventType::BLOCKDESTROYFAILED, std::bind(&Player::OnComboReset, this, std::placeholders::_1));
-
+	EventManager::GetInstance()->BindEvent(this, EventType::COMBOSTART, std::bind(&Player::OnComboUp, this, std::placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::COMBOFAILED, std::bind(&Player::OnComboReset, this, std::placeholders::_1));
 
 	// 기본삽정도는 줘야지.
 	shovel = make_shared<Shovel>();
@@ -404,6 +403,8 @@ void Player::UseItem()
 
 void Player::TakeDamage(float damage)
 {
+	EventManager::GetInstance()->AddEvent(EventType::COMBOFAILED, nullptr, false);
+
 	Camera::GetInstance()->Shake(0.2f, 10);
 
 	float dmamgedHp = hp.Get() - damage;
@@ -414,12 +415,16 @@ void Player::TakeDamage(float damage)
 	}
 	
 	hp.Set(dmamgedHp);
-	
 }
 
 bool Player::IsDead()
 {
 	return hp.Get() <= 0;
+}
+
+void Player::AddGold(int _gold)
+{
+	gold.Set(goldMultiple.Get() * _gold);
 }
 
 void Player::AddWeapon(shared_ptr<Weapon> _weapon)
