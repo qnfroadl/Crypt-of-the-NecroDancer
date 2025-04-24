@@ -4,6 +4,7 @@
 #include <fstream>
 #include "EventManager.h"
 #include "Camera.h"
+#include "Torch.h"
 
 HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 {
@@ -11,21 +12,11 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	mapColumns = _mapColumns;
 	tiles = vector<vector<shared_ptr<Tile>>>(_mapRows, vector<shared_ptr<Tile>>(_mapColumns, nullptr));
 	spawnPoints = {};
-	//leftTop = { Camera::GetInstance()->GetViewRect().left, Camera::GetInstance()->GetViewRect().top };
-	//rightBottom = { Camera::GetInstance()->GetViewRect().right, Camera::GetInstance()->GetViewRect().bottom };
+
 	leftTop = { 0, 0 };
 	rightBottom = { mapColumns - 1, mapRows - 1 };
 	isCombo = false;
 	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, placeholders::_1));
-	// EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::UpdateVisuable, this));
-	//EventManager::GetInstance()->BindEvent(
-	//	this,
-	//	EventType::BEAT,
-	//	[this](EventData* data) {
-	//		bool isCombo = static_cast<BeatEventData*>(data)->isCombo;
-	//		this->OnBeat(isCombo);
-	//	}
-	//);
 
 
 	return S_OK;
@@ -367,4 +358,98 @@ void Tilemap::UpdateVisuable()
 	rightBottom.x = min(mapColumns - 1, leftTile + tilesOnScreenX + marginX);
 	rightBottom.y = min(mapRows - 1, topTile + tilesOnScreenY + marginY);
 	//cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
+}
+
+void Tilemap::ApplyTorchLighting()
+{
+	for (const auto& torch : torchSpots)
+	{
+		for (int dy = -3; dy <= 3; ++dy)
+		{
+			for (int dx = -3; dx <= 3; ++dx)
+			{
+				int nx = torch.x + dx;
+				int ny = torch.y + dy;
+
+				if (nx < 0 || ny < 0 || nx >= mapColumns || ny >= mapRows)
+					continue;
+
+				int dist = abs(dx) + abs(dy);
+				if (dist > 3) continue;
+
+				float lightAdd = 0.0f;
+				switch (dist)
+				{
+				case 0: lightAdd = 1.0f; break;
+				case 1: lightAdd = 0.6f; break;
+				case 2: lightAdd = 0.3f; break;
+				case 3: lightAdd = 0.1f; break;
+				}
+
+				shared_ptr<Tile> tile = tiles[ny][nx];
+				if (!tile) continue;
+
+				tile->SetStaticBrightness(tile->GetStaticBrightness() + lightAdd);
+
+				if (shared_ptr<Block> block = tile->GetBlock())
+				{
+					block->SetStaticBrightness(block->GetStaticBrightness() + lightAdd);
+
+					if (shared_ptr<Torch> torch = block->GetTorch())
+					{
+						torch->SetStaticBrightness(torch->GetStaticBrightness() + lightAdd);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Tilemap::RemoveTorchLightingAt(POINT torchIndex)
+{
+	for (int dy = -3; dy <= 3; ++dy)
+	{
+		for (int dx = -3; dx <= 3; ++dx)
+		{
+			int nx = torchIndex.x + dx;
+			int ny = torchIndex.y + dy;
+
+			if (nx < 0 || ny < 0 || nx >= mapColumns || ny >= mapRows)
+				continue;
+
+			int dist = abs(dx) + abs(dy);
+			if (dist > 3) continue;
+
+			float lightSub = 0.0f;
+			switch (dist)
+			{
+			case 0: lightSub = 1.0f; break;
+			case 1: lightSub = 0.6f; break;
+			case 2: lightSub = 0.3f; break;
+			case 3: lightSub = 0.1f; break;
+			}
+
+			shared_ptr<Tile> tile = tiles[ny][nx];
+			if (!tile) continue;
+
+			tile->SetStaticBrightness(tile->GetStaticBrightness() - lightSub);
+
+			if (shared_ptr<Block> block = tile->GetBlock())
+			{
+				block->SetStaticBrightness(block->GetStaticBrightness() - lightSub);
+
+				if (shared_ptr<Torch> torch = block->GetTorch())
+				{
+					torch->SetStaticBrightness(torch->GetStaticBrightness() - lightSub);
+				}
+			}
+		}
+	}
+	torchSpots.erase(
+		std::remove_if(torchSpots.begin(), torchSpots.end(),
+			[&](const POINT& pt) {
+				return pt.x == torchIndex.x && pt.y == torchIndex.y;
+			}),
+		torchSpots.end()
+	);
 }

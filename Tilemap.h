@@ -56,6 +56,8 @@ public:
 	POINT GetRightBottom() { return rightBottom; }
 
 	void UpdateVisuable();
+	void ApplyTorchLighting();
+	void RemoveTorchLightingAt(POINT torchIndex);
 	void AddSpawnPoint(POINT spawn) { spawnPoints.push_back(spawn); }
 
 	void PrintSpawnPoints()

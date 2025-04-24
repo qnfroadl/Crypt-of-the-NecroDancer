@@ -38,6 +38,7 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
 	FinalizeTilemap(tilemap);
 	// CollectSpawnPoints(tilemap);
     CollectTilemapInfo(tilemap);
+	tilemap -> ApplyTorchLighting();
     return tilemap;
 }
 
@@ -107,6 +108,8 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
     startCandidate = room.playerStart;
 
     CollectTilemapInfo(tilemap);
+    tilemap->ApplyTorchLighting();
+
     return tilemap;
 }
 

@@ -124,6 +124,10 @@ void LobbyScene::Release()
 
 void LobbyScene::Update()
 {
+    if (map)
+    {
+		map->Update();
+    }
 	if (uiManager)
 	{
 		uiManager->Update();
