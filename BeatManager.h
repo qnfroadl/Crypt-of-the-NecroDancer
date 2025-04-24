@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "config.h"
 #include <queue>
 
@@ -11,7 +11,7 @@ private:
 	unsigned int beatBefore;
 
 	bool checkInputTime;
-	bool checkOnBeat; // Á¤¹Ú Ã¼Å©
+	bool checkOnBeat; // ì •ë°• ì²´í¬
 
 	bool isP1Hit;
 	bool isP2Hit;
@@ -24,7 +24,7 @@ public:
 	void Update();
 	void Render(HDC hdc);
 
-	void StartBeat(bool _checkBeat); // zone µé¾î°¥ ¶§ È£Ãâ
+	void StartBeat(bool _checkBeat); // zone ë“¤ì–´ê°ˆ ë•Œ í˜¸ì¶œ
 	void UpdateBeat();
 
 	void ProcessInput();

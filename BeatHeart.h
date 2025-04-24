@@ -8,8 +8,7 @@ class BeatHeart : public UIBase
 {
 private:
 	int frameIndex;
-	int goldMultiple;
-
+	
 public:
 	BeatHeart();
 	virtual ~BeatHeart();
@@ -24,7 +23,6 @@ public:
 
 	void LocateOnCenter(); // 화면 크기가 변경돼도 가운데에 위치하도록
 
-	void OnPlayerGoldMultipleChanged(int multiple) override { goldMultiple = multiple; }
 
 };
 

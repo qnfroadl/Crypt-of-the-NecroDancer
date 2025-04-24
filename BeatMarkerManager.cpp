@@ -1,4 +1,4 @@
-#include "BeatMarkerManager.h"
+﻿#include "BeatMarkerManager.h"
 #include "BeatMarker.h"
 #include "Beatheart.h"
 

@@ -8,6 +8,7 @@
 #include "UIManager.h"
 #include "PlayerWallet.h"
 #include "PlayerHp.h"
+#include "MultipleGoldUI.h"
 
 #include "PositionManager.h"
 #include "ItemSpawner.h"
@@ -23,6 +24,7 @@
 
 #include "SoundManager.h"
 #include "BeatManager.h"
+#include "TileActorRenderer.h"
 
 HRESULT LevelScene::Init()
 {
@@ -50,8 +52,12 @@ HRESULT LevelScene::Init()
 
     PlayerHp* playerHp = new PlayerHp();
     playerHp->Init();
-    playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
     uiManager->AddUI(playerHp);
+
+    MultipleGoldUI* multipleGold = new MultipleGoldUI();
+    multipleGold->Init();
+    uiManager->AddUI(multipleGold);
+
 
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
@@ -60,10 +66,13 @@ HRESULT LevelScene::Init()
     {
         playerManager.lock()->SetPositionManager(positionManager);
         playerManager.lock()->SetTileMap(map);
-        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
-    }
 
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, multipleGold);
+
+    }
 
     monsterManager = make_shared<MonsterManager>();
     monsterManager->Init();
@@ -78,6 +87,11 @@ HRESULT LevelScene::Init()
     beatManager->Init();
     beatManager->StartBeat(true);
 
+    renderer = make_shared<TileActorRenderer>();
+    renderer->Init();
+    renderer->SetPositionManager(positionManager);
+    renderer->SetTileMap(map);
+    shadowCasting->Update();
 
     return S_OK;
 }
@@ -94,11 +108,21 @@ void LevelScene::Release()
         map->Release();
         map = nullptr;
     }
-
+    if (itemSpawner)
+    {
+        itemSpawner->Release();
+        itemSpawner = nullptr;
+    }
     if (beatManager)
     {
         beatManager->Release();
         beatManager = nullptr;
+    }
+
+    if (renderer)
+    {
+        renderer->Release();
+        renderer = nullptr;
     }
 
 	playerManager.lock()->BindRelease();
@@ -116,6 +140,8 @@ void LevelScene::Update()
     {
         uiManager->Update();
     }
+
+
     playerManager.lock()->Update();
     monsterManager->Update();
 
@@ -143,14 +169,10 @@ void LevelScene::Render(HDC hdc)
         pos.x - cPos.x, pos.y - cPos.y,
         SCENE_WIDTH, SCENE_HEIGHT);
 
-    if (map)
+    // 타일, 액터들 렌더링.
+    if (renderer)
     {
-        map->Render(hdc);
-    }
-
-    if (positionManager)
-    {
-        positionManager->Render(hdc);
+        renderer->Render(hdc);
     }
 
     if (beatManager)
@@ -162,11 +184,9 @@ void LevelScene::Render(HDC hdc)
     {
         uiManager->Render(hdc);
     }
-	playerManager.lock()->Render(hdc);
-	monsterManager->Render(hdc);
 
-    // test render
-    shadowCasting->Render(hdc);
+    
+
 }
 
 void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
