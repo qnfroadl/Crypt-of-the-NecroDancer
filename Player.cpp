@@ -22,7 +22,7 @@ void Player::OnBeatHit(EventData* data)
 		BeatHitEventData* beatData = static_cast<BeatHitEventData*>(data);
 		if (beatData->playerIndex == playerIndex)
 		{
-			SetJumpData(beatData->inputKey);
+			Move(beatData->inputKey);
 			//cout << "beat hit" << endl;
 
 		}
@@ -63,7 +63,7 @@ bool Player::JumpAnim()
 	return false;
 }
 
-void Player::SetJumpData(InputKey key)
+void Player::Move(InputKey key)
 {
 	bool isAttack = false;
 	Direction dir = Direction::RIGHT;
@@ -112,8 +112,6 @@ void Player::SetJumpData(InputKey key)
 	else 
 	{
 		// 벽돌이 있다는 뜻.
-		SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
-
 		if (shovel)
 		{
 			tileMap.lock()->InteractTile(pIndex, shovel.get());
@@ -121,6 +119,7 @@ void Player::SetJumpData(InputKey key)
 		else 
 		{
 			// 삽도 없는데 부시려고 함. 실패 이벤트.
+			SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
 			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYFAILED, nullptr, true);
 			Camera::GetInstance()->Shake(0.2, 5);
 		}

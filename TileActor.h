@@ -2,12 +2,14 @@
 
 #include "GameActor.h"
 
+
 class TileActor : public GameActor
 {
 	
 protected:
+	SightInfo sightInfo;
 	POINT index;
-
+	
 public:
 	TileActor();
 	virtual ~TileActor() = default;
@@ -17,5 +19,9 @@ public:
 
 	const POINT& GetTileIndex();
 	virtual void SetTileIndex(const POINT& index);
+
+	void SetSightInfo(const SightInfo& sightInfot);
+	const SightInfo& GetSightInfo();
+
 };
 
