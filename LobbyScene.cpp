@@ -18,6 +18,9 @@
 #include "MonsterManager.h"
 #include "TilemapGenerator.h"
 
+#include "ShadowCasting.h"
+#include "KeyManager.h"
+
 HRESULT LobbyScene::Init()
 {
     // InitMap
@@ -43,21 +46,24 @@ HRESULT LobbyScene::Init()
     uiManager = new UIManager();
 	uiManager->Init();
 
-	PlayerWallet* playerCoin = new PlayerWallet();
-	playerCoin->Init();
-	uiManager->AddUI(playerCoin);
+	PlayerWallet* playerWallet = new PlayerWallet();
+	playerWallet->Init();
+	uiManager->AddUI(playerWallet);
 
 	PlayerHp* playerHp = new PlayerHp();
 	playerHp->Init();
-	playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
 	uiManager->AddUI(playerHp);
 
+    shadowCasting = make_shared<ShadowCasting>();
+    shadowCasting->Init(map->GetTiles());
 
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
         playerManager.lock()->SetTileMap(map);
-        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerWallet);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
+        shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
    
@@ -102,7 +108,12 @@ void LobbyScene::Update()
 		uiManager->Update();
 	}
 	playerManager.lock()->Update();
-	
+
+    // test (actually update when (playermoved, blockdestroyed event) occurs)
+	if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
+	{
+	    shadowCasting->Update();
+	}
 }
 
 void LobbyScene::Render(HDC hdc)
@@ -129,8 +140,9 @@ void LobbyScene::Render(HDC hdc)
 		uiManager->Render(hdc);
 	}
 	playerManager.lock()->Render(hdc);
-	
 
+    // test render
+	shadowCasting->Render(hdc);
 }
 
 void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)

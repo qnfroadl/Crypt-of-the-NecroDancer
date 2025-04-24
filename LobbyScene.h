@@ -9,6 +9,7 @@ class UIManager;
 class PositionManager;
 class ItemSpawner;
 class MonsterManager;
+class ShadowCasting;
 class LobbyScene : public GameObject
 {
 private:
@@ -20,6 +21,8 @@ private:
     UIManager* uiManager;
 	shared_ptr<PositionManager> positionManager;
 	shared_ptr<ItemSpawner> itemSpawner;
+
+	shared_ptr<ShadowCasting> shadowCasting;
 
     // 검정 배경
     HBRUSH blackBrush;

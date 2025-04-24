@@ -162,6 +162,7 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="LevelManager.cpp" />
+    <ClCompile Include="ShadowCasting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -350,6 +351,7 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="LevelManager.h" />
+    <ClInclude Include="ShadowCasting.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="2D Framework">
