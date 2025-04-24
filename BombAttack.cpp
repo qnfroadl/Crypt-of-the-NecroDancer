@@ -9,6 +9,7 @@
 #include "Block.h"
 #include "Tile.h"
 #include "Player.h"
+#include "Monster.h"
 
 HRESULT BombAttack::Init()
 {
@@ -94,7 +95,8 @@ void BombAttack::Interact(GameActor* actor)
 
 			if (block)
 			{
-				if (block->CanDestroy(4))
+				// 폭탄 데미지 4.
+				if (block->GetHardness() <= 4)
 				{
 					block->Destroy();
 					tile->SetBlock(nullptr);
@@ -110,7 +112,12 @@ void BombAttack::Interact(GameActor* actor)
 		else if (ActorType::PLAYER == actor->GetType())
 		{
 			Player* player = static_cast<Player*>(actor);
-			player->TakeDamage(2);
+			player->TakeDamage(2);	// 플레이어 한텐 2.
+		}
+		else if (ActorType::MONSTER == actor->GetType())
+		{
+			Monster* mon = static_cast<Monster*>(actor);
+			mon->TakeDamage(4);		// 몬스터 한텐 4
 		}
 
 	}
