@@ -18,6 +18,7 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	isCombo = false;
 	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, placeholders::_1));
 
+	EventManager::GetInstance()->BindEvent(this, EventType::PLAYERMOVED, std::bind(&Tilemap::UpdateVisuable, this));
 
 	return S_OK;
 }
@@ -43,7 +44,7 @@ void Tilemap::Release()
 void Tilemap::Update()
 {
 	// 나중에 이벤트로 바꿔야 함
-	UpdateVisuable();
+	// UpdateVisuable();
 
 	for (int y = leftTop.y; y <= rightBottom.y; ++y)
 	{
@@ -349,15 +350,17 @@ void Tilemap::UpdateVisuable()
 	int tilesOnScreenY = static_cast<int>(ceil((viewRect.bottom - viewRect.top) / scaledTileSize));
 
 	// 마진
-	int marginX = 2;
-	int marginY = 2;
+	int marginX = 0;
+	int marginY = 0;
 
 	// 보여줄 타일 범위 계산
 	leftTop.x = max(0, leftTile - marginX);
 	leftTop.y = max(0, topTile - marginY);
 	rightBottom.x = min(mapColumns - 1, leftTile + tilesOnScreenX + marginX);
 	rightBottom.y = min(mapRows - 1, topTile + tilesOnScreenY + marginY);
-	//cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
+	
+	
+	cout << leftTop.x << ", " << leftTop.y << " ~ " << rightBottom.x << ", " << rightBottom.y << endl;
 }
 
 void Tilemap::ApplyTorchLighting()
