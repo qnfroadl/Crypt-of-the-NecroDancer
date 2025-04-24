@@ -73,15 +73,16 @@ void ItemSpawner::SpawnItem(POINT tileIndex,ItemType type, int value)
 		item = std::make_shared<TileItem>();
 		break;
 	case ItemType::BOMB:
-		item = std::make_shared<ItemBomb>();
+		item = std::make_shared<ItemBomb>(value);
 		break;
 	
 	default:
 		break;
 	}
-
+	
 	if (item)
 	{
+		item->Init();
 		FPOINT pos = tileMap.lock()->GetTilePos(tileIndex);
 
 		item->SetTileIndex(tileIndex);

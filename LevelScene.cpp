@@ -80,8 +80,6 @@ HRESULT LevelScene::Init()
     monsterManager->SetTileMap(map);
     monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     
-
-
     SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	beatManager = make_shared<BeatManager>();
     beatManager->Init();
@@ -181,8 +179,6 @@ void LevelScene::Render(HDC hdc)
     {
         uiManager->Render(hdc);
     }
-
-    
 
 }
 
