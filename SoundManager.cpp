@@ -23,34 +23,6 @@ void SoundManager::Init()
 	tempo = 1.f;
 	elapsedTime = 0.f;
 	maxTempoChangeTime = 5.f;
-
-#pragma region AddSound
-	AddSound(ESoundKey::LOBBY, "Sound/Bgm/lobby.ogg", true);
-
-	AddSound(ESoundKey::ZONE1_1, "Sound/Bgm/zone1_1.ogg");
-	AddSound(ESoundKey::ZONE1_2, "Sound/Bgm/zone1_2.ogg");
-	AddSound(ESoundKey::ZONE1_3, "Sound/Bgm/zone1_3.ogg");
-
-	//AddSound(ESoundKey::ZONE2_1, "Sound/Bgm/zone2_1.ogg");
-	//AddSound(ESoundKey::ZONE2_2, "Sound/Bgm/zone2_2.ogg");
-	//AddSound(ESoundKey::ZONE2_3, "Sound/Bgm/zone2_3.ogg");
-
-	AddSound(ESoundKey::ZONE1_1_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone1_1_shopkeeper_m.ogg");
-	AddSound(ESoundKey::ZONE1_2_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone1_2_shopkeeper_m.ogg");
-	AddSound(ESoundKey::ZONE1_3_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone1_3_shopkeeper_m.ogg");
-	AddSound(ESoundKey::ZONE1_1_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone1_1_shopkeeper.ogg");
-	AddSound(ESoundKey::ZONE1_2_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone1_2_shopkeeper.ogg");
-	AddSound(ESoundKey::ZONE1_3_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone1_3_shopkeeper.ogg");
-
-	//AddSound(ESoundKey::ZONE2_1_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone2_1_shopkeeper_m.ogg");
-	//AddSound(ESoundKey::ZONE2_2_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone2_2_shopkeeper_m.ogg");
-	//AddSound(ESoundKey::ZONE2_3_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone2_3_shopkeeper_m.ogg");
-	//AddSound(ESoundKey::ZONE2_1_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_1_shopkeeper.ogg");
-	//AddSound(ESoundKey::ZONE2_2_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_2_shopkeeper.ogg");
-	//AddSound(ESoundKey::ZONE2_3_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_3_shopkeeper.ogg");
-
-	AddSound(ESoundKey::MOV_DIG_FAIL, "Sound/Effect/mov_dig_fail.ogg");
-#pragma endregion
 }
 
 void SoundManager::Release()
@@ -80,6 +52,35 @@ void SoundManager::Update()
 	{
 		RecoverTempo();
 	}
+}
+
+void SoundManager::LoadSound()
+{
+	AddSound(ESoundKey::LOBBY, "Sound/Bgm/lobby.ogg", true);
+
+	AddSound(ESoundKey::ZONE1_1, "Sound/Bgm/zone1_1.ogg");
+	AddSound(ESoundKey::ZONE1_2, "Sound/Bgm/zone1_2.ogg");
+	AddSound(ESoundKey::ZONE1_3, "Sound/Bgm/zone1_3.ogg");
+
+	//AddSound(ESoundKey::ZONE2_1, "Sound/Bgm/zone2_1.ogg");
+	//AddSound(ESoundKey::ZONE2_2, "Sound/Bgm/zone2_2.ogg");
+	//AddSound(ESoundKey::ZONE2_3, "Sound/Bgm/zone2_3.ogg");
+
+	AddSound(ESoundKey::ZONE1_1_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone1_1_shopkeeper_m.ogg");
+	AddSound(ESoundKey::ZONE1_2_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone1_2_shopkeeper_m.ogg");
+	AddSound(ESoundKey::ZONE1_3_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone1_3_shopkeeper_m.ogg");
+	AddSound(ESoundKey::ZONE1_1_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone1_1_shopkeeper.ogg");
+	AddSound(ESoundKey::ZONE1_2_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone1_2_shopkeeper.ogg");
+	AddSound(ESoundKey::ZONE1_3_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone1_3_shopkeeper.ogg");
+
+	//AddSound(ESoundKey::ZONE2_1_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone2_1_shopkeeper_m.ogg");
+	//AddSound(ESoundKey::ZONE2_2_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone2_2_shopkeeper_m.ogg");
+	//AddSound(ESoundKey::ZONE2_3_SHOPKEEPER_M, "Sound/Bgm/ShopKeeperVocal/zone2_3_shopkeeper_m.ogg");
+	//AddSound(ESoundKey::ZONE2_1_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_1_shopkeeper.ogg");
+	//AddSound(ESoundKey::ZONE2_2_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_2_shopkeeper.ogg");
+	//AddSound(ESoundKey::ZONE2_3_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_3_shopkeeper.ogg");
+
+	AddSound(ESoundKey::MOV_DIG_FAIL, "Sound/Effect/mov_dig_fail.ogg");
 }
 
 FMOD::Sound* SoundManager::AddSound(ESoundKey key, const char* filePath, bool loop)
