@@ -32,13 +32,14 @@ HRESULT LevelScene::Init()
     //map->Init(20, 20);
     //map->Load("map/ZONE1_01.map");
     map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
-    map->PrintSpawnPoints();
+    //map->PrintSpawnPoints();
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();
     itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
     itemSpawner->SetPositionManager(positionManager);
+    itemSpawner->SetTileMap(map);
 
     uiManager = make_shared<UIManager>();
     uiManager->Init();
@@ -63,6 +64,7 @@ HRESULT LevelScene::Init()
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
+
     monsterManager = shared_ptr<MonsterManager>();
     monsterManager->Init();
     monsterManager->SetPositionManager(positionManager);
@@ -75,6 +77,7 @@ HRESULT LevelScene::Init()
 	beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(true);
+
 
     return S_OK;
 }
