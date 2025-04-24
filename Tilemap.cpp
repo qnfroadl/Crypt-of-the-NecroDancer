@@ -15,15 +15,17 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	//rightBottom = { Camera::GetInstance()->GetViewRect().right, Camera::GetInstance()->GetViewRect().bottom };
 	leftTop = { 0, 0 };
 	rightBottom = { mapColumns - 1, mapRows - 1 };
-	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
-	/*EventManager::GetInstance()->BindEvent(
-		this,
-		EventType::BEAT,
-		[this](EventData* data) {
-			bool isCombo = static_cast<BeatEventData*>(data)->isCombo;
-			this->OnBeat(isCombo);
-		}
-	);*/
+	isCombo = false;
+	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, placeholders::_1));
+	// EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::UpdateVisuable, this));
+	//EventManager::GetInstance()->BindEvent(
+	//	this,
+	//	EventType::BEAT,
+	//	[this](EventData* data) {
+	//		bool isCombo = static_cast<BeatEventData*>(data)->isCombo;
+	//		this->OnBeat(isCombo);
+	//	}
+	//);
 
 
 	return S_OK;
@@ -44,7 +46,7 @@ void Tilemap::Release()
 	}
 	tiles.clear();
 	// 이벤트 언바인드 추가
-	// EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
 }
 
 void Tilemap::Update()

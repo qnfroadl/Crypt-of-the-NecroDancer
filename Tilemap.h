@@ -63,5 +63,7 @@ public:
 			cout << "Spawn Point: (" << spawn.x << ", " << spawn.y << ")" << endl;
 		}
 	}
+
+	void SetIsCombo(bool _isCombo) { isCombo = _isCombo; }
 };
 
