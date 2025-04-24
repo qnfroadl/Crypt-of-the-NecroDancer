@@ -61,7 +61,7 @@ private:
     void OnComboUp(EventData* data);            // 콤보 업
 
     bool JumpAnim() override;
-    void SetJumpData(InputKey key);
+    void Move(InputKey key);
     void SetJumpData(int dx, int dy) override;
     void CalcAttackRange(Direction dir, vector<POINT>& range);
     void NotifyAll();

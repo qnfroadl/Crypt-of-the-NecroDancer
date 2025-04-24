@@ -16,10 +16,10 @@ HRESULT TileActorRenderer::Init()
 
 void TileActorRenderer::Render(HDC hdc)
 {
+
+
+
    
-
-
-
 
 }
 

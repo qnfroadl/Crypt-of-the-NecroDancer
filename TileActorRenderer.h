@@ -20,7 +20,7 @@ private:
 	Tilemap* tileMap;
 	shared_ptr<PositionManager> positionManager;
 	std::vector<std::shared_ptr<IRendableTileActor>> rendableActors;
-
+	vector<vector<bool>> sightMap;
 public:
 
 	HRESULT Init() override;

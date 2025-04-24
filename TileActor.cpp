@@ -7,6 +7,7 @@
 TileActor::TileActor()
 	:index{0,0}
 {
+
 }
 
 void TileActor::Render(HDC hdc)
@@ -30,4 +31,15 @@ const POINT& TileActor::GetTileIndex()
 void TileActor::SetTileIndex(const POINT& _index)
 {
 	index = _index;
+}
+
+void TileActor::SetSightInfo(const SightInfo& _sightInfot)
+{
+	sightInfo = _sightInfot;
+}
+
+const SightInfo& TileActor::GetSightInfo()
+{
+	// TODO: 여기에 return 문을 삽입합니다.
+	return sightInfo;
 }
