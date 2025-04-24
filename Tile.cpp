@@ -18,7 +18,6 @@ HRESULT Tile::Init()
 	tileNum = -1;
 	block = nullptr;
 	trap = nullptr;
-	light = 0.0f;
 
 	return S_OK;
 }
@@ -32,7 +31,6 @@ HRESULT Tile::Init(int x, int y)
 	tileNum = 0;
 	block = nullptr;
 	trap = nullptr;
-	light = 0.0f;
 
 	pos = {
 		x * TILE_SIZE * TILE_SCALE + (TILE_SIZE * TILE_SCALE) / 2.0f,
@@ -92,6 +90,11 @@ void Tile::Render(HDC hdc, bool useCamera)
 	if (block) block->Render(hdc, useCamera);
 }
 
+void Tile::Update()
+{
+	if (block) block->Update();
+}
+
 void Tile::OnTile(TileActor* actor)
 {
 	/*if (trap) trap->OnTriggered(actor);*/
@@ -99,6 +102,10 @@ void Tile::OnTile(TileActor* actor)
 	{
 		EventManager::GetInstance()->AddEvent(EventType::ENTERZONE, nullptr);
 	}
+	//if (tileNum == 25)
+	//{
+	//	EventManager::GetInstance()->AddEvent(EventType::NEXTLEVEL, nullptr);
+	//}
 }
 
 TileType Tile::GetTypeByTileNum(int tileNum)
@@ -125,10 +132,10 @@ void Tile::OnBeat(bool isCombo)
 		switch (type)
 		{
 		case TileType::BRIGHT_DIRT:
-			SetTileNum(0);
+			SetTileNum((index.x + index.y) % 2 == 0 ? 10 : 11);
 			break;
 		case TileType::DARK_DIRT:
-			SetTileNum((index.x + index.y) % 2 == 0 ? 10 : 11);
+			SetTileNum(1);
 			break;
 		case TileType::COMBO1_DIRT:
 		case TileType::COMBO2_DIRT:
@@ -143,12 +150,16 @@ void Tile::OnBeat(bool isCombo)
 		switch (type)
 		{
 		case TileType::BRIGHT_DIRT:
-		case TileType::COMBO2_DIRT:
 			SetTileNum(0);
 			break;
+		case TileType::COMBO2_DIRT:
+		SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
+			break;
 		case TileType::DARK_DIRT:
-		case TileType::COMBO1_DIRT:
 			SetTileNum(1);
+			break;
+		case TileType::COMBO1_DIRT:
+			SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
 			break;
 		default:
 			break;

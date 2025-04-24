@@ -15,9 +15,17 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	//rightBottom = { Camera::GetInstance()->GetViewRect().right, Camera::GetInstance()->GetViewRect().bottom };
 	leftTop = { 0, 0 };
 	rightBottom = { mapColumns - 1, mapRows - 1 };
-	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, std::placeholders::_1));
-    //EventManager::GetInstance()->BindEvent(EventType::PLAYERMOVED, std::bind(&Tilemap::UpdateActiveTiles, this, Camera::GetInstance()->GetPos()));
-	//EventManager::GetInstance()->BindEvent(EventType::BEAT, std::bind(&Tilemap::UpdateVisuable, this));
+	isCombo = false;
+	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, placeholders::_1));
+	// EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::UpdateVisuable, this));
+	//EventManager::GetInstance()->BindEvent(
+	//	this,
+	//	EventType::BEAT,
+	//	[this](EventData* data) {
+	//		bool isCombo = static_cast<BeatEventData*>(data)->isCombo;
+	//		this->OnBeat(isCombo);
+	//	}
+	//);
 
 
 	return S_OK;
@@ -38,6 +46,7 @@ void Tilemap::Release()
 	}
 	tiles.clear();
 	// 이벤트 언바인드 추가
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
 }
 
 void Tilemap::Update()
@@ -56,16 +65,17 @@ void Tilemap::Update()
 
 void Tilemap::Render(HDC hdc)
 {
-	// for (int y = leftTop.y; y <= rightBottom.y; ++y)
-	// {
-	// 	if (y < 0 || y >= mapRows) continue;
-	// 
-	// 	for (int x = leftTop.x; x <= rightBottom.x; ++x)
-	// 	{
-	// 		if (x < 0 || x >= mapColumns) continue;
-	// 		tiles[y][x]->Render(hdc, true);
-	// 	}
-	// }
+	for (int y = leftTop.y; y <= rightBottom.y; ++y)
+	{
+		if (y < 0 || y >= mapRows) continue;
+
+		for (int x = leftTop.x; x <= rightBottom.x; ++x)
+		{
+			if (x < 0 || x >= mapColumns) continue;
+			tiles[y][x]->Render(hdc, true);
+		}
+	}
+
 }
 
 shared_ptr<Tile> Tilemap::GetTile(POINT index)
@@ -235,14 +245,14 @@ void Tilemap::Load(string filePath)
 
 void Tilemap::OnBeat(bool isCombo)
 {
-	for (auto& row : tiles)
+	for (int y = leftTop.y; y <= rightBottom.y; ++y)
 	{
-		for (auto& tile : row)
+		if (y < 0 || y >= mapRows) continue;
+
+		for (int x = leftTop.x; x <= rightBottom.x; ++x)
 		{
-			if (tile)
-			{
-				tile->OnBeat(isCombo);
-			}
+			if (x < 0 || x >= mapColumns) continue;
+			tiles[y][x]->OnBeat(isCombo);
 		}
 	}
 }
