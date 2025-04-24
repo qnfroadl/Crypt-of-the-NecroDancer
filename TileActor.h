@@ -9,6 +9,8 @@ protected:
 	POINT index;
 
 public:
+	TileActor();
+	virtual ~TileActor() = default;
 	void Render(HDC hdc) override;
 
 	virtual void Interact(GameActor* actor) override;

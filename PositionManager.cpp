@@ -64,19 +64,20 @@ void PositionManager::RemoveTileActor(const std::shared_ptr<TileActor>& actor, b
         pos = actor->GetTileIndex();
 	}
     
-
     auto it = posMap.find(pos);
     if (it != posMap.end())
     {
         auto& vec = it->second;
-        auto vecIt = std::remove(vec.begin(), vec.end(), actor);
-        if (vecIt != vec.end())
+        auto vecIt =vec.begin();
+        while (vecIt != vec.end())
         {
-            vec.erase(vecIt, vec.end());
-            if (vec.empty())
+            if (*vecIt == actor)
             {
-                posMap.erase(it);
+                vec.erase(vecIt);
+                break;
             }
+
+            vecIt++;
         }
     }
 }
