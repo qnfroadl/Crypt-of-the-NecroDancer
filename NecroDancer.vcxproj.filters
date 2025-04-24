@@ -23,9 +23,6 @@
     <ClCompile Include="EventManager.cpp">
       <Filter>Event</Filter>
     </ClCompile>
-    <ClCompile Include="LoadingScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>Monster</Filter>
     </ClCompile>
@@ -64,9 +61,6 @@
     </ClCompile>
     <ClCompile Include="BeatHeart.cpp">
       <Filter>InputSystem &amp; UI\UI\BeatMarker</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyScene.cpp">
-      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Tilemap.cpp">
       <Filter>TileSystem</Filter>
@@ -118,9 +112,6 @@
     <ClCompile Include="BossMonster.cpp">
       <Filter>Monster</Filter>
     </ClCompile>
-    <ClCompile Include="LevelScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="ShadowCasting.cpp">
       <Filter>ShadowCasting</Filter>
@@ -164,6 +155,21 @@
     <ClCompile Include="KeyManager.cpp">
       <Filter>2D Framework\KeyManager</Filter>
     </ClCompile>
+    <ClCompile Include="IntroScene.cpp">
+      <Filter>Scene\IntroScene</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelScene.cpp">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuScene.cpp">
+      <Filter>Scene\IntroScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -199,9 +205,6 @@
     </ClInclude>
     <ClInclude Include="ObjectPool.h">
       <Filter>2D Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadingScene.h">
-      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Monster.h">
       <Filter>Monster</Filter>
@@ -256,9 +259,6 @@
     </ClInclude>
     <ClInclude Include="IPlayerObserver.h" />
     <ClInclude Include="ObservableValue.h" />
-    <ClInclude Include="LobbyScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Tilemap.h">
       <Filter>TileSystem</Filter>
     </ClInclude>
@@ -308,9 +308,6 @@
     <ClInclude Include="BossMonster.h">
       <Filter>Monster</Filter>
     </ClInclude>
-    <ClInclude Include="LevelScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="ShadowCasting.h">
       <Filter>ShadowCasting</Filter>
@@ -353,6 +350,21 @@
     </ClInclude>
     <ClInclude Include="KeyManager.h">
       <Filter>2D Framework\KeyManager</Filter>
+    </ClInclude>
+    <ClInclude Include="IntroScene.h">
+      <Filter>Scene\IntroScene</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyScene.h">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelScene.h">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuScene.h">
+      <Filter>Scene\IntroScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -427,6 +439,12 @@
     </Filter>
     <Filter Include="2D Framework\KeyManager">
       <UniqueIdentifier>{d40b88ed-16e9-42cc-9933-4854b0625d6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\IntroScene">
+      <UniqueIdentifier>{5a82e0ae-715c-48e9-89ea-f5ba84677a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\GamePlayScene">
+      <UniqueIdentifier>{11c5a51b-188c-4447-b226-b007256b8822}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

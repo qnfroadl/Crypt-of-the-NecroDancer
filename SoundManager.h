@@ -13,6 +13,9 @@ enum class ESoundKey
 {
 	NONE,
 
+	INTRO,
+	MAINMENU,
+
 	// Bgm
 	LOBBY,
 
@@ -68,6 +71,8 @@ public:
 	void Init();
 	void Release();
 	void Update();
+
+	void LoadSound();
 
 	FMOD::Sound* AddSound(ESoundKey key, const char* filePath, bool loop=false);
 	FMOD::Sound* FindSound(ESoundKey key);
