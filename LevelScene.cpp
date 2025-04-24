@@ -62,6 +62,7 @@ HRESULT LevelScene::Init()
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
 
+	int playerCount = 1;
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
@@ -71,7 +72,7 @@ HRESULT LevelScene::Init()
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, multipleGold);
-
+        playerCount = playerManager.lock()->GetPlayerCount();
     }
 
     monsterManager = make_shared<MonsterManager>();
@@ -84,6 +85,7 @@ HRESULT LevelScene::Init()
 	beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(true);
+    beatManager->SetActive2P(playerCount == 1 ? false : true);
 
     renderer = make_shared<TileActorRenderer>();
     renderer->Init();

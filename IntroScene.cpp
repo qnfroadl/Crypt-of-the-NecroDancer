@@ -7,6 +7,8 @@
 #include "SoundManager.h"
 #include "SceneManager.h"
 
+#include <thread>
+
 HRESULT IntroScene::Init()
 {
 	SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
@@ -16,6 +18,11 @@ HRESULT IntroScene::Init()
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::INTRO);
 
 	cutscene1End = false;
+
+	std::thread([&]()
+		{
+			SoundManager::GetInstance()->LoadSound();
+		}).detach();
 
     return S_OK;
 }

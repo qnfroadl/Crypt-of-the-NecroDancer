@@ -1,6 +1,8 @@
 #include "SoundManager.h"
 #include "TimerManager.h"
 
+#include <mutex>
+
 map<ESoundKey, string> bgmPath = {
 	{ESoundKey::LOBBY, "Sound/Bgm/lobby"},
 	{ESoundKey::ZONE1_1, "Sound/Bgm/zone1_1"},
@@ -56,6 +58,9 @@ void SoundManager::Update()
 
 void SoundManager::LoadSound()
 {
+	std::mutex sound_mutex;
+	std::lock_guard<std::mutex> lock(sound_mutex);
+
 	AddSound(ESoundKey::LOBBY, "Sound/Bgm/lobby.ogg", true);
 
 	AddSound(ESoundKey::ZONE1_1, "Sound/Bgm/zone1_1.ogg");

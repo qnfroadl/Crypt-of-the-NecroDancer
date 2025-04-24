@@ -60,5 +60,7 @@ public:
 	bool IsSymmetric(Row row, POINT rowData);
 
 	bool IsOutOfRange(POINT pos);
+
+	void CalculateCameraRect();
 };
 
