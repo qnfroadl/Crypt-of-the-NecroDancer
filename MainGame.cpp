@@ -169,7 +169,7 @@ HRESULT MainGame::Init()
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
-	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
+	EventManager::GetInstance()->AddEvent(EventType::SONGEND, nullptr);
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Init();
