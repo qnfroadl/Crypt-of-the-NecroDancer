@@ -398,3 +398,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Image/UI/Intro/cutscene2.bmp
+Image/UI/Intro/cutscene1.bmp
