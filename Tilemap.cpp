@@ -51,14 +51,17 @@ void Tilemap::Release()
 
 void Tilemap::Update()
 {
-	for (auto& row : tiles)
+	// 나중에 이벤트로 바꿔야 함
+	UpdateVisuable();
+
+	for (int y = leftTop.y; y <= rightBottom.y; ++y)
 	{
-		for (auto& tile : row)
+		if (y < 0 || y >= mapRows) continue;
+
+		for (int x = leftTop.x; x <= rightBottom.x; ++x)
 		{
-			if (tile)
-			{
-				tile->Update();
-			}
+			if (x < 0 || x >= mapColumns) continue;
+			tiles[y][x]->Update();
 		}
 	}
 }

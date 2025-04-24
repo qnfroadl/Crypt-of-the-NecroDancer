@@ -7,17 +7,16 @@ HRESULT Torch::Init()
 {
 	torchImage = ImageManager::GetInstance()->AddImage("TORCH", TEXT("Image/Torch.bmp"), 
 		48, 26, 4, 1, true, RGB(255, 0, 255));
-    // 토치 리소스 추가
+
 	curFrame = 0;
     return S_OK;
 }
 
 HRESULT Torch::Init(FPOINT _pos, POINT _index)
 {
-	torchImage = ImageManager::GetInstance()->AddImage("TORCH", L"Image/Torch.bmp",
+	torchImage = ImageManager::GetInstance()->AddImage("TORCH", TEXT("Image/Torch.bmp"),
 		48, 26, 4, 1, true, RGB(255, 0, 255));
 
-	// 토치 리소스 추가
 	curFrame = 0;
     pos = _pos;
     index = _index;
@@ -42,7 +41,7 @@ void Torch::Update()
 void Torch::Render(HDC hdc, bool useCamera)
 {
 	float centerX = pos.x;
-	float centerY = pos.y;
+	float centerY = pos.y - 20.0f * TILE_SCALE;
 	if (useCamera)
 	{
 		centerX -= Camera::GetInstance()->GetPos().x;
@@ -54,7 +53,7 @@ void Torch::Render(HDC hdc, bool useCamera)
 			curFrame, 0,
 			static_cast<float>(TILE_SCALE),
 			static_cast<float>(TILE_SCALE),
-			false, true, 1.0f, 0.0f
+			false, true
 		);
 	}
 	else
@@ -65,7 +64,7 @@ void Torch::Render(HDC hdc, bool useCamera)
 			static_cast<int>(centerY / TILE_SCALE),
 			curFrame,
 			0,
-			false, true  // 중심 기준
+			false, true
 		);
 	}
 }

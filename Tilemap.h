@@ -11,6 +11,7 @@ class Tilemap : public GameActor
 private:
 	vector<vector<shared_ptr<Tile>>> tiles;
 	vector<POINT> spawnPoints;
+	vector<POINT> torchSpots;
 	int mapRows;
 	int mapColumns;
 	bool isCombo;
@@ -64,7 +65,19 @@ public:
 			cout << "Spawn Point: (" << spawn.x << ", " << spawn.y << ")" << endl;
 		}
 	}
+	void PrintTorchSpots()
+	{
+		for (const auto& torch : torchSpots)
+		{
+			cout << "Torch Spot: (" << torch.x << ", " << torch.y << ")" << endl;
+		}
+	}
 
 	void SetIsCombo(bool _isCombo) { isCombo = _isCombo; }
+
+	void ClearSpawnPoints() { spawnPoints.clear(); }
+	void ClearTorchSpots() { torchSpots.clear(); }
+	void AddTorchSpot(POINT spot) { torchSpots.push_back(spot); }
+	
 };
 

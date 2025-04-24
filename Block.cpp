@@ -56,6 +56,7 @@ void Block::Render(HDC hdc, bool useCamera)
 			false, true  // 중심 기준
 		);
 	}
+
 	if (torch)
 		torch->Render(hdc, useCamera);
 }
