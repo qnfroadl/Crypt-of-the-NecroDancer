@@ -17,7 +17,7 @@ void BossMonster::Init(BossType p)
 	state=BossState::IDLE;
 	damage = 1;
 	
-	light = 0;
+	
 	moveDelay = 3;
 	beatCount = 0;
 	
@@ -250,13 +250,7 @@ void BossMonster::AttackTarget()
 
 bool BossMonster::FindWall(bool _isLeft)
 {
-	if (_isLeft)
-	{
-	}
-	else
-	{
 
-	}
 
 	return false;
 }

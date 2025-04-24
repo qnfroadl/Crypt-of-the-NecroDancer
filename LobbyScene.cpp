@@ -32,7 +32,7 @@ HRESULT LobbyScene::Init()
         levelManager->Init();
     }
 
-    map = make_shared<Tilemap>();
+    //map = make_shared<Tilemap>();
     map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("LOBBY")));
 	
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
@@ -74,8 +74,7 @@ HRESULT LobbyScene::Init()
     
     EventManager::GetInstance()->AddEvent(EventType::SPAWNWEAPON, 
         new SpawnWeaponEventdata({ 1,4 }, DamageType::NORMAL, WeaponMaterialType::NORMAL, WeaponType::BROADSWORD));
-
-    return S_OK;
+   return S_OK;
 }
 
 void LobbyScene::Release()
@@ -86,7 +85,11 @@ void LobbyScene::Release()
 		delete uiManager;
 		uiManager = nullptr;
 	}
-
+	if (itemSpawner)
+	{
+		itemSpawner->Release();
+		itemSpawner = nullptr;
+	}
     if (map) {
         map->Release();
         map = nullptr;
