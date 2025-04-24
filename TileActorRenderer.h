@@ -17,7 +17,7 @@ class TileActorRenderer : public GameActor
 {
 
 private:
-	vector<vector<bool>> sightMap;
+	vector<vector<pair<bool, float>>> sightMap;
 
 	shared_ptr<Tilemap> tileMap;
 	shared_ptr<PositionManager> positionManager;

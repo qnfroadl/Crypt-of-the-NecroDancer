@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "GameObject.h"
 
 // Tile and Monster need this
@@ -30,12 +30,14 @@ class ShadowCasting : public GameObject
 private:
 	int maxRow;
 	int maxCol;
-	vector<vector<bool>> sightMap; // ÇöÀç ½Ã¾ß¿¡ º¸ÀÓ / ¾Æ´Ô
+	vector<vector<pair<bool, float>>> sightMap; // í˜„ì¬ ì‹œì•¼ì— ë³´ì„ / ì•„ë‹˜
 	vector<vector<shared_ptr<Tile>>> tiles;
 
-	vector<weak_ptr<Player>> players; // 2ÀÎ ´ëºñ
+	vector<weak_ptr<Player>> players; // 2ì¸ ëŒ€ë¹„
 
 	RECT cameraRect;
+
+	float CalcBrightness(POINT playerIndex, int col, int row);
 
 public:
 	ShadowCasting();
@@ -47,13 +49,13 @@ public:
 	void Render(HDC hdc);
 	
 	void AddPlayer(weak_ptr<Player> player);
-	vector<vector<bool>>& GetSightMap() { return sightMap; }
+	vector<vector<pair<bool, float>>>& GetSightMap() { return sightMap; }
 
 	void InitShadowMap();
 	void ComputeShadowMap(POINT playerPos);
 	
 	void Scan(POINT origin, Row row, int dx, int dy);
-	void Reveal(shared_ptr<Tile> tile);
+	void Reveal(shared_ptr<Tile> tile, POINT origin);
 	void UnReveal(shared_ptr<Tile> tile);
 	bool IsWall(shared_ptr<Tile> tile);
 	bool IsFloor(shared_ptr<Tile> tile);

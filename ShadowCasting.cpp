@@ -23,6 +23,17 @@ Row Row::GetNextRow()
 	return Row(depth + 1, start, end);
 }
 
+float ShadowCasting::CalcBrightness(POINT origin, int col, int row)
+{
+	/*
+		거리 구해서, 적당한 밝기값 반환하도록,
+		이후에는 렌더러에서 읽어서 밝기값만큼 렌더 하면됨(Render 할 때 투명값을 줄 수도 있겠지만? 밝기값 설정 후 렌더)
+	*/
+
+
+	return 0.0f;
+}
+
 ShadowCasting::ShadowCasting()
 {
 	maxRow = 0;
@@ -43,7 +54,7 @@ void ShadowCasting::Init(vector<vector<shared_ptr<Tile>>> _tiles)
 
 	maxRow = tiles.size();
 	maxCol = tiles.at(0).size();
-	sightMap.resize(maxRow, vector<bool>(maxCol, false));
+	sightMap.resize(maxRow, vector<pair<bool, float>>(maxCol, make_pair(false, 0.f)));
 
 	EventManager::GetInstance()->BindEvent(this, EventType::PLAYERMOVED, std::bind(&ShadowCasting::Update, this));
 	EventManager::GetInstance()->BindEvent(this, EventType::BLOCKDESTROYED, std::bind(&ShadowCasting::Update, this));
@@ -82,7 +93,7 @@ void ShadowCasting::Render(HDC hdc)
 	{
 		for (int j = 0; j < maxCol; ++j)
 		{
-			if (sightMap[i][j])
+			if (sightMap[i][j].first)
 			{
 				FPOINT pos = tiles[i][j]->GetPos();
 				float renderX = pos.x - Camera::GetInstance()->GetPos().x;
@@ -108,7 +119,8 @@ void ShadowCasting::InitShadowMap()
 	{
 		for (int j = 0; j < col; ++j)
 		{
-			sightMap[i][j] = false;
+			sightMap[i][j].first = false;
+			sightMap[i][j].second = 0.f;
 		}
 	}
 }
@@ -132,7 +144,9 @@ void ShadowCasting::ComputeShadowMap(POINT playerPos)
 		{
 			if (i >= 0 && i < sightMap.size() && j >= 0 && j < sightMap[0].size())
 			{
-				sightMap[i][j] = true;
+				sightMap[i][j].first = true;
+				sightMap[i][j].second = 1.f;
+
 			}
 		}
 	}
@@ -190,7 +204,7 @@ void ShadowCasting::Scan(POINT origin, Row row, int dx, int dy)
 
 		if (IsWall(tile) || IsSymmetric(row, rowData))
 		{
-			Reveal(tile);
+			Reveal(tile, origin);
 		}
 		if (IsWall(prevColTile) && IsFloor(tile))
 		{
@@ -222,14 +236,14 @@ void ShadowCasting::Scan(POINT origin, Row row, int dx, int dy)
 	
 	if (IsFloor(prevColTile))
 	{
-		if (sightMap[prevColTile->GetTileIndex().y][prevColTile->GetTileIndex().x] == true)
+		if (sightMap[prevColTile->GetTileIndex().y][prevColTile->GetTileIndex().x].first == true)
 		{
 			Scan(origin, row.GetNextRow(), dx, dy);
 		}
 	}
 }
 
-void ShadowCasting::Reveal(shared_ptr<Tile> tile)
+void ShadowCasting::Reveal(shared_ptr<Tile> tile, POINT origin)
 {
 	if (!tile) return;
 	int row = tile->GetTileIndex().y;
@@ -237,7 +251,10 @@ void ShadowCasting::Reveal(shared_ptr<Tile> tile)
 
 	if (IsOutOfRange({ col, row })) return;
 
-	sightMap[row][col] = true;
+	sightMap[row][col].first = true;
+
+	// 시야에 보이는 애들만 밝기가 적용될 예정
+	sightMap[row][col].second = CalcBrightness(origin, col, row);
 }
 
 void ShadowCasting::UnReveal(shared_ptr<Tile> tile)
@@ -248,7 +265,7 @@ void ShadowCasting::UnReveal(shared_ptr<Tile> tile)
 
 	if (IsOutOfRange({ col, row })) return;
 
-	sightMap[row][col] = false;
+	sightMap[row][col].first = false;
 }
 
 bool ShadowCasting::IsWall(shared_ptr<Tile> tile)

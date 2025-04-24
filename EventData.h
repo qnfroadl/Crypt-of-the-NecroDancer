@@ -56,9 +56,9 @@ public:
 class ShadowCastingEventData : public EventData
 {
 public:
-	vector<vector<bool>>& sightMap;
+	vector<vector<pair<bool, float>>>& sightMap;
 
-	ShadowCastingEventData(vector<vector<bool>>& _sightMap)
+	ShadowCastingEventData(vector<vector<pair<bool, float>>>& _sightMap)
 	:sightMap(_sightMap)
 	{
 
