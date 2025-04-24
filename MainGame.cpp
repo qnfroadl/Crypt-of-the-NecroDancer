@@ -175,8 +175,7 @@ HRESULT MainGame::Init()
 	SoundManager::GetInstance()->Init();
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
-	BeatManager::GetInstance()->Init();
-	BeatManager::GetInstance()->StartBeat(true);
+
 
 	
 
@@ -220,7 +219,6 @@ void MainGame::Release()
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Release();
-	BeatManager::GetInstance()->Release();
 
 	if (btn)
 	{
@@ -263,7 +261,6 @@ void MainGame::Update()
 	{
 		SoundManager::GetInstance()->ChangeSoundBgmShopkeeper();
 	}
-	BeatManager::GetInstance()->Update();
 }
 
 void MainGame::Render()
@@ -288,7 +285,6 @@ void MainGame::Render()
 
 	}
 
-	BeatManager::GetInstance()->Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);

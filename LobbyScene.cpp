@@ -21,6 +21,9 @@
 #include "ShadowCasting.h"
 #include "KeyManager.h"
 
+#include "BeatManager.h"
+#include "SoundManager.h"
+
 HRESULT LobbyScene::Init()
 {
     // InitMap
@@ -43,7 +46,7 @@ HRESULT LobbyScene::Init()
 	itemSpawner->SetPositionManager(positionManager);
     itemSpawner->SetTileMap(map);
 
-    uiManager = new UIManager();
+    uiManager = make_shared<UIManager>();
 	uiManager->Init();
 
 	PlayerWallet* playerWallet = new PlayerWallet();
@@ -66,6 +69,12 @@ HRESULT LobbyScene::Init()
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
+
+    SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::LOBBY);
+    beatManager = make_shared<BeatManager>();
+    beatManager->Init();
+    beatManager->StartBeat(false);
+
    
     // Test
 	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({1,1}, ItemType::GOLD, 50));
@@ -83,7 +92,6 @@ void LobbyScene::Release()
 	if (uiManager)
 	{
 		uiManager->Release();
-		delete uiManager;
 		uiManager = nullptr;
 	}
 
@@ -91,6 +99,12 @@ void LobbyScene::Release()
         map->Release();
         map = nullptr;
     }
+
+	if (beatManager)
+	{
+		beatManager->Release();
+		beatManager = nullptr;
+	}
 
     playerManager.lock()->BindRelease();
 
@@ -113,6 +127,11 @@ void LobbyScene::Update()
 	{
 	    shadowCasting->Update();
 	}
+
+    if (beatManager)
+    {
+		beatManager->Update();
+    }
 }
 
 void LobbyScene::Render(HDC hdc)
@@ -133,6 +152,11 @@ void LobbyScene::Render(HDC hdc)
 	{
 		positionManager->Render(hdc);
 	}
+
+    if (beatManager)
+    {
+        beatManager->Render(hdc);
+    }
 
 	if (uiManager)
 	{
