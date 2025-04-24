@@ -38,6 +38,7 @@ HRESULT LevelScene::Init()
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();
+    positionManager->Init();
     itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
     itemSpawner->SetPositionManager(positionManager);
@@ -102,6 +103,12 @@ void LevelScene::Release()
     {
         uiManager->Release();
         uiManager = nullptr;
+    }
+
+    if (positionManager)
+    {
+        positionManager->Release();
+        positionManager = nullptr;
     }
 
     if (map) {

@@ -4,6 +4,29 @@
 #include <fstream>
 #include "EventManager.h"
 #include "Camera.h"
+#include "EventData.h"
+
+void Tilemap::OnInteract(EventData* data)
+{
+	if (data)
+	{
+		InteractEventData* interact = static_cast<InteractEventData*>(data);
+
+		POINT center = interact->actor->GetTileIndex();
+
+		auto it = interact->range.begin();
+		while (it != interact->range.end())
+		{
+			shared_ptr<Tile> tile = GetTile({ center.x + it->x , center.y + it->y });
+			if (tile)
+			{
+				tile->Interact(interact->actor.get());
+				interact->actor->Interact(tile.get());
+			}
+			it++;
+		}
+	}
+}
 
 HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 {
@@ -17,6 +40,9 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	rightBottom = { mapColumns - 1, mapRows - 1 };
 	isCombo = false;
 	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::INTERACT, std::bind(&Tilemap::OnInteract, this, placeholders::_1));
+
+
 	// EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::UpdateVisuable, this));
 	//EventManager::GetInstance()->BindEvent(
 	//	this,
@@ -47,6 +73,8 @@ void Tilemap::Release()
 	tiles.clear();
 	// 이벤트 언바인드 추가
 	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::INTERACT);
+
 }
 
 void Tilemap::Update()

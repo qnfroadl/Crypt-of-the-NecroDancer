@@ -72,8 +72,9 @@ class InteractEventData : public EventData
 {
 public:
 	shared_ptr<TileActor> actor;		// 현 위치는 액터가 갖고있것지.
-	
-	InteractEventData(shared_ptr<TileActor> actor)
-		:  actor(actor) {};
+	vector<POINT> range;
+
+	InteractEventData(shared_ptr<TileActor> _actor, vector<POINT> _range)
+		:  actor(_actor),range(_range) {};
 
 };

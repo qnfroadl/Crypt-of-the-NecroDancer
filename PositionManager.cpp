@@ -1,14 +1,19 @@
 ﻿// PositionManager.cpp
 #include "PositionManager.h"
 #include "TileActor.h"
+#include "EventManager.h"
 
 PositionManager::PositionManager()
 {
-  
+   
+
 }
 
 PositionManager::~PositionManager()
 {
+
+
+
     Clear();
 }
 
@@ -126,6 +131,41 @@ std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT
     return actors;
 }
 
+HRESULT PositionManager::Init()
+{
+    EventManager::GetInstance()->BindEvent(this, EventType::INTERACT, [&](EventData* data)
+        {
+            if (data)
+            {
+                InteractEventData* interact = static_cast<InteractEventData*>(data);
+                
+                POINT center = interact->actor->GetTileIndex();
+
+
+                auto it =interact->range.begin();
+                while (it != interact->range.end())
+                {
+                    auto actors = GetActorsAt({center.x + it->x , center.y + it->y});
+
+                    for (auto ac : actors)
+                    {
+                        ac->Interact(interact->actor.get());
+                        interact->actor->Interact(ac.get());
+                    }
+
+                    it++;
+                }
+            }
+        });
+   
+    return S_OK;
+}
+
+void PositionManager::Release()
+{
+    EventManager::GetInstance()->UnbindEvent(this, EventType::INTERACT);
+
+}
 void PositionManager::Update()
 {
     // 포지션 매니저에 등록된 애들만 업데이트.
@@ -159,6 +199,7 @@ void PositionManager::Render(HDC hdc)
     // }
 
 }
+
 
 void PositionManager::Clear()
 {

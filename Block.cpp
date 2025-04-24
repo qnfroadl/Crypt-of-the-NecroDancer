@@ -72,7 +72,7 @@ void Block::Destroy()
 
 }
 
-bool Block::Destroy(int strength)
+bool Block::CanDestroy(int strength)
 {
 	if (strength >= hp)
 	{

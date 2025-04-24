@@ -43,6 +43,7 @@ HRESULT LobbyScene::Init()
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
 	positionManager = make_shared<PositionManager>();
+    positionManager->Init();
 	itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
 	itemSpawner->SetPositionManager(positionManager);
@@ -113,6 +114,8 @@ void LobbyScene::Release()
         map->Release();
         map = nullptr;
     }
+
+    positionManager->Release();
 
 	if (beatManager)
 	{

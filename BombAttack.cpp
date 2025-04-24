@@ -6,7 +6,8 @@
 #include "Camera.h"
 #include "EffectManager.h"
 #include "BombEffect.h"
-
+#include "Block.h"
+#include "Tile.h"
 
 HRESULT BombAttack::Init()
 {
@@ -39,6 +40,15 @@ void BombAttack::Update()
 		EffectManager::GetInstance()->AddEffect(make_shared<BombEffect>(GetPos()));
 		// 상호작용도 요청 해야하는데?
 
+		vector<POINT> range = {
+				{-1, -1}, {0, -1}, {1, -1},
+				{-1,  0}, {0 , 0}, {1,  0},
+				{-1,  1}, {0,  1}, {1,  1}
+			};
+
+		// 즉발
+		EventManager::GetInstance()->AddEvent(EventType::INTERACT, new InteractEventData(shared_from_this(), range), true);
+		SetActive(false);
 	}
 }
 
@@ -74,10 +84,22 @@ void BombAttack::OnNextStep()
 
 void BombAttack::Interact(GameActor* actor)
 {
-	if (IsActive() )
+	if (IsActive() && isExplode)
 	{
-		
+		if (ActorType::TILE == actor->GetType())
+		{
+			Tile* tile = static_cast<Tile*>(actor);
+			shared_ptr<Block> block = tile->GetBlock();
 
-
+			if (block)
+			{
+				if (block->CanDestroy(4))
+				{
+					block->Destroy();
+					tile->SetBlock(nullptr);
+					EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYED, nullptr, true);
+				}
+			}
+		}
 	}
 }
