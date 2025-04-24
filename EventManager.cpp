@@ -8,15 +8,15 @@ int EventManager::GetPriority(EventType type)
 
 	switch (type) 
 	{
+		case EventType::BEATEND: // 정박 타이밍 끝
+			priority = 0;
+			break;
 		case EventType::BEAT: 
 		case EventType::BEATHIT: 
 		case EventType::BEATMISS: 
 			priority = 1;
 			break;
-		case EventType::BEATEND: 
-			priority = 2;
-			break;
-		case EventType::LIGHTINGUPDATE:		// 라이팅 업데이트.
+		case EventType::SONGEND: 
 			priority = 2;
 			break;
 		case EventType::PLAYERMOVED:

@@ -1,4 +1,4 @@
-#include "ShadowCasting.h"
+ï»¿#include "ShadowCasting.h"
 #include "Tile.h"
 #include "EventManager.h"
 #include "Player.h"
@@ -57,7 +57,7 @@ void ShadowCasting::Release()
 
 void ShadowCasting::Update()
 {
-	//cameraRect = Camera::GetInstance()->GetViewRect(); // ÀÀ Å¸ÀÏ ÀÎµ¦½º ±â¹İ ¾Æ´Ï¾ß
+	//cameraRect = Camera::GetInstance()->GetViewRect(); // ì‘ íƒ€ì¼ ì¸ë±ìŠ¤ ê¸°ë°˜ ì•„ë‹ˆì•¼
 
 	InitShadowMap();
 
@@ -65,11 +65,13 @@ void ShadowCasting::Update()
 	{
 		if (auto p = player.lock())
 		{
-			// ÇÃ·¹ÀÌ¾î°¡ À§Ä¡ÇÑ Å¸ÀÏ ±âÁØ ½Ã¾ß °è»ê
+			// í”Œë ˆì´ì–´ê°€ ìœ„ì¹˜í•œ íƒ€ì¼ ê¸°ì¤€ ì‹œì•¼ ê³„ì‚°
 			POINT pos = p->GetTileIndex();
 			ComputeShadowMap(pos);
 		}
 	}
+
+	EventManager::GetInstance()->AddEvent(EventType::LIGHTINGUPDATED, new ShadowCastingEventData(sightMap), true);
 }
 
 void ShadowCasting::Render(HDC hdc)
@@ -83,7 +85,7 @@ void ShadowCasting::Render(HDC hdc)
 				FPOINT pos = tiles[i][j]->GetPos();
 				float renderX = pos.x - Camera::GetInstance()->GetPos().x;
 				float renderY = pos.y - Camera::GetInstance()->GetPos().y;
-				// ½Ã¾ß¿¡ º¸ÀÌ´Â Å¸ÀÏ
+				// ì‹œì•¼ì— ë³´ì´ëŠ” íƒ€ì¼
 				Ellipse(hdc, renderX - 5, renderY - 5, renderX + 5, renderY + 5);
 				//tiles[i][j]->Render(hdc);
 			}
@@ -119,8 +121,8 @@ void ShadowCasting::ComputeShadowMap(POINT playerPos)
 		Scan(playerPos, Row(1, -1.f, 1.f), dx[i], dy[i]);
 	}
 
-	// ÇÃ·¹ÀÌ¾î ÁÖº¯ ½Ã¾ß´Â Ç×»ó º¸ÀÓ(Àı´ë½Ã¾ß) - ±âº» 3x3
-	// ÇÃ·¹ÀÌ¾î ÁÖº¯ ±¤¿ø °ªÀº ¿©±â¼­ °í·ÁÇÏÁö ¾ÊÀ½
+	// í”Œë ˆì´ì–´ ì£¼ë³€ ì‹œì•¼ëŠ” í•­ìƒ ë³´ì„(ì ˆëŒ€ì‹œì•¼) - ê¸°ë³¸ 3x3
+	// í”Œë ˆì´ì–´ ì£¼ë³€ ê´‘ì› ê°’ì€ ì—¬ê¸°ì„œ ê³ ë ¤í•˜ì§€ ì•ŠìŒ
 
 	for (int i = playerPos.y - 1; i <= playerPos.y + 1; ++i)
 	{
@@ -261,7 +263,7 @@ bool ShadowCasting::IsFloor(shared_ptr<Tile> tile)
 	return tile->GetBlock() == nullptr;
 }
 
-bool ShadowCasting::IsSymmetric(Row row, POINT rowData) // Áö±İ ¹«Á¶°Ç true ¾Æ´Ñ°¡...?
+bool ShadowCasting::IsSymmetric(Row row, POINT rowData) // ì§€ê¸ˆ ë¬´ì¡°ê±´ true ì•„ë‹Œê°€...?
 {
 	return (rowData.y >= (float)row.depth * row.start) && (rowData.y <= (float)row.depth * row.end);
 }

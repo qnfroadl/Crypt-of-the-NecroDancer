@@ -52,7 +52,6 @@ public:
 
 	inline int GetGold() { return gold.Get();}
 	inline void SetGold(int _gold) { gold.Set(_gold);}
-	inline void AddGold(int _gold) { gold.Set(gold.Get() + _gold);}
 
 	inline float GetAttack() { return attack; }
 	inline void SetAttack(float _attack) { attack = _attack; }

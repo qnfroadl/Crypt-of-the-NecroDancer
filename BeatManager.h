@@ -1,11 +1,10 @@
 #pragma once
 #include "config.h"
-#include "Singleton.h"
 #include <queue>
 
 class Image;
 class BeatMarkerManager;
-class BeatManager : public Singleton<BeatManager>
+class BeatManager
 {
 private:
 	queue<unsigned int> beatDatas;

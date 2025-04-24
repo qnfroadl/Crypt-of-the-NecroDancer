@@ -142,9 +142,6 @@ HRESULT MainGame::Init()
 
 	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
-	monsterManager = std::make_shared<MonsterManager>();
-	monsterManager->Init();
-
 
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
@@ -158,7 +155,6 @@ HRESULT MainGame::Init()
 
 	LevelScene* level = new LevelScene();
 	level->SetPlayerManager(playerManager);
-	level->SetMonsterManager(monsterManager);
 	SceneManager::GetInstance()->AddScene("LevelScene", level);
 
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
@@ -169,18 +165,14 @@ HRESULT MainGame::Init()
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
-	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
+	EventManager::GetInstance()->AddEvent(EventType::SONGEND, nullptr);
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Init();
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
-	BeatManager::GetInstance()->Init();
-	BeatManager::GetInstance()->StartBeat(true);
 
-	
 
-	
 
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 
@@ -220,7 +212,6 @@ void MainGame::Release()
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Release();
-	BeatManager::GetInstance()->Release();
 
 	if (btn)
 	{
@@ -263,7 +254,6 @@ void MainGame::Update()
 	{
 		SoundManager::GetInstance()->ChangeSoundBgmShopkeeper();
 	}
-	BeatManager::GetInstance()->Update();
 }
 
 void MainGame::Render()
@@ -273,7 +263,6 @@ void MainGame::Render()
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 	
-
 	//playerManager->Render(hBackBufferDC);
 	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
@@ -288,7 +277,6 @@ void MainGame::Render()
 
 	}
 
-	BeatManager::GetInstance()->Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);

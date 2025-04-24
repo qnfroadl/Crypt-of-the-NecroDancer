@@ -66,7 +66,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	int height = rcWindowSize.bottom - rcWindowSize.top;
 
 	g_hWnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, g_lpszClassName, g_lpszClassName,
-		WS_OVERLAPPEDWINDOW, 50, 50, width, height,
+		WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, 50, 50, width, height,
 		NULL, NULL, g_hInstance, NULL);
 	
 	g_mainGame.Init();

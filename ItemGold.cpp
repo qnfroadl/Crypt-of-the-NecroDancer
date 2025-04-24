@@ -24,20 +24,18 @@ HRESULT ItemGold::Init()
 
 void ItemGold::Render(HDC hdc)
 {
+	if (sightState == SightState::INVISIBLE)
+	{
+		return;
+	}
+
 	if (IsActive())
 	{
 		FPOINT screenPos = Camera::GetInstance()->GetScreenPos(GetPos());
 
 		if (image)
 		{
-			image->FrameRender(hdc, screenPos.x, screenPos.y, 0, 0, false, true);
-
-			// 
-		}
-		else
-		{
-			// 검정 돈
-			image->FrameRender(hdc, screenPos.x, screenPos.y, 0, 1, false, true);
+			image->FrameRender(hdc, screenPos.x, screenPos.y, 0, sightState == SightState::VISIBLE ? 0 : 1, false, true);
 		}
 	}
 	

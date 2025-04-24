@@ -34,7 +34,7 @@ void BeatMarkerManager::Init(queue<unsigned int> beatQueue)
 	{
 		heart = new BeatHeart();
 	}
-	heart->Init(beatQueue);
+	heart->Init();
 }
 
 void BeatMarkerManager::Release()
@@ -76,7 +76,7 @@ void BeatMarkerManager::Update(unsigned int curPosition)
 
 	if (heart)
 	{
-		heart->Update(curPosition);
+		heart->Update();
 	}
 }
 

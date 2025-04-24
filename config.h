@@ -18,8 +18,8 @@ using namespace std;
 	컴파일러에서 해당 코드를 뒤에 정의된 코드로 변경한다. 
 */
 
-#define SCENE_WIDTH 1920
-#define SCENE_HEIGHT 1080
+#define SCENE_WIDTH 1280
+#define SCENE_HEIGHT 720
 
 #define TILEMAPTOOL_X 1200
 #define TILEMAPTOOL_Y 800
@@ -47,6 +47,18 @@ using namespace std;
 #define WALL_TILE_HEIGHT 48
 
 #define TILE_SCALE 3
+
+struct SightInfo
+{
+	bool revealed;		// 한번이라도 보였으면 true. 유지.
+	bool visible;		// 현재 보이는지 안보이는지.	
+};
+
+struct BrightnessInfo
+{
+	float staticBrightness;		// 정적 밝기
+	float dynamicBrightness;	// 동적으로 변화 할 밝기.
+};
 
 enum class PlayerIndex
 {
