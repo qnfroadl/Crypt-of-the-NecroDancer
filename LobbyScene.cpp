@@ -61,7 +61,6 @@ HRESULT LobbyScene::Init()
     }
 
    
-
     // Test
 	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({1,1}, ItemType::GOLD, 50));
     EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 1,2 }, ItemType::GOLD, 100));
