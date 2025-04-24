@@ -69,7 +69,6 @@ void Block::Destroy()
 	// 삽 아이콘 띄우면서 없어져버려.
 	
 
-
 }
 
 bool Block::CanDestroy(int strength)

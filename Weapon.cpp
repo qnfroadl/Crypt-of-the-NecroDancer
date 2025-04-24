@@ -266,11 +266,6 @@ void Weapon::Swipe(FPOINT pos, Direction dir)
 	
 }
 
-void Weapon::Destroy()
-{
-
-}
-
 vector<POINT> Weapon::GetRange()
 {
 	return range;

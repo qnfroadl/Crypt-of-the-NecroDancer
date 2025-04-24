@@ -8,6 +8,7 @@
 #include "BombEffect.h"
 #include "Block.h"
 #include "Tile.h"
+#include "Player.h"
 
 HRESULT BombAttack::Init()
 {
@@ -101,5 +102,16 @@ void BombAttack::Interact(GameActor* actor)
 				}
 			}
 		}
+		else if (ActorType::ITEM == actor->GetType())
+		{
+			TileItem* item = static_cast<TileItem*>(actor);
+			item->Destroy();
+		}
+		else if (ActorType::PLAYER == actor->GetType())
+		{
+			Player* player = static_cast<Player*>(actor);
+			player->TakeDamage(2);
+		}
+
 	}
 }
