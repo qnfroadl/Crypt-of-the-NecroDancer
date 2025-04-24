@@ -1,9 +1,10 @@
 #pragma once
 #include "config.h"
 #include "IPlayerObserver.h"
+#include "GameObject.h"
 
 class Image;
-class UIBase : public IPlayerObserver
+class UIBase : public IPlayerObserver, public GameObject
 {
 protected:
 	Image* image;
@@ -14,7 +15,7 @@ public:
 	UIBase();
 	virtual ~UIBase();
 
-	virtual void Init();
+	virtual HRESULT Init();
 	virtual void Release();
 	virtual void Update();
 	virtual void Render(HDC hdc);

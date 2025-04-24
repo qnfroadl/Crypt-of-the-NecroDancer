@@ -12,27 +12,28 @@
 class Tilemap;
 class LightingRenderer;
 class PositionManager;
-
+class EventData;
 class TileActorRenderer : public GameActor
 {
 
 private:
-	Tilemap* tileMap;
-	shared_ptr<PositionManager> positionManager;
-	std::vector<std::shared_ptr<IRendableTileActor>> rendableActors;
 	vector<vector<bool>> sightMap;
+
+	shared_ptr<Tilemap> tileMap;
+	shared_ptr<PositionManager> positionManager;
+
+	std::vector<std::shared_ptr<IRendableTileActor>> rendableActors;
+
+	void OnChangedSightMap(EventData* data);
+
 public:
 
 	HRESULT Init() override;
 	void Render(HDC hdc) override;
 
-	/*
-		PositionManager (PlayerManager, MonsterManager + Item까지 포함되어 있는 포지션 매니저)
-		Tilemap,
+	void SetTileMap(shared_ptr<Tilemap> tileMap); 
+	void SetPositionManager(shared_ptr<PositionManager> positionManager);
 
-
-		LightingRenderer에서 어떻게 할 지는 모르겠다.
-	*/
 	void AddRendableSource(std::shared_ptr<IRendableTileActor> source);
 	void OnPlayerMoved(); // 또는 OnLightingUpdateTrigger()
 	void OnTileDestroyed();

@@ -1,5 +1,6 @@
-#pragma once
+ï»¿#pragma once
 #include "UIBase.h"
+#include "GameObject.h"
 
 #include <queue>
 
@@ -7,17 +8,23 @@ class BeatHeart : public UIBase
 {
 private:
 	int frameIndex;
-	queue<unsigned int> beats; // ½ÉÀåÀº ÇÃ·¹ÀÌ¾îÀÇ ºñÆ® ¼º°ø/¹Ì½º¿Í °ü°è¾øÀÌ Á¤¹Ú¿¡ ¶Ù¾î¾ß ÇÔ
+	int goldMultiple;
 
 public:
 	BeatHeart();
 	virtual ~BeatHeart();
 
-	void Init(queue<unsigned int> beatQueue);
+	virtual HRESULT Init() override;
 	virtual void Release() override;
-	void Update(unsigned int curPosition);
+	void Update();
 	virtual void Render(HDC hdc) override;
 
-	void LocateOnCenter(); // È­¸é Å©±â°¡ º¯°æµÅµµ °¡¿îµ¥¿¡ À§Ä¡ÇÏµµ·Ï
+	void BeatStart() { frameIndex = 1; }
+	void BeatEnd() { frameIndex = 0; }
+
+	void LocateOnCenter(); // í™”ë©´ í¬ê¸°ê°€ ë³€ê²½ë¼ë„ ê°€ìš´ë°ì— ìœ„ì¹˜í•˜ë„ë¡
+
+	void OnPlayerGoldMultipleChanged(int multiple) override { goldMultiple = multiple; }
+
 };
 

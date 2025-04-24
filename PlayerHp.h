@@ -18,7 +18,7 @@ public:
 	PlayerHp();
 	~PlayerHp();
 
-	void Init();
+	HRESULT Init();
 	virtual void Release() override;
 	virtual void Update() override;
 	void Render(HDC hdc);
@@ -28,7 +28,7 @@ public:
 
 	void AdjustSize();
 
-	void LoadBeats();
-	void CheckBeats();
+	void BeatStart() { beatAnim = true; }
+	void BeatEnd() { beatAnim = false; beatAnimIndex++; beatAnimIndex %= (int)ceil(curHp); }
 };
 

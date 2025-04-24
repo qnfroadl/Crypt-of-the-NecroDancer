@@ -2,12 +2,21 @@
 
 #include "GameActor.h"
 
+enum class SightState
+{
+	INVISIBLE,	// 아예 렌더 안됨.
+	VISIBLE, // BrightnessInfo 읽어서 밝기에 따라 투명도 변화.
+	SHADOW	// 그림자 상태로 보이게 렌더.
+};
 
 class TileActor : public GameActor
 {
 	
 protected:
+	SightState sightState;
 	SightInfo sightInfo;
+	BrightnessInfo brightnessInfo;
+
 	POINT index;
 	
 public:
@@ -20,8 +29,16 @@ public:
 	const POINT& GetTileIndex();
 	virtual void SetTileIndex(const POINT& index);
 
-	void SetSightInfo(const SightInfo& sightInfot);
+	void SetVisible(bool visible);
 	const SightInfo& GetSightInfo();
+
+	void SetDynamicBrightness(float brightness);
+	void SetStaticBrightness(float brightness);
+	float GetDynamicBrightness();
+	float GetStaticBrightness();
+
+	void SetBrightnessInfo(const BrightnessInfo& info);
+	const BrightnessInfo& GetBrightnessInfoInfo();
 
 };
 

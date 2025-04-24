@@ -154,7 +154,6 @@
       <Filter>InputSystem &amp; UI</Filter>
     </ClCompile>
     <ClCompile Include="TileActorRenderer.cpp" />
-    <ClCompile Include="LightingRenderer.cpp" />
     <ClCompile Include="BossMonster.cpp">
       <Filter>Monster</Filter>
     </ClCompile>
@@ -346,7 +345,6 @@
       <Filter>InputSystem &amp; UI</Filter>
     </ClInclude>
     <ClInclude Include="TileActorRenderer.h" />
-    <ClInclude Include="LightingRenderer.h" />
     <ClInclude Include="BossMonster.h">
       <Filter>Monster</Filter>
     </ClInclude>

@@ -39,6 +39,7 @@ HRESULT LevelScene::Init()
     itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
     itemSpawner->SetPositionManager(positionManager);
+    itemSpawner->SetTileMap(map);
 
     uiManager = make_shared<UIManager>();
     uiManager->Init();
@@ -63,18 +64,20 @@ HRESULT LevelScene::Init()
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
-    if (monsterManager.lock())
-    {
-        monsterManager.lock()->SetPositionManager(positionManager);
-        monsterManager.lock()->SetTileMap(map);
-        monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
-    }
+
+    monsterManager = make_shared<MonsterManager>();
+    monsterManager->Init();
+    monsterManager->SetPositionManager(positionManager);
+    monsterManager->SetTileMap(map);
+    monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+    
 
 
     SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(true);
+
 
     return S_OK;
 }
@@ -111,12 +114,15 @@ void LevelScene::Update()
         uiManager->Update();
     }
     playerManager.lock()->Update();
-    monsterManager.lock()->Update();
+    monsterManager->Update();
 
-    // test (actually update when (playermoved, blockdestroyed event) occurs)
-    if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
+    if (KeyManager::GetInstance()->IsOnceKeyDown('O'))
     {
-        shadowCasting->Update();
+        SoundManager::GetInstance()->SetTempo(0.8f);
+    }
+    if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
+    {
+        SoundManager::GetInstance()->SetTempo(1.2f);
     }
 
     if (beatManager)
@@ -154,7 +160,7 @@ void LevelScene::Render(HDC hdc)
         uiManager->Render(hdc);
     }
 	playerManager.lock()->Render(hdc);
-	monsterManager.lock()->Render(hdc);
+	monsterManager->Render(hdc);
 
     // test render
     shadowCasting->Render(hdc);
@@ -163,7 +169,6 @@ void LevelScene::Render(HDC hdc)
 void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
-
 
     if (positionManager)
     {
@@ -174,17 +179,3 @@ void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
         this->playerManager.lock()->SetTileMap(map);
     }
 }
-
-void LevelScene::SetMonsterManager(weak_ptr<MonsterManager> monsterManager)
-{
-    this->monsterManager = monsterManager;
-    if (positionManager)
-    {
-        this->monsterManager.lock()->SetPositionManager(positionManager);
-    }
-    if (nullptr != map)
-    {
-        this->monsterManager.lock()->SetTileMap(map);
-    }
-}
-

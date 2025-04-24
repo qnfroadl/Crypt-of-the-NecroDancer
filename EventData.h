@@ -23,7 +23,6 @@ public:
 	: playerIndex(playerIndex), inputKey(inputKey) {};
 
 	~BeatHitEventData() {};
-
 };
 
 class SpawnItemEventData : public EventData
@@ -52,6 +51,19 @@ public:
 	{
 
 	}
+};
+
+class ShadowCastingEventData : public EventData
+{
+public:
+	vector<vector<bool>>& sightMap;
+
+	ShadowCastingEventData(vector<vector<bool>>& _sightMap)
+	:sightMap(_sightMap)
+	{
+
+	}
+
 };
 
 /*

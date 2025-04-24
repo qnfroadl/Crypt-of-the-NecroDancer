@@ -65,16 +65,6 @@ void Tilemap::Update()
 
 void Tilemap::Render(HDC hdc)
 {
-	//for (auto& row : tiles)
-	//{
-	//	for (auto& tile : row)
-	//	{
-	//		if (tile)
-	//		{
-	//			tile->Render(hdc);
-	//		}
-	//	}
-	//}
 	for (int y = leftTop.y; y <= rightBottom.y; ++y)
 	{
 		if (y < 0 || y >= mapRows) continue;

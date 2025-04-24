@@ -151,7 +151,6 @@
     <ClCompile Include="ItemSpawner.cpp" />
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="LevelScene.cpp" />
-    <ClCompile Include="LightingRenderer.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MonsterManager.cpp" />
     <ClCompile Include="PlayerHp.cpp" />
@@ -217,7 +216,6 @@
     <ClInclude Include="ItemSpawner.h" />
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="LevelScene.h" />
-    <ClInclude Include="LightingRenderer.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="MonsterManager.h" />
     <ClInclude Include="ObservableValue.h" />
