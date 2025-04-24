@@ -3,7 +3,7 @@
 
 HRESULT MonsterManager::Init()
 {
-	monsterNumber = 1;
+	monsterNumber = 8;
 	monsterVector.resize(10);
 	for (int i = 0; i < monsterNumber; i++)
 	{

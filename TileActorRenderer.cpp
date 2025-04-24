@@ -29,6 +29,11 @@ HRESULT TileActorRenderer::Init()
     return S_OK;
 }
 
+void TileActorRenderer::Release()
+{
+    EventManager::GetInstance()->UnbindEvent(this, EventType::LIGHTINGUPDATED);
+}
+
 void TileActorRenderer::Render(HDC hdc)
 {
     bool sightVisible = false;

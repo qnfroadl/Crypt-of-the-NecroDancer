@@ -43,7 +43,8 @@ void Monster::Init(MONSTERTYPE p)
 
 void Monster::Release()
 {
-
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATMISS);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATHIT);
 }
 
 void Monster::Update()
@@ -130,7 +131,7 @@ void Monster::Render(HDC hdc)
 		
 		FPOINT pos = Camera::GetInstance()->GetScreenPos(FPOINT(GetPos()));
 		
-		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, 0,isLeft);
+		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, sightState == SightState::VISIBLE ? 0 : 1,isLeft);
 		if (isAttack)
 		{
 			FPOINT attackPos = Camera::GetInstance()->GetScreenPos(FPOINT(target.lock()->GetPos()));
@@ -183,7 +184,7 @@ POINT Monster::Trace()
 
 void Monster::Dead()
 {
-	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData(GetTileIndex(), ItemType::GOLD, 50));
+	
 	SetActive(false);
 	state = MonsterState::DEAD;
 	positionManager.lock()->RemoveTileActor(shared_from_this(), true, GetTileIndex());
@@ -333,7 +334,7 @@ void Monster::TakeDamage(int damage)
 	if (curHP <= 0)
 	{
 		curHP = 0;
-		
+		EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData(GetTileIndex(), ItemType::GOLD, 100));
 		Dead();
 	}
 }

@@ -41,7 +41,7 @@ private:
 #pragma region Image Box
 	unordered_map<MONSTERTYPE, MonsterImageInfo>MonsterInfoTable =
 	{
-		{ MONSTERTYPE::SKELETON,      { "Skeleton",TEXT("Image/Monster/skeleton_Normal.bmp"),195,25, 8,1}},
+		{ MONSTERTYPE::SKELETON,      { "Skeleton",TEXT("Image/Monster/SkeletoN_Normal _and_dark.bmp"),195,50, 8,2}},
 		{ MONSTERTYPE::SLIME,         { "Slime",TEXT("Image/Monster/slime_green_normal.bmp"),104,26, 4,1}},
 		{ MONSTERTYPE::ARMERSKELETON, { "ArmerSkeleton",TEXT("Image/Monster/armoredskeleton_Normal.bmp"),144,24,8,1}},
 
