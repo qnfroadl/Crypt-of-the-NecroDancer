@@ -38,6 +38,7 @@ HRESULT LobbyScene::Init()
 	itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
 	itemSpawner->SetPositionManager(positionManager);
+    itemSpawner->SetTileMap(map);
 
     uiManager = new UIManager();
 	uiManager->Init();
@@ -62,8 +63,12 @@ HRESULT LobbyScene::Init()
    
 
     // Test
-	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({3,3}, map->GetTilePos({ 3,3 }), ItemType::GOLD, 1));
-    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 4,4 }, map->GetTilePos({ 4,4 }), ItemType::GOLD, 30));
+	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({1,1}, ItemType::GOLD, 50));
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 1,2 }, ItemType::GOLD, 100));
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 1,3 }, ItemType::BOMB, 3));
+    
+    EventManager::GetInstance()->AddEvent(EventType::SPAWNWEAPON, 
+        new SpawnWeaponEventdata({ 1,4 }, DamageType::NORMAL, WeaponMaterialType::NORMAL, WeaponType::BROADSWORD));
 
     return S_OK;
 }

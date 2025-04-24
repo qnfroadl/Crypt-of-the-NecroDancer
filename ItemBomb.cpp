@@ -24,7 +24,17 @@ void ItemBomb::Render(HDC hdc)
 
 void ItemBomb::Interact(GameActor* actor)
 {
-	if (actor->GetType() == ActorType::PLAYER)
+	if (isExplode)
+	{
+		// 플레이어
+
+		// 몬스터
+
+		// 타일
+
+		// 아이템.
+	}
+	else if (actor->GetType() == ActorType::PLAYER)
 	{
 		Player* player = static_cast<Player*>(actor);
 		player->AddBomb(3);

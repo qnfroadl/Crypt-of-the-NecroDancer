@@ -3,10 +3,7 @@
 #include "config.h"
 class Player;
 class Weapon;
-enum class WeaponMaterialType
-{
-	NORMAL, BLOOD, GLASS, GOLDEN, OBSIDIAN, TITANIUM
-};
+
 
 // 데미지 타입은 한번 정해지면 변하지 않음. 
 // 무기의 종류도 변하지 않음. 
@@ -20,7 +17,7 @@ private:
 
 	void InitDamage();
 public:
-	WeaponMaterial(WeaponMaterialType materialType);
+	WeaponMaterial(WeaponMaterialType materialType = WeaponMaterialType::NORMAL);
 
 	virtual string GetMaterialName();
 	void OnEnemyKilled(Player* player);
@@ -29,4 +26,6 @@ public:
 	virtual ~WeaponMaterial() = default;
 
 	int GetDamage();
+
+	void SetType(WeaponMaterialType type);
 };
