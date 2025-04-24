@@ -38,6 +38,7 @@ private:
 	int curHP;
 
 
+#pragma region Image Box
 	unordered_map<MONSTERTYPE, MonsterImageInfo>MonsterInfoTable =
 	{
 		{ MONSTERTYPE::SKELETON,      { "Skeleton",TEXT("Image/Monster/skeleton_Normal.bmp"),195,25, 8,1}},
@@ -45,8 +46,8 @@ private:
 		{ MONSTERTYPE::ARMERSKELETON, { "ArmerSkeleton",TEXT("Image/Monster/armoredskeleton_Normal.bmp"),144,24,8,1}},
 
 	};
+#pragma endregion 이미지 정보 Table
 protected:
-	float light;
 	int beatCount;
 	int moveDelay;
 	int minFrame;
@@ -63,8 +64,6 @@ protected:
 	weak_ptr<Tilemap> tileMap;
 	weak_ptr<PositionManager> positionManager;
 	Image* attackImage;
-#pragma region Image Box
-#pragma endregion 이미지 정보 Table
 
 public:
 	void Init(MONSTERTYPE p);

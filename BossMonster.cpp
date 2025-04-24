@@ -18,7 +18,7 @@ void BossMonster::Init(BossType p)
 	state=BossState::IDLE;
 	damage = 1;
 	
-	light = 0;
+	
 	moveDelay = 3;
 	beatCount = 0;
 	
@@ -252,6 +252,7 @@ void BossMonster::AttackTarget()
 
 void BossMonster::FindWall(bool isLeft, int maxRange)
 {
+
 	/*breathRange = 0;
 	if (_isLeft)
 	{
@@ -279,6 +280,9 @@ void BossMonster::FindWall(bool isLeft, int maxRange)
 	}
 }*/
 	breathRange = 0;
+
+
+
 
 	auto map = tileMap.lock();
 	if (!map) return;

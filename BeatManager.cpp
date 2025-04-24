@@ -24,8 +24,6 @@ void BeatManager::Release()
 		delete markerManager;
 		markerManager = nullptr;
 	}
-
-	ReleaseInstance();
 }
 
 void BeatManager::Update()
@@ -105,7 +103,11 @@ void BeatManager::UpdateBeat()
 
 		if (curPosition > beat + 30.f)
 		{
-			checkOnBeat = false;
+			if (checkOnBeat)
+			{
+				checkOnBeat = false;
+				EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
+			}
 		}
 
 		// 반 박자보다 더 느림

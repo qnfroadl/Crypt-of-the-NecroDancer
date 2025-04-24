@@ -9,8 +9,8 @@ HRESULT MonsterManager::Init()
 	{
 		if (monsterVector[i] == nullptr)
 		{
-			//monsterVector[i] = AddMonster(MONSTERTYPE::SKELETON);
-			monsterVector[i] = AddBossMonster(BossType::Dragon);
+			monsterVector[i] = AddMonster(MONSTERTYPE::SKELETON);
+			//monsterVector[i] = AddBossMonster(BossType::Dragon);
 		}
 	}
 	return S_OK;

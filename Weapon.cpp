@@ -7,6 +7,7 @@
 #include "Monster.h"
 #include "ImageManager.h"
 #include "TimerManager.h"
+#include "EventManager.h"
 
 void Weapon::InitResources()
 {
@@ -173,11 +174,14 @@ void Weapon::Render(HDC hdc)
 	// 주인이 없을때 => 바닥에 있어야 함.
 	if (false == HasOwner() && IsActive())
 	{
+		if (sightState == SightState::INVISIBLE)
+		{
+			return;
+		}
+
 		FPOINT screenPos = Camera::GetInstance()->GetScreenPos(GetPos());
 
-		dropedImage->FrameRender(hdc, screenPos.x, screenPos.y, 0,0, false, true);
-
-		// 타일이 상태면 그림자만 보이게 렌더 해야하마.
+		dropedImage->FrameRender(hdc, screenPos.x, screenPos.y, 0, sightState == SightState::VISIBLE ? 0 : 1, false, true);
 	}
 	else if (bSwipe)
 	{
@@ -197,9 +201,6 @@ void Weapon::Render(HDC hdc)
 			bSwipe = false;
 			curFrame = 0;
 		}
-		
-	
-	
 	}
 }
 
@@ -238,7 +239,7 @@ void Weapon::Attack(Monster* monster)
 	
 	if (monster->IsDead())
 	{
-		// 추가 로 뭔가 해야해.
+		EventManager::GetInstance()->AddEvent(EventType::COMBOSTART,nullptr, false);
 	}
 
 }

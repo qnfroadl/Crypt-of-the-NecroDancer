@@ -4,11 +4,11 @@
 #include "Tile.h"
 #include "EventManager.h"
 #include "Camera.h"
+#include "SoundManager.h"
 
 HRESULT Shovel::Init()
 {
 	SetShovelType(ShovelType::NORMAL);
-
 	return S_OK;
 }
 
@@ -58,11 +58,15 @@ void Shovel::Interact(GameActor* actor)
 		{
 			block->Destroy();
 			tile->SetBlock(nullptr);
+
+			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYED, nullptr, true);
+
 		}
 		else 
 		{
-			// 벽돌이 너무 튼튼해서, 실패 이벤트.
-			EventManager::GetInstance()->AddEvent(EventType::BLOCKDESTROYFAILED, nullptr, true);
+			// 벽돌이 너무 튼튼해서, 실패 이벤트.	
+			SoundManager::GetInstance()->PlaySoundEffect(ESoundKey::MOV_DIG_FAIL);
+			EventManager::GetInstance()->AddEvent(EventType::COMBOFAILED, nullptr, false);
 			Camera::GetInstance()->Shake(0.2, 5);
 
 		}

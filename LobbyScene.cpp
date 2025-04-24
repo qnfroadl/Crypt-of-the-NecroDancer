@@ -21,6 +21,9 @@
 #include "ShadowCasting.h"
 #include "KeyManager.h"
 
+#include "BeatManager.h"
+#include "SoundManager.h"
+
 HRESULT LobbyScene::Init()
 {
     // InitMap
@@ -32,7 +35,7 @@ HRESULT LobbyScene::Init()
         levelManager->Init();
     }
 
-    map = make_shared<Tilemap>();
+    //map = make_shared<Tilemap>();
     map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("LOBBY")));
 	
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
@@ -43,7 +46,7 @@ HRESULT LobbyScene::Init()
 	itemSpawner->SetPositionManager(positionManager);
     itemSpawner->SetTileMap(map);
 
-    uiManager = new UIManager();
+    uiManager = make_shared<UIManager>();
 	uiManager->Init();
 
 	PlayerWallet* playerWallet = new PlayerWallet();
@@ -66,7 +69,20 @@ HRESULT LobbyScene::Init()
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
-   
+
+    SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::LOBBY);
+    beatManager = make_shared<BeatManager>();
+    beatManager->Init();
+    beatManager->StartBeat(false);
+
+
+    renderer = make_unique<TileActorRenderer>();
+    renderer->Init();
+    renderer->SetPositionManager(positionManager);
+    renderer->SetTileMap(map);
+
+    shadowCasting->Update();
+
     // Test
 	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({1,1}, ItemType::GOLD, 50));
     EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 1,2 }, ItemType::GOLD, 100));
@@ -74,8 +90,7 @@ HRESULT LobbyScene::Init()
     
     EventManager::GetInstance()->AddEvent(EventType::SPAWNWEAPON, 
         new SpawnWeaponEventdata({ 1,4 }, DamageType::NORMAL, WeaponMaterialType::NORMAL, WeaponType::BROADSWORD));
-
-    return S_OK;
+   return S_OK;
 }
 
 void LobbyScene::Release()
@@ -83,14 +98,23 @@ void LobbyScene::Release()
 	if (uiManager)
 	{
 		uiManager->Release();
-		delete uiManager;
 		uiManager = nullptr;
 	}
-
+	if (itemSpawner)
+	{
+		itemSpawner->Release();
+		itemSpawner = nullptr;
+	}
     if (map) {
         map->Release();
         map = nullptr;
     }
+
+	if (beatManager)
+	{
+		beatManager->Release();
+		beatManager = nullptr;
+	}
 
     playerManager.lock()->BindRelease();
 
@@ -108,40 +132,42 @@ void LobbyScene::Update()
 	}
 	playerManager.lock()->Update();
 
-    // test (actually update when (playermoved, blockdestroyed event) occurs)
-	if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
-	{
-	    shadowCasting->Update();
-	}
+    if (KeyManager::GetInstance()->IsOnceKeyDown('O'))
+    {
+        SoundManager::GetInstance()->SetTempo(0.8f);
+    }
+    if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
+    {
+        SoundManager::GetInstance()->SetTempo(1.2f);
+    }
+
+    if (beatManager)
+    {
+		beatManager->Update();
+    }
 }
 
 void LobbyScene::Render(HDC hdc)
 {
     FPOINT pos = playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1).lock()->GetPos();
     FPOINT cPos = Camera::GetInstance()->GetPos();
-    // 검은색 배경으로 초기화    
-    RenderFillRectAtCenter(hdc, blackBrush,
-        pos.x - cPos.x, pos.y - cPos.y,
-        SCENE_WIDTH, SCENE_HEIGHT);
-
-    if (map)
-    {
-        map->Render(hdc);
-    }
     
-	if (positionManager)
-	{
-		positionManager->Render(hdc);
-	}
+    // 검은색 배경으로 초기화    (플레이어의 스크린보스를 중심으로)
+    RenderFillRectAtCenter(hdc, blackBrush, pos.x - cPos.x, pos.y - cPos.y, SCENE_WIDTH, SCENE_HEIGHT);
+
+    if (beatManager)
+    {
+        beatManager->Render(hdc);
+    }
 
 	if (uiManager)
 	{
 		uiManager->Render(hdc);
 	}
-	playerManager.lock()->Render(hdc);
 
-    // test render
-	shadowCasting->Render(hdc);
+    // 타일, 액터들 렌더링.
+    renderer->Render(hdc);
+
 }
 
 void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)

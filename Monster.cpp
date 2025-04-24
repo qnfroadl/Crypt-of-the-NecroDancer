@@ -20,7 +20,7 @@ void Monster::Init(MONSTERTYPE p)
 
 	state = MonsterState::IDLE;
 
-	light = 0;
+	
 	damage = 0.5;
 	moveDelay = 3;
 	beatCount = 0;
@@ -183,6 +183,7 @@ POINT Monster::Trace()
 
 void Monster::Dead()
 {
+	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData(GetTileIndex(), ItemType::GOLD, 50));
 	SetActive(false);
 	state = MonsterState::DEAD;
 	positionManager.lock()->RemoveTileActor(shared_from_this(), true, GetTileIndex());
@@ -327,10 +328,12 @@ Monster::~Monster()
 
 void Monster::TakeDamage(int damage)
 {
+	
 	curHP -= damage;
 	if (curHP <= 0)
 	{
 		curHP = 0;
+		
 		Dead();
 	}
 }

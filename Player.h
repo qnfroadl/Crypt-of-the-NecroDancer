@@ -61,7 +61,7 @@ private:
     void OnComboUp(EventData* data);            // 콤보 업
 
     bool JumpAnim() override;
-    void SetJumpData(InputKey key);
+    void Move(InputKey key);
     void SetJumpData(int dx, int dy) override;
     void CalcAttackRange(Direction dir, vector<POINT>& range);
     void NotifyAll();
@@ -101,6 +101,8 @@ public:
 
 	float GetAttack() { return this->attack; }
 	void SetAttack(float attack) { this->attack = attack; }
+
+    void AddGold(int _gold);
 
 	void SetDiamond(int diamond) { this->diamond.Set(diamond); }
     void AddDiamond(int diamond) { this->diamond.Set(this->diamond.Get() + diamond); }
