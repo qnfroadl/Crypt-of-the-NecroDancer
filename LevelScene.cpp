@@ -63,12 +63,12 @@ HRESULT LevelScene::Init()
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
-    if (monsterManager.lock())
-    {
-        monsterManager.lock()->SetPositionManager(positionManager);
-        monsterManager.lock()->SetTileMap(map);
-        monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
-    }
+    monsterManager = shared_ptr<MonsterManager>();
+    monsterManager->Init();
+    monsterManager->SetPositionManager(positionManager);
+    monsterManager->SetTileMap(map);
+    monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+    
 
 
     SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
@@ -111,7 +111,7 @@ void LevelScene::Update()
         uiManager->Update();
     }
     playerManager.lock()->Update();
-    monsterManager.lock()->Update();
+    monsterManager->Update();
 
     if (KeyManager::GetInstance()->IsOnceKeyDown('O'))
     {
@@ -157,7 +157,7 @@ void LevelScene::Render(HDC hdc)
         uiManager->Render(hdc);
     }
 	playerManager.lock()->Render(hdc);
-	monsterManager.lock()->Render(hdc);
+	monsterManager->Render(hdc);
 
     // test render
     shadowCasting->Render(hdc);
@@ -177,17 +177,3 @@ void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
         this->playerManager.lock()->SetTileMap(map);
     }
 }
-
-void LevelScene::SetMonsterManager(weak_ptr<MonsterManager> monsterManager)
-{
-    this->monsterManager = monsterManager;
-    if (positionManager)
-    {
-        this->monsterManager.lock()->SetPositionManager(positionManager);
-    }
-    if (nullptr != map)
-    {
-        this->monsterManager.lock()->SetTileMap(map);
-    }
-}
-

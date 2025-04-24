@@ -109,7 +109,6 @@ void Player::Move(InputKey key)
 
 		SetJumpData(tilePos.x, tilePos.y);
 		SetTileIndex(pIndex);	// 타일 인덱스 선 변경.
-		
 	}
 	else 
 	{

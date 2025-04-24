@@ -142,9 +142,6 @@ HRESULT MainGame::Init()
 
 	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
-	monsterManager = std::make_shared<MonsterManager>();
-	monsterManager->Init();
-
 
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
@@ -158,7 +155,6 @@ HRESULT MainGame::Init()
 
 	LevelScene* level = new LevelScene();
 	level->SetPlayerManager(playerManager);
-	level->SetMonsterManager(monsterManager);
 	SceneManager::GetInstance()->AddScene("LevelScene", level);
 
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
@@ -177,9 +173,6 @@ HRESULT MainGame::Init()
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
 
 
-	
-
-	
 
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 
