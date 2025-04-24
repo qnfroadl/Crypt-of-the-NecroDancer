@@ -421,6 +421,13 @@ bool Player::IsDead()
 
 void Player::AddWeapon(shared_ptr<Weapon> _weapon)
 {
+	// 새로 줏은 무기를 포지션매니저에서 제거한다.
+	if (positionManager.lock())
+	{
+		positionManager.lock()->RemoveTileActor(_weapon);
+	}
+
+
 	// 기존 무기를 떨어뜨리고, 새 무기를 장착 한다.
 	if (weapon)
 	{
@@ -431,7 +438,6 @@ void Player::AddWeapon(shared_ptr<Weapon> _weapon)
 		weapon->Drop();
 	}
 	
-
 	weapon = _weapon;
 }
 

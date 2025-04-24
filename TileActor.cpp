@@ -4,6 +4,11 @@
 #include "CommonFunction.h"
 #include "Camera.h"
 
+TileActor::TileActor()
+	:index{0,0}
+{
+}
+
 void TileActor::Render(HDC hdc)
 {
 	float screenX = Camera::GetInstance()->GetPos().x;
