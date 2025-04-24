@@ -17,6 +17,10 @@
 
 #include "MonsterManager.h"
 #include "TilemapGenerator.h"
+
+#include "ShadowCasting.h"
+#include "KeyManager.h"
+
 HRESULT LevelScene::Init()
 {
     // InitMap
@@ -45,11 +49,15 @@ HRESULT LevelScene::Init()
     playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
     uiManager->AddUI(playerHp);
 
+    shadowCasting = make_shared<ShadowCasting>();
+    shadowCasting->Init(map->GetTiles());
+
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
         playerManager.lock()->SetTileMap(map);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+        shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
     if (monsterManager.lock())
@@ -90,6 +98,12 @@ void LevelScene::Update()
     }
     playerManager.lock()->Update();
     monsterManager.lock()->Update();
+
+    // test (actually update when (playermoved, blockdestroyed event) occurs)
+    if (KeyManager::GetInstance()->IsOnceKeyDown('L'))
+    {
+        shadowCasting->Update();
+    }
 }
 
 void LevelScene::Render(HDC hdc)
@@ -117,6 +131,9 @@ void LevelScene::Render(HDC hdc)
     }
 	playerManager.lock()->Render(hdc);
 	monsterManager.lock()->Render(hdc);
+
+    // test render
+    shadowCasting->Render(hdc);
 }
 
 void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
