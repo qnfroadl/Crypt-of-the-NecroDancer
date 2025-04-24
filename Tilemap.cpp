@@ -56,26 +56,16 @@ void Tilemap::Update()
 
 void Tilemap::Render(HDC hdc)
 {
-	//for (auto& row : tiles)
-	//{
-	//	for (auto& tile : row)
-	//	{
-	//		if (tile)
-	//		{
-	//			tile->Render(hdc);
-	//		}
-	//	}
-	//}
-	for (int y = leftTop.y; y <= rightBottom.y; ++y)
-	{
-		if (y < 0 || y >= mapRows) continue;
-
-		for (int x = leftTop.x; x <= rightBottom.x; ++x)
-		{
-			if (x < 0 || x >= mapColumns) continue;
-			tiles[y][x]->Render(hdc, true);
-		}
-	}
+	// for (int y = leftTop.y; y <= rightBottom.y; ++y)
+	// {
+	// 	if (y < 0 || y >= mapRows) continue;
+	// 
+	// 	for (int x = leftTop.x; x <= rightBottom.x; ++x)
+	// 	{
+	// 		if (x < 0 || x >= mapColumns) continue;
+	// 		tiles[y][x]->Render(hdc, true);
+	// 	}
+	// }
 }
 
 shared_ptr<Tile> Tilemap::GetTile(POINT index)

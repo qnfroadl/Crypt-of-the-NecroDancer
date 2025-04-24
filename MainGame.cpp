@@ -270,7 +270,6 @@ void MainGame::Render()
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
 	
-
 	//playerManager->Render(hBackBufferDC);
 	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);

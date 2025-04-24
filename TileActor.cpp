@@ -7,6 +7,13 @@
 TileActor::TileActor()
 	:index{0,0}
 {
+	sightState = SightState::INVISIBLE;
+
+	sightInfo.revealed = false;
+	sightInfo.visible = false;
+
+	brightnessInfo.staticBrightness = 0.f;
+	brightnessInfo.dynamicBrightness = 1.f;
 
 }
 
@@ -33,9 +40,27 @@ void TileActor::SetTileIndex(const POINT& _index)
 	index = _index;
 }
 
-void TileActor::SetSightInfo(const SightInfo& _sightInfot)
+void TileActor::SetVisible(bool visible)
 {
-	sightInfo = _sightInfot;
+	sightInfo.visible = visible;
+	if (visible && false == sightInfo.revealed )
+	{
+		// 최초 1회. 본 적있다.
+		sightInfo.revealed = true;
+	}
+
+	if (sightInfo.visible)
+	{
+		sightState = SightState::VISIBLE;
+	}
+	else if(sightInfo.revealed)
+	{
+		sightState = SightState::SHADOW;
+	}
+	else 
+	{
+		sightState = SightState::INVISIBLE;
+	}
 }
 
 const SightInfo& TileActor::GetSightInfo()

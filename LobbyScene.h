@@ -2,6 +2,8 @@
 #include "config.h"
 #include "GameObject.h"
 #include "LevelManager.h"
+#include "TileActorRenderer.h"
+#include "LevelManager.h"
 
 class Tilemap;
 class PlayerManager;
@@ -11,9 +13,12 @@ class ItemSpawner;
 class MonsterManager;
 class ShadowCasting;
 class BeatManager;
+class TileActorRenderer;
+
 class LobbyScene : public GameObject
 {
 private:
+    unique_ptr<TileActorRenderer> renderer;
     unique_ptr<LevelManager> levelManager;
 
     shared_ptr<Tilemap> map;

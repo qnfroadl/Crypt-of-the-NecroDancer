@@ -54,6 +54,12 @@ void Tile::Render(HDC hdc, bool useCamera)
 {
 	if (!tileImage) return;
 
+	if (false == sightInfo.visible && useCamera)
+	{
+		// 임시 조치.
+		return;
+	}
+
 	float renderX = pos.x;
 	float renderY = pos.y;
 

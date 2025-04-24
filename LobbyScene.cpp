@@ -75,7 +75,14 @@ HRESULT LobbyScene::Init()
     beatManager->Init();
     beatManager->StartBeat(false);
 
-   
+
+    renderer = make_unique<TileActorRenderer>();
+    renderer->Init();
+    renderer->SetPositionManager(positionManager);
+    renderer->SetTileMap(map);
+
+    shadowCasting->Update();
+
     // Test
 	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({1,1}, ItemType::GOLD, 50));
     EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData({ 1,2 }, ItemType::GOLD, 100));
@@ -138,20 +145,9 @@ void LobbyScene::Render(HDC hdc)
 {
     FPOINT pos = playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1).lock()->GetPos();
     FPOINT cPos = Camera::GetInstance()->GetPos();
-    // 검은색 배경으로 초기화    
-    RenderFillRectAtCenter(hdc, blackBrush,
-        pos.x - cPos.x, pos.y - cPos.y,
-        SCENE_WIDTH, SCENE_HEIGHT);
-
-    if (map)
-    {
-        map->Render(hdc);
-    }
     
-	if (positionManager)
-	{
-		positionManager->Render(hdc);
-	}
+    // 검은색 배경으로 초기화    (플레이어의 스크린보스를 중심으로)
+    RenderFillRectAtCenter(hdc, blackBrush, pos.x - cPos.x, pos.y - cPos.y, SCENE_WIDTH, SCENE_HEIGHT);
 
     if (beatManager)
     {
@@ -162,10 +158,10 @@ void LobbyScene::Render(HDC hdc)
 	{
 		uiManager->Render(hdc);
 	}
-	playerManager.lock()->Render(hdc);
 
-    // test render
-	shadowCasting->Render(hdc);
+    // 타일, 액터들 렌더링.
+    renderer->Render(hdc);
+
 }
 
 void LobbyScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)

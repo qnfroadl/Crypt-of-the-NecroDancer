@@ -17,21 +17,22 @@ class TileActorRenderer : public GameActor
 {
 
 private:
-	
 	vector<vector<bool>> sightMap;
 
-	Tilemap* tileMap;
+	shared_ptr<Tilemap> tileMap;
 	shared_ptr<PositionManager> positionManager;
+
 	std::vector<std::shared_ptr<IRendableTileActor>> rendableActors;
 
 	void OnChangedSightMap(EventData* data);
+
 public:
 
 	HRESULT Init() override;
 	void Render(HDC hdc) override;
 
-	void SetTileMap(weak_ptr<Tilemap> tileMap); 
-	void SetPositionManager(weak_ptr<PositionManager> positionManager);
+	void SetTileMap(shared_ptr<Tilemap> tileMap); 
+	void SetPositionManager(shared_ptr<PositionManager> positionManager);
 
 	void AddRendableSource(std::shared_ptr<IRendableTileActor> source);
 	void OnPlayerMoved(); // 또는 OnLightingUpdateTrigger()
