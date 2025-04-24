@@ -57,6 +57,9 @@ HRESULT LobbyScene::Init()
 	playerHp->Init();
 	uiManager->AddUI(playerHp);
 
+
+
+
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
 

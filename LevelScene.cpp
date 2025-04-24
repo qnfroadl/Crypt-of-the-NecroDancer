@@ -65,7 +65,7 @@ HRESULT LevelScene::Init()
     }
 
 
-    monsterManager = shared_ptr<MonsterManager>();
+    monsterManager = make_shared<MonsterManager>();
     monsterManager->Init();
     monsterManager->SetPositionManager(positionManager);
     monsterManager->SetTileMap(map);
@@ -169,7 +169,6 @@ void LevelScene::Render(HDC hdc)
 void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
-
 
     if (positionManager)
     {
