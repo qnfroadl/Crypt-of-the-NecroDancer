@@ -53,11 +53,13 @@ void ShadowCasting::Init(vector<vector<shared_ptr<Tile>>> _tiles)
 
 void ShadowCasting::Release()
 {
+	EventManager::GetInstance()->UnbindEvent(this, EventType::PLAYERMOVED);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BLOCKDESTROYED);
 }
 
 void ShadowCasting::Update()
 {
-	//cameraRect = Camera::GetInstance()->GetViewRect(); // 응 타일 인덱스 기반 아니야
+	CalculateCameraRect();
 
 	InitShadowMap();
 
@@ -279,4 +281,30 @@ bool ShadowCasting::IsOutOfRange(POINT pos)
 	if (pos.y < 0 || pos.y >= maxRow) return true;
 
 	return false;
+}
+
+void ShadowCasting::CalculateCameraRect()
+{
+	// 급하니까 냅다 가져다 씁니다~~
+	FPOINT cameraPos = Camera::GetInstance()->GetPos();
+	RECT viewRect = Camera::GetInstance()->GetViewRect();
+	float scaledTileSize = TILE_SIZE * TILE_SCALE;
+
+	// 카메라 좌상단 좌표가 포함된 타일 인덱스
+	int leftTile = static_cast<int>(cameraPos.x / scaledTileSize);
+	int topTile = static_cast<int>(cameraPos.y / scaledTileSize);
+
+	// 화면에 보이는 타일 개수 (뷰의 폭/높이를 타일 크기로 나눔)
+	int tilesOnScreenX = static_cast<int>(ceil((viewRect.right - viewRect.left) / scaledTileSize));
+	int tilesOnScreenY = static_cast<int>(ceil((viewRect.bottom - viewRect.top) / scaledTileSize));
+
+	// 마진
+	int marginX = 2;
+	int marginY = 2;
+
+	// 보여줄 타일 범위 계산
+	cameraRect.left = max(0, leftTile - marginX);
+	cameraRect.top = max(0, topTile - marginY);
+	cameraRect.right = min(maxCol - 1, leftTile + tilesOnScreenX + marginX);
+	cameraRect.bottom = min(maxRow - 1, topTile + tilesOnScreenY + marginY);
 }

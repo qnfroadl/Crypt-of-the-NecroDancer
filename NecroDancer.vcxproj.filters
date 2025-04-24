@@ -17,9 +17,6 @@
     <ClCompile Include="BattleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="BeatManager.cpp">
-      <Filter>InputSystem &amp; UI</Filter>
-    </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>InputSystem &amp; UI</Filter>
     </ClCompile>
@@ -155,8 +152,6 @@
       <Filter>Monster</Filter>
     </ClCompile>
     <ClCompile Include="LevelManager.cpp" />
-    <ClCompile Include="ShadowCasting.cpp" />
-
     <ClCompile Include="MultipleGoldUI.cpp">
       <Filter>InputSystem &amp; UI\UI</Filter>
     </ClCompile>
@@ -178,6 +173,12 @@
     <ClCompile Include="MainMenuScene.cpp">
       <Filter>Scene\IntroScene</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowCasting.cpp">
+      <Filter>ShadowCasting</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatManager.cpp">
+      <Filter>InputSystem &amp; UI\BeatManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -198,9 +199,6 @@
     </ClInclude>
     <ClInclude Include="ActorDef.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="BeatManager.h">
-      <Filter>InputSystem &amp; UI</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>InputSystem &amp; UI</Filter>
@@ -359,7 +357,6 @@
       <Filter>Monster</Filter>
     </ClInclude>
     <ClInclude Include="LevelManager.h" />
-    <ClInclude Include="ShadowCasting.h" />
     <ClInclude Include="MultipleGoldUI.h">
       <Filter>InputSystem &amp; UI\UI</Filter>
     </ClInclude>
@@ -380,6 +377,12 @@
     </ClInclude>
     <ClInclude Include="MainMenuScene.h">
       <Filter>Scene\IntroScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowCasting.h">
+      <Filter>ShadowCasting</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatManager.h">
+      <Filter>InputSystem &amp; UI\BeatManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

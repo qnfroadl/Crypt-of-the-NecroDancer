@@ -62,6 +62,7 @@ HRESULT LobbyScene::Init()
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
 
+    int playerCount = 1;
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
@@ -69,6 +70,7 @@ HRESULT LobbyScene::Init()
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerWallet);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+		playerCount = playerManager.lock()->GetPlayerCount();
     }
 
 
@@ -76,7 +78,7 @@ HRESULT LobbyScene::Init()
     beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(false);
-
+    beatManager->SetActive2P(playerCount == 1 ? false : true);
 
     renderer = make_unique<TileActorRenderer>();
     renderer->Init();
