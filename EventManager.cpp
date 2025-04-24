@@ -16,6 +16,12 @@ int EventManager::GetPriority(EventType type)
 		case EventType::BEATEND: 
 			priority = 2;
 			break;
+		case EventType::LIGHTINGUPDATE:		// 라이팅 업데이트.
+			priority = 2;
+			break;
+		case EventType::PLAYERMOVED:
+			priority = 3;
+			break;
 	}
 
 	return priority;

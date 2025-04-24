@@ -25,7 +25,8 @@ public:
 	void Update();
 	void Render(HDC hdc);
 
-	shared_ptr<Tile> GetTile(POINT index);
+	shared_ptr<Tile> GetTile(POINT index);  
+    vector<vector<shared_ptr<Tile>>> GetTiles() { return tiles; }
 
 	FPOINT GetTilePos(POINT index);
 
