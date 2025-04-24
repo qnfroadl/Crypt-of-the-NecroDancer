@@ -156,7 +156,10 @@ void LobbyScene::Render(HDC hdc)
     RenderFillRectAtCenter(hdc, blackBrush, pos.x - cPos.x, pos.y - cPos.y, SCENE_WIDTH, SCENE_HEIGHT);
 
     // 타일, 액터들 렌더링.
-    renderer->Render(hdc);
+    if (renderer)
+    {
+        renderer->Render(hdc);
+    }
 
     if (beatManager)
     {

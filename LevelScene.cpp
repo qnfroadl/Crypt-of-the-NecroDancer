@@ -166,11 +166,6 @@ void LevelScene::Render(HDC hdc)
         pos.x - cPos.x, pos.y - cPos.y,
         SCENE_WIDTH, SCENE_HEIGHT);
 
-    if (map)
-    {
-        map->Render(hdc);
-    }
-
     // 타일, 액터들 렌더링.
     if (renderer)
     {
