@@ -42,7 +42,7 @@ public:
 	void Move(TileActor* actor, POINT index);
 	POINT GetSpawnIndex();
 	void Load(string filePath);
-	void OnBeat(bool isCombo);
+	void OnBeat();
 	POINT GetPlayerStartIndex() { return startIndex; }
 	POINT GetNextStageIndex() { return endIndex; }
 	void SetPlayerStartIndex(POINT p) { startIndex = p; }
@@ -84,5 +84,7 @@ public:
 	void ClearTorchSpots() { torchSpots.clear(); }
 	void AddTorchSpot(POINT spot) { torchSpots.push_back(spot); }
 	
+	void OnCombo() { isCombo = true; }
+	void OffCombo() { isCombo = false; }
 };
 

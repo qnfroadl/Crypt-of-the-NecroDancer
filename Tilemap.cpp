@@ -40,13 +40,13 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	leftTop = { 0, 0 };
 	rightBottom = { mapColumns - 1, mapRows - 1 };
 	isCombo = false;
-	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this, placeholders::_1));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::OnBeat, this));
 	EventManager::GetInstance()->BindEvent(this, EventType::INTERACT, std::bind(&Tilemap::OnInteract, this, placeholders::_1));
 	EventManager::GetInstance()->BindEvent(this, EventType::PLAYERMOVED, std::bind(&Tilemap::UpdateVisuable, this));
 
 
-	EventManager::GetInstance()->BindEvent(this, EventType::COMBOSTART, std::bind(&Tilemap::SetIsCombo, this, true));
-	EventManager::GetInstance()->BindEvent(this, EventType::COMBOFAILED, std::bind(&Tilemap::SetIsCombo, this, false));
+	EventManager::GetInstance()->BindEvent(this, EventType::COMBOSTART, std::bind(&Tilemap::OnCombo, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::COMBOFAILED, std::bind(&Tilemap::OffCombo, this));
 
 
 
@@ -272,9 +272,9 @@ void Tilemap::Load(string filePath)
 	in.close();
 }
 
-void Tilemap::OnBeat(bool isCombo)
+void Tilemap::OnBeat()
 {
-	for (int y = leftTop.y; y <= rightBottom.y; ++y)
+	/*for (int y = leftTop.y; y <= rightBottom.y; ++y)
 	{
 		if (y < 0 || y >= mapRows) continue;
 
@@ -282,6 +282,16 @@ void Tilemap::OnBeat(bool isCombo)
 		{
 			if (x < 0 || x >= mapColumns) continue;
 			tiles[y][x]->OnBeat(isCombo);
+		}
+	}*/
+	for (int x = 0; x < mapColumns; ++x)
+	{
+		for (int y = 0; y < mapRows; ++y)
+		{
+			if (tiles[y][x])
+			{
+				tiles[y][x]->OnBeat(isCombo);
+			}
 		}
 	}
 }
