@@ -32,6 +32,7 @@ HRESULT TileActorRenderer::Init()
 void TileActorRenderer::Render(HDC hdc)
 {
     bool sightVisible = false;
+    float brightness = 0.f;
 
     POINT leftTop = tileMap->GetLeftTop();
     POINT rightBottom = tileMap->GetRightBottom();
@@ -44,6 +45,8 @@ void TileActorRenderer::Render(HDC hdc)
         {
             // 타일 렌더.
             sightVisible = sightMap[y][x].first;
+            brightness = sightMap[y][x].second;
+
             tiles[y][x]->SetVisible(sightVisible);
             tiles[y][x]->Render(hdc, true);
             std::vector<std::shared_ptr<TileActor>> actors = positionManager->GetActorsAt(POINT{x,y});

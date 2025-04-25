@@ -72,7 +72,7 @@ void PlayerHp::Render(HDC hdc)
 				int heartX = position.x + image->GetFrameHeight() * size.y * 1.15f * (j + 5 - x);
 				int heartY = position.y + image->GetFrameHeight() * size.y * 1.15f * i;
 
-				if (((i * 5 + j) == beatAnimIndex) && beatAnim)
+				if (((i * 5 + j) == beatAnimIndex) && beatAnim && curHp > 0)
 				{
 					image->FrameRender(hdc, heartX, heartY, frameIndex, 0, size.x * 1.1f, size.y * 1.1f, false, true);
 				}
@@ -108,5 +108,19 @@ void PlayerHp::AdjustSize()
 
 	// position 은 하트의 시작위치(좌상단)
 	position = { clientWidth - heartWidth * 1.3f * 6.5f, heartHeight * 0.7f };
+}
+
+void PlayerHp::BeatEnd()
+{
+	beatAnim = false;
+	beatAnimIndex++;
+	if (curHp > 0)
+	{
+		beatAnimIndex %= (int)ceil(curHp);
+	}
+	else
+	{
+		beatAnimIndex = 0;
+	}
 }
 

@@ -29,6 +29,6 @@ public:
 	void AdjustSize();
 
 	void BeatStart() { beatAnim = true; }
-	void BeatEnd() { beatAnim = false; beatAnimIndex++; beatAnimIndex %= (int)ceil(curHp); }
+	void BeatEnd();
 };
 
