@@ -71,6 +71,8 @@ void Tilemap::Release()
 	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
 	EventManager::GetInstance()->UnbindEvent(this, EventType::INTERACT);
 	EventManager::GetInstance()->UnbindEvent(this, EventType::PLAYERMOVED);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::COMBOSTART);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::COMBOFAILED);
 
 
 }
