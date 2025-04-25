@@ -4,6 +4,7 @@
 #include "Tile.h"
 #include "Block.h"
 #include <functional>
+#include "Torch.h"
 
 Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int mapCols)
 {
@@ -35,7 +36,9 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
         endTile->SetTileNum(24);
 
 	FinalizeTilemap(tilemap);
-	CollectSpawnPoints(tilemap);
+	// CollectSpawnPoints(tilemap);
+    CollectTilemapInfo(tilemap);
+	tilemap -> ApplyTorchLighting();
     return tilemap;
 }
 
@@ -84,6 +87,11 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
                 auto b = make_shared<Block>();
                 b->Init(copy->GetPos(), { x, y });
                 b->SetBlockNum(src->GetBlock()->GetBlockNum());
+                if (src->GetBlock()->GetTorch()) {
+                        auto torch = make_shared<Torch>();
+                        torch->Init(copy->GetPos(), { x, y });
+                        b->SetTorch(torch);
+                    }
                 copy->SetBlock(b);
             }
 
@@ -94,6 +102,14 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
     tilemap->SetPlayerStartIndex(room.playerStart);
     tilemap->SetNextStageIndex(room.nextStage);
     tilemap->GetTile(room.nextStage)->SetTileNum(24);
+
+    placedRects.clear();
+    placedRects.push_back({ 0, 0, room.cols, room.rows });
+    startCandidate = room.playerStart;
+
+    CollectTilemapInfo(tilemap);
+    tilemap->ApplyTorchLighting();
+
     return tilemap;
 }
 
@@ -181,6 +197,24 @@ RoomData TilemapGenerator::ParseMapFile(const string& path)
                 b->Init(room.tiles[y][x]->GetPos(), { x, y });
                 b->SetBlockNum(num);
                 room.tiles[y][x]->SetBlock(b);
+            }
+        }
+    }
+
+    in >> label;
+    if (label == "TORCH") {
+        for (int y = 0; y < rows; ++y) {
+            for (int x = 0; x < cols; ++x) {
+                int torchFlag;
+                in >> torchFlag;
+                if (torchFlag == 1) {
+                    auto block = room.tiles[y][x]->GetBlock();
+                    if (block) {
+                        auto torch = make_shared<Torch>();
+                        torch->Init(room.tiles[y][x]->GetPos(), { x, y });
+                        block->SetTorch(torch);
+                    }
+                }
             }
         }
     }
@@ -363,6 +397,13 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
                     auto b = make_shared<Block>();
                     b->Init(copy->GetPos(), { globalX, globalY });
                     b->SetBlockNum(src->GetBlock()->GetBlockNum());
+
+                    if (src->GetBlock()->GetTorch()) {
+                        auto torch = make_shared<Torch>();
+                        torch->Init(copy->GetPos(), { globalX, globalY });
+                        b->SetTorch(torch);
+                    }
+
                     copy->SetBlock(b);
                 }
 
@@ -769,9 +810,59 @@ void TilemapGenerator::ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& roo
     }
 }
 
-void TilemapGenerator::CollectSpawnPoints(Tilemap* tilemap)
+//void TilemapGenerator::CollectSpawnPoints(Tilemap* tilemap)
+//{
+//    // 시작 방 RECT 찾기
+//    RECT startRoomRect = {};
+//    for (const RECT& r : placedRects)
+//    {
+//        if (startCandidate.x >= r.left && startCandidate.x < r.right &&
+//            startCandidate.y >= r.top && startCandidate.y < r.bottom)
+//        {
+//            startRoomRect = r;
+//            break;
+//        }
+//    }
+//
+//    // spawnPoints 수집
+//    for (int y = 0; y < tilemap->GetHeight(); ++y)
+//    {
+//        for (int x = 0; x < tilemap->GetWidth(); ++x)
+//        {
+//            // 시작 방이면 제외
+//            if (x >= startRoomRect.left && x < startRoomRect.right &&
+//                y >= startRoomRect.top && y < startRoomRect.bottom)
+//                continue;
+//
+//            // 상점 방이면 제외
+//            bool isInShop = false;
+//            for (const RECT& shop : shopRoomRects)
+//            {
+//                if (x >= shop.left && x < shop.right &&
+//                    y >= shop.top && y < shop.bottom)
+//                {
+//                    isInShop = true;
+//                    break;
+//                }
+//            }
+//            if (isInShop) continue;
+//
+//            // 조건에 맞으면 추가
+//            shared_ptr<Tile> t = tilemap->GetTile({ x, y });
+//            if (t && t->GetTileNum() == 0 && !t->GetBlock())
+//            {
+//				tilemap->AddSpawnPoint({ x, y });
+//            }
+//        }
+//    }
+//}
+
+
+void TilemapGenerator::CollectTilemapInfo(Tilemap* tilemap)
 {
-    // 시작 방 RECT 찾기
+    tilemap->ClearTorchSpots();
+    tilemap->ClearSpawnPoints();
+
     RECT startRoomRect = {};
     for (const RECT& r : placedRects)
     {
@@ -783,17 +874,23 @@ void TilemapGenerator::CollectSpawnPoints(Tilemap* tilemap)
         }
     }
 
-    // spawnPoints 수집
     for (int y = 0; y < tilemap->GetHeight(); ++y)
     {
         for (int x = 0; x < tilemap->GetWidth(); ++x)
         {
-            // 시작 방이면 제외
+            shared_ptr<Tile> tile = tilemap->GetTile({ x, y });
+            if (!tile) continue;
+
+            shared_ptr<Block> block = tile->GetBlock();
+            if (block && block->GetTorch())
+            {
+                tilemap->AddTorchSpot({ x, y });
+            }
+
             if (x >= startRoomRect.left && x < startRoomRect.right &&
                 y >= startRoomRect.top && y < startRoomRect.bottom)
                 continue;
 
-            // 상점 방이면 제외
             bool isInShop = false;
             for (const RECT& shop : shopRoomRects)
             {
@@ -806,11 +903,9 @@ void TilemapGenerator::CollectSpawnPoints(Tilemap* tilemap)
             }
             if (isInShop) continue;
 
-            // 조건에 맞으면 추가
-            shared_ptr<Tile> t = tilemap->GetTile({ x, y });
-            if (t && t->GetTileNum() == 0 && !t->GetBlock())
+            if (tile->GetTileNum() == 0 && !tile->GetBlock())
             {
-				tilemap->AddSpawnPoint({ x, y });
+                tilemap->AddSpawnPoint({ x, y });
             }
         }
     }

@@ -18,7 +18,6 @@ HRESULT LevelManager::Init()
 void LevelManager::Release()
 {
     EventManager::GetInstance()->UnbindEvent(this, EventType::ENTERZONE);
-   
 
 }
 

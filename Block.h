@@ -38,7 +38,7 @@ public:
 	void Update() override;	
 
 	void Destroy();
-	bool Destroy(int strength);
+	bool CanDestroy(int strength);
 
 	void SetBlockNum(int _blockNum);
 	int GetBlockNum() { return blockNum; }

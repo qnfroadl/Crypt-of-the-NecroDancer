@@ -49,9 +49,11 @@ public:
     const std::vector<std::shared_ptr<TileActor>>& GetActorsAt(const POINT& pos);
     std::vector<std::shared_ptr<TileActor>> GetActorsAt(const POINT& pos, ActorType type);
 
+    HRESULT Init() override;
     void Update() override;
     void Render(HDC hdc) override;
-    
+    void Release() override;
+
     void Clear();
 
 };

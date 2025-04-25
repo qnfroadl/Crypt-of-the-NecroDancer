@@ -12,6 +12,7 @@
 #include "Shovel.h"
 #include "Tile.h"
 #include "ItemBomb.h"
+#include "BombAttack.h"
 #include "SoundManager.h"
 
 void Player::OnBeatHit(EventData* data)
@@ -23,7 +24,19 @@ void Player::OnBeatHit(EventData* data)
 		BeatHitEventData* beatData = static_cast<BeatHitEventData*>(data);
 		if (beatData->playerIndex == playerIndex)
 		{
-			Move(beatData->inputKey);
+			switch (beatData->inputKey)
+			{
+				case InputKey::UP:
+				case InputKey::DOWN:
+				case InputKey::LEFT:
+				case InputKey::RIGHT:
+					Move(beatData->inputKey);
+				break;
+				case InputKey::DOWNLEFT:
+					DropBombAttack();
+					break;
+			}
+			
 			//cout << "beat hit" << endl;
 		}
 		else
@@ -130,6 +143,31 @@ void Player::Move(InputKey key)
 	}
 }
 
+void Player::DropBombAttack()
+{
+	int count = bombCount.Get();
+	// static POINT range[9] = { {0 , 0},
+	// 	{-1, -1}, {0, -1}, {1, -1},
+	// 	{-1,  0},   {1,  0},
+	// 	{-1,  1}, {0,  1}, {1,  1}
+	// };
+
+	if (0 < count)
+	{
+		POINT center = GetTileIndex(); // 플레이어 위치 기준
+
+		shared_ptr<BombAttack> ba = make_shared<BombAttack>();
+		ba->Init();
+		FPOINT pos = tileMap.lock()->GetTilePos(center);
+		ba->SetTileIndex(center);
+		ba->SetPos(pos);
+		positionManager.lock()->AddTileActor(ba);
+		
+		bombCount.Set(count - 1);
+	}
+
+}
+
 void Player::SetJumpData(int dx, int dy)
 {
 	state = PlayerState::JUMP;
@@ -174,8 +212,10 @@ Player::Player()
 	hp.Set(3);
 	maxHP.Set(3);
 	diamond.Set(0);
+	gold.Set(0);
 	goldMultiple.Set(1);	// 최소 배수.1
-
+	bombCount.Set(1);
+	
 	SetType(ActorType::PLAYER);
 }
 
@@ -203,6 +243,9 @@ HRESULT Player::Init()
 	// 기본삽정도는 줘야지.
 	shovel = make_shared<Shovel>();
 	shovel->Init();
+
+	// 기본 폭탄
+	bombCount.Set(99);
 
 	// 기본무기
 	auto tempWeapon = make_shared<Weapon>();
@@ -320,7 +363,10 @@ void Player::Render(HDC hdc)
 
 void Player::Release()
 {
-
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATHIT);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATMISS);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::COMBOSTART);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::COMBOFAILED);
 }
 
 void Player::SetTileIndex(const POINT& _index)

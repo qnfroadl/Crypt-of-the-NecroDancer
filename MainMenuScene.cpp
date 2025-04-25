@@ -1,4 +1,4 @@
-#include "MainMenuScene.h"
+﻿#include "MainMenuScene.h"
 #include "Image.h"
 #include "ImageManager.h"
 #include "KeyManager.h"
@@ -28,7 +28,7 @@ void MainMenuScene::Update()
 
 	if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RETURN))
 	{
-		SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
+		SceneManager::GetInstance()->ChangeScene("LobbyScene");
 	}
 }
 

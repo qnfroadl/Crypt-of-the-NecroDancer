@@ -56,7 +56,9 @@ private:
 
     void ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& rooms);
 
-    void CollectSpawnPoints(Tilemap* tilemap);
+    //void CollectSpawnPoints(Tilemap* tilemap);
+
+    void CollectTilemapInfo(Tilemap* tilemap);
 
     void PlaceRoomsFromBSP(BSPNode* root, Tilemap* tilemap, const string& zoneName);
     void ConnectLeafRooms(Tilemap* tilemap, BSPNode* node);

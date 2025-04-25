@@ -82,19 +82,27 @@ void EventManager::Update()
 		queEvents.pop();
 
 		// 이벤트 노티, 매 프레임당 최대 10개의 이벤트만 처리한다. (일단은 로컬변수로 처리)
-		auto it = funcs[event->type].begin();
+		//auto it = funcs[event->type].begin();
 
-		int maxCount = 10;
-		int count = 0;
-		while (it != funcs[event->type].end() && count < maxCount)
+		int maxCount = 0;
+
+		auto& bindEvents = funcs[event->type];
+		maxCount = bindEvents.size();
+		for (int i = 0; i < maxCount; i++)
 		{
-			(*it).func(event->data);
-			
-			it++;
-			count++;
+			bindEvents[i].func(event->data);
 		}
-		
 		delete event;
+
+		//while (it != funcs[event->type].end() && count < maxCount)
+		//{
+		//	(*it).func(event->data);
+		//	
+		//	it++;
+		//	count++;
+		//}
+		
+		
 	}
 	
 }

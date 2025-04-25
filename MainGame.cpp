@@ -25,7 +25,11 @@
 #include "MainMenuScene.h"
 #include "LobbyScene.h"
 #include "LevelScene.h"
+
 #include "LevelManager.h"
+
+#include "EffectManager.h"
+
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -55,28 +59,7 @@ void MainGame::UpdateCollisionInfo()
 
 void MainGame::ItemSpawnSimulation()
 {
-	if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LSHIFT))
-	{
-		SceneManager::GetInstance()->ChangeScene("TilemapTool", "Loading");
-	}
-	else if (KeyManager::GetInstance()->IsOnceKeyDown('Q'))
-	{
-		LobbyScene* scene = static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene("LobbyScene"));
-		if (scene)
-		{
-			SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
-		}
-		
-
-	}
-	else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RSHIFT))
-	{
-		SceneManager::GetInstance()->ChangeScene("AstarScene", "Loading");
-	}
-	else if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
-	{
-			SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
-	}
+	
 }
 
 //void MainGame::TilemapMenuClicked(WORD id)
@@ -142,6 +125,7 @@ HRESULT MainGame::Init()
 	KeyManager::GetInstance()->Init();
 	ImageManager::GetInstance()->Init();
 	SceneManager::GetInstance()->Init();
+	EffectManager::GetInstance()->Init();
 
 	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
@@ -220,7 +204,7 @@ void MainGame::Release()
 	KeyManager::GetInstance()->Release();
 	ImageManager::GetInstance()->Release();
 	SceneManager::GetInstance()->Release();
-
+	EffectManager::GetInstance()->Release();
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Release();
@@ -251,6 +235,7 @@ void MainGame::Update()
 
 	CollisionManager::GetInstance()->Update();
 	SceneManager::GetInstance()->Update();
+	EffectManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
 	//btn->Update();
 	
@@ -278,7 +263,7 @@ void MainGame::Render()
 	HDC hBackBufferDC = backBuffer->GetMemDC();
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
-	
+	EffectManager::GetInstance()->Render(hBackBufferDC);
 	//playerManager->Render(hBackBufferDC);
 	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);

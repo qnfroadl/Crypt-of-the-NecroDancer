@@ -5,12 +5,14 @@
 class TileActor;
 class Tile;
 class Item;
+class EventData;
 //이게 전체맵 타일 제너레이터가 방 조합해서 여기 넣어줘야 함
 class Tilemap : public GameActor
 {
 private:
 	vector<vector<shared_ptr<Tile>>> tiles;
 	vector<POINT> spawnPoints;
+	vector<POINT> torchSpots;
 	int mapRows;
 	int mapColumns;
 	bool isCombo;
@@ -19,6 +21,8 @@ private:
 
 	POINT leftTop;
 	POINT rightBottom;
+
+	void OnInteract(EventData* data);
 public:
 	HRESULT Init(int _mapRows, int _mapColumns);
 	void Release();
@@ -55,6 +59,8 @@ public:
 	POINT GetRightBottom() { return rightBottom; }
 
 	void UpdateVisuable();
+	void ApplyTorchLighting();
+	void RemoveTorchLightingAt(POINT torchIndex);
 	void AddSpawnPoint(POINT spawn) { spawnPoints.push_back(spawn); }
 
 	void PrintSpawnPoints()
@@ -64,7 +70,19 @@ public:
 			cout << "Spawn Point: (" << spawn.x << ", " << spawn.y << ")" << endl;
 		}
 	}
+	void PrintTorchSpots()
+	{
+		for (const auto& torch : torchSpots)
+		{
+			cout << "Torch Spot: (" << torch.x << ", " << torch.y << ")" << endl;
+		}
+	}
 
 	void SetIsCombo(bool _isCombo) { isCombo = _isCombo; }
+
+	void ClearSpawnPoints() { spawnPoints.clear(); }
+	void ClearTorchSpots() { torchSpots.clear(); }
+	void AddTorchSpot(POINT spot) { torchSpots.push_back(spot); }
+	
 };
 

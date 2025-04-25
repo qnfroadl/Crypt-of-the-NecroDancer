@@ -47,7 +47,7 @@ public:
 	void Attack(Monster* monster);
 	void Swipe(FPOINT pos, Direction dir);
 	// 유리무기인 경우에는 유리조각 스폰.
-	void Destroy();
+	// void Destroy();
 
 	vector<POINT> GetRange();
 };

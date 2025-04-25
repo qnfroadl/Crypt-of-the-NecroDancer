@@ -62,6 +62,8 @@ private:
 
     bool JumpAnim() override;
     void Move(InputKey key);
+    void DropBombAttack();
+
     void SetJumpData(int dx, int dy) override;
     void CalcAttackRange(Direction dir, vector<POINT>& range);
     void NotifyAll();

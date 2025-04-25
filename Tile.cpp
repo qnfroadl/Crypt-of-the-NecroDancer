@@ -12,7 +12,7 @@
 HRESULT Tile::Init()
 {
 	tileImage = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"),
-		234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
+		234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255), true);
 
 	type = TileType::NONE;
 	tileNum = -1;
@@ -25,7 +25,7 @@ HRESULT Tile::Init()
 HRESULT Tile::Init(int x, int y)
 {
 	tileImage = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"),
-		234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
+		234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255), true);
 
 	type = TileType::NONE;
 	tileNum = 0;
@@ -66,13 +66,21 @@ void Tile::Render(HDC hdc, bool useCamera)
 		renderX -= Camera::GetInstance()->GetPos().x;
 		renderY -= Camera::GetInstance()->GetPos().y;
 
-		tileImage->RenderScaledImage(
+		//tileImage->RenderScaledImage(
+		//	hdc,
+		//	static_cast<int>(renderX),
+		//	static_cast<int>(renderY),
+		//	tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
+		//	static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
+		//	true
+		//);
+		tileImage->FrameRender(
 			hdc,
 			static_cast<int>(renderX),
 			static_cast<int>(renderY),
 			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
 			static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
-			true
+			false, true, GetStaticBrightness() + GetDynamicBrightness(), 0.0f
 		);
 	}
 	else

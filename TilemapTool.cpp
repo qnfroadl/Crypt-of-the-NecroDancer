@@ -29,16 +29,16 @@ HRESULT TilemapTool::Init()
 	rcSampleTile = { TILEMAPTOOL_X - sampleTile->GetWidth(), 0, TILEMAPTOOL_X, sampleTile->GetHeight() };
 	rcSampleWall = { TILEMAPTOOL_X - sampleWall->GetWidth(), rcSampleTile.bottom + 10, TILEMAPTOOL_X, rcSampleTile.bottom + 10 + sampleWall->GetHeight() };
 
-	rcFloorEraser = { TILEMAPTOOL_X - 300, rcSampleWall.bottom + 80, TILEMAPTOOL_X - 200, rcSampleWall.bottom + 120 };
-	rcWallEraser = { TILEMAPTOOL_X - 150, rcSampleWall.bottom + 80, TILEMAPTOOL_X - 50, rcSampleWall.bottom + 120 };
-	rcSaveBtn = { TILEMAPTOOL_X - 300, rcWallEraser.bottom + 60, TILEMAPTOOL_X - 200, rcWallEraser.bottom + 100 };
-	rcLoadBtn = { TILEMAPTOOL_X - 150, rcWallEraser.bottom + 60, TILEMAPTOOL_X - 50, rcWallEraser.bottom + 100 };
-	rcSizeUpBtn = { 200, rcFloorEraser.top, 300, rcFloorEraser.bottom };
-	rcSizeDownBtn = { 50, rcFloorEraser.top, 150, rcFloorEraser.bottom };
+	rcFloorEraser = { TILEMAPTOOL_X - 300, rcSampleWall.bottom + 60, TILEMAPTOOL_X - 200, rcSampleWall.bottom + 100 };
+	rcWallEraser = { TILEMAPTOOL_X - 150, rcSampleWall.bottom + 60, TILEMAPTOOL_X - 50, rcSampleWall.bottom + 100 };
+	rcSaveBtn = { TILEMAPTOOL_X - 300, rcWallEraser.bottom + 40, TILEMAPTOOL_X - 200, rcWallEraser.bottom + 80 };
+	rcLoadBtn = { TILEMAPTOOL_X - 150, rcWallEraser.bottom + 40, TILEMAPTOOL_X - 50, rcWallEraser.bottom + 80 };
+	rcSizeUpBtn = { 200, rcFloorEraser.top-30, 300, rcFloorEraser.bottom-40 };
+	rcSizeDownBtn = { 50, rcFloorEraser.top-30, 150, rcFloorEraser.bottom-40 };
 	rcMapTile = { 0, 0, mapSize * TILE_SIZE, mapSize * TILE_SIZE };
-	rcPlayerStartBtn = { 50, rcSizeDownBtn.bottom + 40, 150, rcSizeDownBtn.bottom + 80 };
-	rcNextStageBtn = { 200, rcSizeDownBtn.bottom + 40, 300, rcSizeDownBtn.bottom + 80 };
-	rcTorchBtn = { 50, rcNextStageBtn.bottom + 40, 150, rcNextStageBtn.bottom + 80 };
+	rcPlayerStartBtn = { 50, rcSizeDownBtn.bottom + 10, 150, rcSizeDownBtn.bottom + 40 };
+	rcNextStageBtn = { 200, rcSizeDownBtn.bottom + 10, 300, rcSizeDownBtn.bottom + 40 };
+	rcTorchBtn = { 50, rcNextStageBtn.bottom + 10, 150, rcNextStageBtn.bottom + 40 };
 
 	tiles = vector<vector<shared_ptr<Tile>>>(mapSize, vector<shared_ptr<Tile>>(mapSize, nullptr));
 

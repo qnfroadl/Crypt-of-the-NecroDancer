@@ -38,6 +38,7 @@ HRESULT LevelScene::Init()
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();
+    positionManager->Init();
     itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
     itemSpawner->SetPositionManager(positionManager);
@@ -62,6 +63,7 @@ HRESULT LevelScene::Init()
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
 
+	int playerCount = 1;
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
@@ -71,7 +73,7 @@ HRESULT LevelScene::Init()
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, multipleGold);
-
+        playerCount = playerManager.lock()->GetPlayerCount();
     }
 
     monsterManager = make_shared<MonsterManager>();
@@ -87,6 +89,7 @@ HRESULT LevelScene::Init()
 	beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(true);
+    beatManager->SetActive2P(playerCount == 1 ? false : true);
 
     renderer = make_shared<TileActorRenderer>();
     renderer->Init();
@@ -103,6 +106,12 @@ void LevelScene::Release()
     {
         uiManager->Release();
         uiManager = nullptr;
+    }
+
+    if (positionManager)
+    {
+        positionManager->Release();
+        positionManager = nullptr;
     }
 
     if (map) {
@@ -145,21 +154,22 @@ void LevelScene::Release()
 
 void LevelScene::Update()
 {
-    map->UpdateVisuable();
+    if (map)
+    {
+		map->Update();
+    }
     if (uiManager)
     {
         uiManager->Update();
     }
 
+    positionManager->Update();
 
-    playerManager.lock()->Update();
-    monsterManager->Update();
-
-    if (KeyManager::GetInstance()->IsOnceKeyDown('O'))
+    if (KeyManager::GetInstance()->IsOnceKeyDown(VK_F3))
     {
         SoundManager::GetInstance()->SetTempo(0.8f);
     }
-    if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
+    if (KeyManager::GetInstance()->IsOnceKeyDown(VK_F4))
     {
         SoundManager::GetInstance()->SetTempo(1.2f);
     }

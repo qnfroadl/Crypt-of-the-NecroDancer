@@ -56,9 +56,9 @@ public:
 class ShadowCastingEventData : public EventData
 {
 public:
-	vector<vector<bool>>& sightMap;
+	vector<vector<pair<bool, float>>>& sightMap;
 
-	ShadowCastingEventData(vector<vector<bool>>& _sightMap)
+	ShadowCastingEventData(vector<vector<pair<bool, float>>>& _sightMap)
 	:sightMap(_sightMap)
 	{
 
@@ -66,16 +66,15 @@ public:
 
 };
 
-/*
+
 class TileActor;
-class TileActorPositionEventData : public EventData
+class InteractEventData : public EventData
 {
 public:
-	POINT preIndex;						// 이전 위치.
 	shared_ptr<TileActor> actor;		// 현 위치는 액터가 갖고있것지.
-	
-	TileActorPositionEventData(POINT preIndex, shared_ptr<TileActor> actor)
-		: preIndex(preIndex), actor(actor) {};
+	vector<POINT> range;
+
+	InteractEventData(shared_ptr<TileActor> _actor, vector<POINT> _range)
+		:  actor(_actor),range(_range) {};
 
 };
-*/
