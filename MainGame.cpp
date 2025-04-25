@@ -25,6 +25,7 @@
 #include "MainMenuScene.h"
 #include "LobbyScene.h"
 #include "LevelScene.h"
+#include "BossScene.h"
 
 #include "LevelManager.h"
 
@@ -146,6 +147,10 @@ HRESULT MainGame::Init()
 	LevelScene* level = new LevelScene();
 	level->SetPlayerManager(playerManager);
 	SceneManager::GetInstance()->AddScene("LevelScene", level);
+
+	BossScene* boss = new BossScene();
+	boss->SetPlayerManager(playerManager);
+	SceneManager::GetInstance()->AddScene("BossScene", boss);
 
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 

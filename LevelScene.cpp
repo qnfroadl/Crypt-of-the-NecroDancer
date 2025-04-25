@@ -115,7 +115,8 @@ void LevelScene::Release()
         positionManager = nullptr;
     }
 
-    if (map) {
+    if (map)
+    {
         map->Release();
         map = nullptr;
     }
@@ -215,7 +216,7 @@ HRESULT LevelScene::Init(int zone)
 {
     SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
 
-    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE" + std::to_string(zone), 30, 30)));
+    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();

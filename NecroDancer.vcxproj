@@ -146,6 +146,7 @@
     <ClCompile Include="BombAttack.cpp" />
     <ClCompile Include="BombEffect.cpp" />
     <ClCompile Include="BossMonster.cpp" />
+    <ClCompile Include="BossScene.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="IntroScene.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="BombAttack.h" />
     <ClInclude Include="BombEffect.h" />
     <ClInclude Include="BossMonster.h" />
+    <ClInclude Include="BossScene.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Effect.h" />
