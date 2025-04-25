@@ -1,7 +1,7 @@
 TILEMAP
 SIZE 5 5
-PLAYER_START 0 0
-NEXT_STAGE 0 0
+PLAYER_START 1 2
+NEXT_STAGE 2 1
 FLOOR
 1 1 1 1 1 
 1 1 1 1 1 
@@ -10,7 +10,13 @@ FLOOR
 1 1 1 1 1 
 WALL
 0 0 0 0 0 
-0 -1 -1 -1 0 
-0 -1 -1 -1 0 
-0 -1 -1 -1 0 
+0 -1 -1 -1 12 
+6 -1 -1 -1 12 
+0 -1 -1 -1 12 
+0 12 12 0 12 
+TORCH
+0 0 0 0 0 
+0 0 0 0 0 
+0 0 0 0 1 
+1 0 0 0 0 
 0 0 0 0 0 

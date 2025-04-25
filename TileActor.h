@@ -30,12 +30,15 @@ public:
 	virtual void SetTileIndex(const POINT& index);
 
 	void SetVisible(bool visible);
+	void SetSightInfo(const SightInfo& sightInfo);
 	const SightInfo& GetSightInfo();
 
-	void SetDynamicBrightness(float brightness);
+	virtual void SetDynamicBrightness(float brightness);
 	void SetStaticBrightness(float brightness);
 	float GetDynamicBrightness();
 	float GetStaticBrightness();
+
+	float GetBrightness();
 
 	void SetBrightnessInfo(const BrightnessInfo& info);
 	const BrightnessInfo& GetBrightnessInfoInfo();

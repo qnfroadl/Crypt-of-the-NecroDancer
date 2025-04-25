@@ -123,9 +123,12 @@ void BeatManager::UpdateBeat()
 		{
 			// 플레이어 두명 중 하나라도 hit이 안된 경우 miss
 			// 플레이어가 한명이라면 1p만 hit 안된 경우 miss // 이 경우 isP2Hit은 언제나 true
-			if (!isP1Hit || !isP2Hit)
+			if (checkInputTime)
 			{
-				EventManager::GetInstance()->AddEvent(EventType::BEATMISS, nullptr);
+				if (!isP1Hit || !isP2Hit)
+				{
+					EventManager::GetInstance()->AddEvent(EventType::BEATMISS, nullptr);
+				}
 			}
 
 			beatDatas.pop();

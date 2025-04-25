@@ -52,9 +52,10 @@ void Tile::Render(HDC hdc, bool useCamera)
 {
 	if (!tileImage) return;
 
-	if (false == sightInfo.visible && useCamera)
+	if (false == sightInfo.revealed && useCamera)
 	{
-		// 임시 조치.
+
+		
 		return;
 	}
 
@@ -74,13 +75,14 @@ void Tile::Render(HDC hdc, bool useCamera)
 		//	static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
 		//	true
 		//);
+		float brightness = GetBrightness();
 		tileImage->FrameRender(
 			hdc,
 			static_cast<int>(renderX),
 			static_cast<int>(renderY),
 			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
 			static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
-			false, true, GetStaticBrightness() + GetDynamicBrightness(), 0.0f
+			false, true, brightness, 0.0f
 		);
 	}
 	else
@@ -95,7 +97,12 @@ void Tile::Render(HDC hdc, bool useCamera)
 	}
 
 	if (trap) trap->Render(hdc, useCamera);
-	if (block) block->Render(hdc, useCamera);
+	if (block) 
+	{
+		block->SetBrightnessInfo(GetBrightnessInfoInfo());
+		block->SetSightInfo(GetSightInfo());
+		block->Render(hdc, useCamera);
+	}
 }
 
 void Tile::Update()
