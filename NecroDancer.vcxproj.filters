@@ -108,7 +108,6 @@
     <ClCompile Include="Shovel.cpp">
       <Filter>Item</Filter>
     </ClCompile>
-    
     <ClCompile Include="TileActorRenderer.cpp" />
     <ClCompile Include="BossMonster.cpp">
       <Filter>Monster</Filter>
@@ -160,13 +159,13 @@
       <Filter>2D Framework\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
-      <Filter>2D Framework\SceneManager\KeyManager\ImageManager</Filter>
+      <Filter>2D Framework\ImageManager</Filter>
     </ClCompile>
     <ClCompile Include="ImageManager.cpp">
-      <Filter>2D Framework\SceneManager\KeyManager\ImageManager</Filter>
+      <Filter>2D Framework\ImageManager</Filter>
     </ClCompile>
     <ClCompile Include="KeyManager.cpp">
-      <Filter>2D Framework\SceneManager\KeyManager</Filter>
+      <Filter>2D Framework\KeyManager</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>2D Framework\SceneManager</Filter>
@@ -338,14 +337,12 @@
     <ClInclude Include="MainMenuScene.h">
       <Filter>Scene\IntroScene</Filter>
     </ClInclude>
-
     <ClInclude Include="BombAttack.h">
       <Filter>Item</Filter>
     </ClInclude>
     <ClInclude Include="EffectManager.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="BombEffect.h" />
-
     <ClInclude Include="ShadowCasting.h">
       <Filter>ShadowCasting</Filter>
     </ClInclude>
@@ -365,13 +362,13 @@
       <Filter>2D Framework\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
-      <Filter>2D Framework\SceneManager\KeyManager\ImageManager</Filter>
+      <Filter>2D Framework\ImageManager</Filter>
     </ClInclude>
     <ClInclude Include="ImageManager.h">
-      <Filter>2D Framework\SceneManager\KeyManager\ImageManager</Filter>
+      <Filter>2D Framework\ImageManager</Filter>
     </ClInclude>
     <ClInclude Include="KeyManager.h">
-      <Filter>2D Framework\SceneManager\KeyManager</Filter>
+      <Filter>2D Framework\KeyManager</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>2D Framework\SceneManager</Filter>
@@ -459,10 +456,10 @@
     <Filter Include="Scene\GamePlayScene">
       <UniqueIdentifier>{11c5a51b-188c-4447-b226-b007256b8822}</UniqueIdentifier>
     </Filter>
-    <Filter Include="2D Framework\SceneManager\KeyManager">
+    <Filter Include="2D Framework\KeyManager">
       <UniqueIdentifier>{d40b88ed-16e9-42cc-9933-4854b0625d6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="2D Framework\SceneManager\KeyManager\ImageManager">
+    <Filter Include="2D Framework\ImageManager">
       <UniqueIdentifier>{1978390e-73c6-430f-9d73-aac79542c268}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
