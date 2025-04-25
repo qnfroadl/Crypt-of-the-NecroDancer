@@ -219,6 +219,8 @@ HRESULT LevelScene::Init(int zone)
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();
+    positionManager->Init();
+
     itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
     itemSpawner->SetPositionManager(positionManager);
@@ -236,6 +238,10 @@ HRESULT LevelScene::Init(int zone)
     playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
     uiManager->AddUI(playerHp);
 
+    MultipleGoldUI* multipleGold = new MultipleGoldUI();
+    multipleGold->Init();
+    uiManager->AddUI(multipleGold);
+
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
 
@@ -244,6 +250,8 @@ HRESULT LevelScene::Init(int zone)
         playerManager.lock()->SetPositionManager(positionManager);
         playerManager.lock()->SetTileMap(map);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, multipleGold);
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     }
 
@@ -265,6 +273,7 @@ HRESULT LevelScene::Init(int zone)
     renderer->Init();
     renderer->SetPositionManager(positionManager);
     renderer->SetTileMap(map);
+
     shadowCasting->Update();
 
     return S_OK;

@@ -32,6 +32,7 @@ private:
     };
     // 검정 배경
     HBRUSH blackBrush;
+
 public:
     virtual HRESULT Init() override;
     virtual void Release() override;

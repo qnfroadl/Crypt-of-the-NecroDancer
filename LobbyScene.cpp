@@ -110,7 +110,12 @@ void LobbyScene::Release()
         map = nullptr;
     }
 
-    positionManager->Release();
+    if (positionManager)
+    {
+        positionManager->Release();
+        positionManager = nullptr;
+    }
+    
 
 	if (beatManager)
 	{
