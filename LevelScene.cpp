@@ -246,6 +246,7 @@ HRESULT LevelScene::Init(int zone)
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
 
+    float playerCount = 1;
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
@@ -254,6 +255,7 @@ HRESULT LevelScene::Init(int zone)
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, multipleGold);
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+        playerCount = playerManager.lock()->GetPlayerCount();
     }
 
 
@@ -266,9 +268,10 @@ HRESULT LevelScene::Init(int zone)
 
 
     SoundManager::GetInstance()->PlaySoundBgm(soundKey[zone%3].first, soundKey[zone%3].second);
-     beatManager = make_shared<BeatManager>();
+    beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(true);
+    beatManager->SetActive2P(playerCount == 1 ? false : true);
 
     renderer = make_shared<TileActorRenderer>();
     renderer->Init();
