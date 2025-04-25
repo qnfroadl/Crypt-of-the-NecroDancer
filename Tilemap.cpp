@@ -77,7 +77,7 @@ void Tilemap::Release()
 	// 이벤트 언바인드 추가
 	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
 	EventManager::GetInstance()->UnbindEvent(this, EventType::INTERACT);
-	EventManager::GetInstance()->UnBindEvent(this, EventType::PLAYERMOVED);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::PLAYERMOVED);
 
 
 }
