@@ -23,30 +23,58 @@ public:
 	: playerIndex(playerIndex), inputKey(inputKey) {};
 
 	~BeatHitEventData() {};
-
 };
 
 class SpawnItemEventData : public EventData
 {
 public:
 	POINT index;
-	FPOINT pos;
 	ItemType type;
 	int value;	// 골드량 같은거 넣어줄 변수.
 
-	SpawnItemEventData(POINT index, FPOINT pos, ItemType type, int value)
-		: index(index), pos(pos), type(type), value(value) {};
+	SpawnItemEventData(POINT index, ItemType type, int value)
+		: index(index), type(type), value(value) {};
 
 };
 
-class TileActor;
-class TileActorPositionEventData : public EventData
+class SpawnWeaponEventdata : public EventData
 {
 public:
-	POINT preIndex;						// 이전 위치.
+	POINT index;
+
+	DamageType damageType;
+	WeaponMaterialType material;
+	WeaponType weaponType;
+
+	SpawnWeaponEventdata(POINT _index, DamageType dType, WeaponMaterialType mType, WeaponType wType)
+		:index(_index),damageType(dType), material(mType), weaponType(wType)
+	{
+
+	}
+};
+
+class ShadowCastingEventData : public EventData
+{
+public:
+	vector<vector<pair<bool, float>>>& sightMap;
+
+	ShadowCastingEventData(vector<vector<pair<bool, float>>>& _sightMap)
+	:sightMap(_sightMap)
+	{
+
+	}
+
+};
+
+
+class TileActor;
+class InteractEventData : public EventData
+{
+public:
 	shared_ptr<TileActor> actor;		// 현 위치는 액터가 갖고있것지.
-	
-	TileActorPositionEventData(POINT preIndex, shared_ptr<TileActor> actor)
-		: preIndex(preIndex), actor(actor) {};
+	vector<POINT> range;
+
+	InteractEventData(shared_ptr<TileActor> _actor, vector<POINT> _range)
+		:  actor(_actor),range(_range) {};
 
 };

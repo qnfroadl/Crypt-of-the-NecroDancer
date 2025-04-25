@@ -1,4 +1,7 @@
 #include "SoundManager.h"
+#include "TimerManager.h"
+
+#include <mutex>
 
 map<ESoundKey, string> bgmPath = {
 	{ESoundKey::LOBBY, "Sound/Bgm/lobby"},
@@ -19,7 +22,45 @@ void SoundManager::Init()
 	bgmVolume = 1.f;
 	effectVolume = 1.f;
 
-#pragma region AddSound
+	tempo = 1.f;
+	elapsedTime = 0.f;
+	maxTempoChangeTime = 5.f;
+}
+
+void SoundManager::Release()
+{
+	for (auto& iter : mapSounds)
+	{
+		if (iter.second)
+		{
+			iter.second->release();
+
+		}
+	}
+
+	channelGroupEffect->release();
+
+	system->release();
+
+	ReleaseInstance();
+}
+
+void SoundManager::Update()
+{
+	system->update();
+
+	elapsedTime += TimerManager::GetInstance()->GetDeltaTime();
+	if (elapsedTime > maxTempoChangeTime)
+	{
+		RecoverTempo();
+	}
+}
+
+void SoundManager::LoadSound()
+{
+	std::mutex sound_mutex;
+	std::lock_guard<std::mutex> lock(sound_mutex);
+
 	AddSound(ESoundKey::LOBBY, "Sound/Bgm/lobby.ogg", true);
 
 	AddSound(ESoundKey::ZONE1_1, "Sound/Bgm/zone1_1.ogg");
@@ -45,30 +86,6 @@ void SoundManager::Init()
 	//AddSound(ESoundKey::ZONE2_3_SHOPKEEPER, "Sound/Bgm/ShopKeeperVocal/zone2_3_shopkeeper.ogg");
 
 	AddSound(ESoundKey::MOV_DIG_FAIL, "Sound/Effect/mov_dig_fail.ogg");
-#pragma endregion
-}
-
-void SoundManager::Release()
-{
-	for (auto& iter : mapSounds)
-	{
-		if (iter.second)
-		{
-			iter.second->release();
-
-		}
-	}
-
-	channelGroupEffect->release();
-
-	system->release();
-
-	ReleaseInstance();
-}
-
-void SoundManager::Update()
-{
-	system->update();
 }
 
 FMOD::Sound* SoundManager::AddSound(ESoundKey key, const char* filePath, bool loop)
@@ -202,4 +219,35 @@ bool SoundManager::IsBgmEnd()
 		return !isPlaying;
 	}
 	return true;
+}
+
+void SoundManager::SetTempo(float _tempo)
+{
+	tempo = _tempo;
+	elapsedTime = 0.f;
+
+	if (channelBgm)
+	{
+		channelBgm->setPitch(tempo);
+	}
+
+	if (channelBgmShopkeeper)
+	{
+		channelBgmShopkeeper->setPitch(tempo);
+	}
+}
+
+void SoundManager::RecoverTempo()
+{
+	tempo = 1.f;
+
+	if (channelBgm)
+	{
+		channelBgm->setPitch(tempo);
+	}
+
+	if (channelBgmShopkeeper)
+	{
+		channelBgmShopkeeper->setPitch(tempo);
+	}
 }

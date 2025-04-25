@@ -29,6 +29,7 @@ public:
 	// Interact = Pickup과 같다. 아이템과 상호작용 한다는것은 줍거나, 장착하거나 사용하거나. 그렇고 그런거지.
 	virtual void Interact(GameActor* actor) override;	
 	
+	virtual void Destroy();
 	virtual void Drop();
 	virtual void Equip();
 	virtual void Use();

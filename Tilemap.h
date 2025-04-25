@@ -5,11 +5,14 @@
 class TileActor;
 class Tile;
 class Item;
+class EventData;
 //이게 전체맵 타일 제너레이터가 방 조합해서 여기 넣어줘야 함
 class Tilemap : public GameActor
 {
 private:
 	vector<vector<shared_ptr<Tile>>> tiles;
+	vector<POINT> spawnPoints;
+	vector<POINT> torchSpots;
 	int mapRows;
 	int mapColumns;
 	bool isCombo;
@@ -18,13 +21,16 @@ private:
 
 	POINT leftTop;
 	POINT rightBottom;
+
+	void OnInteract(EventData* data);
 public:
 	HRESULT Init(int _mapRows, int _mapColumns);
 	void Release();
 	void Update();
 	void Render(HDC hdc);
 
-	shared_ptr<Tile> GetTile(POINT index);
+	shared_ptr<Tile> GetTile(POINT index);  
+    const vector<vector<shared_ptr<Tile>>>& GetTiles() { return tiles; }
 
 	FPOINT GetTilePos(POINT index);
 
@@ -36,7 +42,7 @@ public:
 	void Move(TileActor* actor, POINT index);
 	POINT GetSpawnIndex();
 	void Load(string filePath);
-	void OnBeat(bool isCombo);
+	void OnBeat();
 	POINT GetPlayerStartIndex() { return startIndex; }
 	POINT GetNextStageIndex() { return endIndex; }
 	void SetPlayerStartIndex(POINT p) { startIndex = p; }
@@ -53,5 +59,32 @@ public:
 	POINT GetRightBottom() { return rightBottom; }
 
 	void UpdateVisuable();
+	void ApplyTorchLighting();
+	void RemoveTorchLightingAt(POINT torchIndex);
+	void AddSpawnPoint(POINT spawn) { spawnPoints.push_back(spawn); }
+
+	void PrintSpawnPoints()
+	{
+		for (const auto& spawn : spawnPoints)
+		{
+			cout << "Spawn Point: (" << spawn.x << ", " << spawn.y << ")" << endl;
+		}
+	}
+	void PrintTorchSpots()
+	{
+		for (const auto& torch : torchSpots)
+		{
+			cout << "Torch Spot: (" << torch.x << ", " << torch.y << ")" << endl;
+		}
+	}
+
+	void SetIsCombo(bool _isCombo) { isCombo = _isCombo;}
+
+	void ClearSpawnPoints() { spawnPoints.clear(); }
+	void ClearTorchSpots() { torchSpots.clear(); }
+	void AddTorchSpot(POINT spot) { torchSpots.push_back(spot); }
+	
+	void OnCombo() { isCombo = true; }
+	void OffCombo() { isCombo = false; }
 };
 

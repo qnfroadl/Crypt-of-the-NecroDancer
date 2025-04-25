@@ -24,8 +24,6 @@ private:
 	shared_ptr<Block> block;
 	shared_ptr<Trap> trap;
 	Image* tileImage;
-
-	float light;
 	int tileNum;
 
 public:
@@ -36,10 +34,10 @@ public:
 	HRESULT Init(int x, int y);
 	void Release();
 	void Render(HDC hdc, bool useCamera = true);
+	void Update();
 	void OnTile(TileActor* actor);
 	void OnBeat(bool isCombo);
 	virtual void Interact(GameActor* actor) override;
-
 	// 바닥 번호
 	int GetTileNum() { return tileNum; }
 	void SetTileNum(int _tileNum) {

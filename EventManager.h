@@ -10,8 +10,8 @@
 class EventData;
 enum class EventType
 {
-	BEAT, BEATHIT, BEATMISS, BEATEND, 
-	SPAWNITEM,
+	BEAT/*정박 타이밍 시작*/, BEATEND/*정박 타이밍 끝*/, BEATHIT, BEATMISS, SONGEND,
+	SPAWNITEM, SPAWNWEAPON,
 
 	PLAYERMOVED,	// 플레이어 이동 됨 이벤트. 
 	BLOCKDESTROYED,	// 벽돌 파괴 됨 이벤트.
@@ -19,6 +19,13 @@ enum class EventType
 
 	ENTERZONE,	// 어떤 존에 입장하는지. 이벤트.
 	NEXTLEVEL,	// 다음층으로 이동하는 이벤트.
+
+	COMBOSTART,	// 콤보 시작.
+	COMBOFAILED,	// 콤보 실패.
+
+	LIGHTINGUPDATED,	// 라이팅이 업데이트 되었음을 알림.
+
+	INTERACT, 
 };
 
 

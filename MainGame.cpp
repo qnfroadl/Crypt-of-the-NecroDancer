@@ -21,8 +21,11 @@
 #include "SoundManager.h"
 #include "BeatManager.h"
 
+#include "IntroScene.h"
+#include "MainMenuScene.h"
 #include "LobbyScene.h"
 #include "LevelScene.h"
+#include "EffectManager.h"
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -52,28 +55,7 @@ void MainGame::UpdateCollisionInfo()
 
 void MainGame::ItemSpawnSimulation()
 {
-	if (KeyManager::GetInstance()->IsOnceKeyDown(VK_LSHIFT))
-	{
-		SceneManager::GetInstance()->ChangeScene("TilemapTool", "Loading");
-	}
-	else if (KeyManager::GetInstance()->IsOnceKeyDown('Q'))
-	{
-		LobbyScene* scene = static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene("LobbyScene"));
-		if (scene)
-		{
-			SceneManager::GetInstance()->ChangeScene("LobbyScene", "Loading");
-		}
-		
-
-	}
-	else if (KeyManager::GetInstance()->IsOnceKeyDown(VK_RSHIFT))
-	{
-		SceneManager::GetInstance()->ChangeScene("AstarScene", "Loading");
-	}
-	else if (KeyManager::GetInstance()->IsOnceKeyDown('P'))
-	{
-			SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
-	}
+	
 }
 
 //void MainGame::TilemapMenuClicked(WORD id)
@@ -111,9 +93,9 @@ void MainGame::InitResource()
 	ImageManager::GetInstance()->AddImage("coin8", L"Image/Player/item/resource_coin8.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage("coin9", L"Image/Player/item/resource_coin9.bmp",  24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 	ImageManager::GetInstance()->AddImage("coin10", L"Image/Player/item/resource_coin10.bmp", 24* BASE_SCALE, 48* BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin30", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin50", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
-	ImageManager::GetInstance()->AddImage("coin100", L"Image/Player/item/resource_coin10.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin30", L"Image/Player/item/resource_coin30.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin50", L"Image/Player/item/resource_coin50.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
+	ImageManager::GetInstance()->AddImage("coin100", L"Image/Player/item/resource_coin100.bmp", 24 * BASE_SCALE, 48 * BASE_SCALE, 1, 2, true, RGB(255, 0, 255));
 
 }
 
@@ -139,17 +121,18 @@ HRESULT MainGame::Init()
 	KeyManager::GetInstance()->Init();
 	ImageManager::GetInstance()->Init();
 	SceneManager::GetInstance()->Init();
+	EffectManager::GetInstance()->Init();
 
 	playerManager = std::make_shared<PlayerManager>();
 	playerManager->Init();
-	monsterManager = std::make_shared<MonsterManager>();
-	monsterManager->Init();
-
 
 	SceneManager::GetInstance()->AddScene("TilemapTool", new TilemapTool());
 	SceneManager::GetInstance()->AddScene("BattleScene", new BattleScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
 	SceneManager::GetInstance()->AddScene("AstarScene", new AstarScene());
+
+	SceneManager::GetInstance()->AddScene("IntroScene", new IntroScene());
+	SceneManager::GetInstance()->AddScene("MainMenuScene", new MainMenuScene());
 
 	LobbyScene* lobby = new LobbyScene();
 	lobby->SetPlayerManager(playerManager);
@@ -158,7 +141,6 @@ HRESULT MainGame::Init()
 
 	LevelScene* level = new LevelScene();
 	level->SetPlayerManager(playerManager);
-	level->SetMonsterManager(monsterManager);
 	SceneManager::GetInstance()->AddScene("LevelScene", level);
 
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
@@ -169,18 +151,14 @@ HRESULT MainGame::Init()
 	//Test EventManager
 	EventManager::GetInstance()->AddEvent(EventType::BEAT, nullptr);
 	EventManager::GetInstance()->AddEvent(EventType::BEATHIT, nullptr);
-	EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
+	EventManager::GetInstance()->AddEvent(EventType::SONGEND, nullptr);
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Init();
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
-	BeatManager::GetInstance()->Init();
-	BeatManager::GetInstance()->StartBeat(true);
 
-	
 
-	
 
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 
@@ -195,7 +173,9 @@ HRESULT MainGame::Init()
 	
 	// 로비 씬 로딩.
 	
-	SceneManager::GetInstance()->ChangeScene("LobbyScene");
+	SceneManager::GetInstance()->ChangeScene("IntroScene");
+
+	//SceneManager::GetInstance()->ChangeScene("LobbyScene");
 	//SceneManager::GetInstance()->ChangeScene("LevelScene");
 
 
@@ -216,11 +196,10 @@ void MainGame::Release()
 	KeyManager::GetInstance()->Release();
 	ImageManager::GetInstance()->Release();
 	SceneManager::GetInstance()->Release();
-
+	EffectManager::GetInstance()->Release();
 
 	// Test. SoundManager
 	SoundManager::GetInstance()->Release();
-	BeatManager::GetInstance()->Release();
 
 	if (btn)
 	{
@@ -244,6 +223,7 @@ void MainGame::Update()
 
 	CollisionManager::GetInstance()->Update();
 	SceneManager::GetInstance()->Update();
+	EffectManager::GetInstance()->Update();
 	// SceneManager::GetInstance()->
 	//btn->Update();
 	
@@ -263,7 +243,6 @@ void MainGame::Update()
 	{
 		SoundManager::GetInstance()->ChangeSoundBgmShopkeeper();
 	}
-	BeatManager::GetInstance()->Update();
 }
 
 void MainGame::Render()
@@ -272,8 +251,7 @@ void MainGame::Render()
 	HDC hBackBufferDC = backBuffer->GetMemDC();
 
 	SceneManager::GetInstance()->Render(hBackBufferDC);
-	
-
+	EffectManager::GetInstance()->Render(hBackBufferDC);
 	//playerManager->Render(hBackBufferDC);
 	//monsterManager->Render(hBackBufferDC);
 	//btn->Render(hBackBufferDC);
@@ -288,7 +266,6 @@ void MainGame::Render()
 
 	}
 
-	BeatManager::GetInstance()->Render(hBackBufferDC);
 
 	// 백버퍼에 있는 내용을 메인 hdc에 복사
 	backBuffer->Render(hdc);

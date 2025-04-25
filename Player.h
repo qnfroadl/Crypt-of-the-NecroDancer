@@ -50,7 +50,7 @@ private:
     shared_ptr<Shovel> shovel;
     shared_ptr<TileItem> touch;
     shared_ptr<TileItem> consumableItem;
-
+    
     // 참조
     weak_ptr<Tilemap> tileMap;
 	weak_ptr<PositionManager> positionManager;
@@ -61,7 +61,9 @@ private:
     void OnComboUp(EventData* data);            // 콤보 업
 
     bool JumpAnim() override;
-    void SetJumpData(InputKey key);
+    void Move(InputKey key);
+    void DropBombAttack();
+
     void SetJumpData(int dx, int dy) override;
     void CalcAttackRange(Direction dir, vector<POINT>& range);
     void NotifyAll();
@@ -102,13 +104,14 @@ public:
 	float GetAttack() { return this->attack; }
 	void SetAttack(float attack) { this->attack = attack; }
 
+    void AddGold(int _gold);
+
 	void SetDiamond(int diamond) { this->diamond.Set(diamond); }
     void AddDiamond(int diamond) { this->diamond.Set(this->diamond.Get() + diamond); }
 	int GetDiamond() { return this->diamond.Get(); }
 	
 	void AddWeapon(shared_ptr<Weapon> weapon);
-	
-    void AddBomb(int bomb) { this->bombCount.Set(this->bombCount.Get() + bomb); }
+	void AddBomb(shared_ptr<ItemBomb> bomb, int count);
     
     void SetPlayerState(PlayerState state);
 };

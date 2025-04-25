@@ -24,8 +24,6 @@ void BeatManager::Release()
 		delete markerManager;
 		markerManager = nullptr;
 	}
-
-	ReleaseInstance();
 }
 
 void BeatManager::Update()
@@ -105,23 +103,34 @@ void BeatManager::UpdateBeat()
 
 		if (curPosition > beat + 30.f)
 		{
-			checkOnBeat = false;
+			if (checkOnBeat)
+			{
+				checkOnBeat = false;
+				EventManager::GetInstance()->AddEvent(EventType::BEATEND, nullptr);
+			}
 		}
 
 		// 반 박자보다 더 느림
 		if (curPosition > beat + beatInterval / 2.f)
 		{
-			// hit이 안된 경우 miss
-			if (!isP1Hit && !isP2Hit)
+			// 플레이어 두명 중 하나라도 hit이 안된 경우 miss
+			// 플레이어가 한명이라면 1p만 hit 안된 경우 miss // 이 경우 isP2Hit은 언제나 true
+			if (checkInputTime)
 			{
-				EventManager::GetInstance()->AddEvent(EventType::BEATMISS, nullptr);
+				if (!isP1Hit || !isP2Hit)
+				{
+					EventManager::GetInstance()->AddEvent(EventType::BEATMISS, nullptr);
+				}
 			}
 
 			beatDatas.pop();
 			beatBefore = beat;
 			checkOnBeat = false;
 			isP1Hit = false;
-			isP2Hit = false;
+			if (active2p)
+			{
+				isP2Hit = false;
+			}
 		}
 	}
 }
@@ -157,11 +166,14 @@ void BeatManager::ProcessInput()
 			BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER1, pressedKeyP1);
 			EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
 		}
-		if (pressedKeyP2 != InputKey::NONE)
+		if (active2p)
 		{
-			bool hit = IsHit(isP2Hit);
-			BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER2, pressedKeyP2);
-			EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
+			if (pressedKeyP2 != InputKey::NONE)
+			{
+				bool hit = IsHit(isP2Hit);
+				BeatHitEventData* event = new BeatHitEventData(PlayerIndex::PLAYER2, pressedKeyP2);
+				EventManager::GetInstance()->AddEvent(hit ? EventType::BEATHIT : EventType::BEATMISS, event);
+			}
 		}
 	}
 }

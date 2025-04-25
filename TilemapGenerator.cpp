@@ -4,6 +4,7 @@
 #include "Tile.h"
 #include "Block.h"
 #include <functional>
+#include "Torch.h"
 
 Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int mapCols)
 {
@@ -12,6 +13,9 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
     placedStart = false;
     placedEnd = false;
     placedRects.clear();
+    shopRoomRects.clear();
+    startCandidate = { -1, -1 };
+    endCandidate = { -1, -1 };
 
     Tilemap* tilemap = new Tilemap();
     tilemap->Init(mapRows, mapCols);
@@ -31,17 +35,10 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName, int mapRows, int map
     if (endTile)
         endTile->SetTileNum(24);
 
-    if (startCandidate.x != -1)
-    {
-        tilemap->SetPlayerStartIndex(startCandidate);
-        placedStart = true;
-    }
-    if (endCandidate.x != -1)
-    {
-        tilemap->SetNextStageIndex(endCandidate);
-        placedEnd = true;
-    }
-	tilemap->GetTile(endCandidate)->SetTileNum(24);
+	FinalizeTilemap(tilemap);
+	// CollectSpawnPoints(tilemap);
+    CollectTilemapInfo(tilemap);
+	tilemap -> ApplyTorchLighting();
     return tilemap;
 }
 
@@ -90,6 +87,11 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
                 auto b = make_shared<Block>();
                 b->Init(copy->GetPos(), { x, y });
                 b->SetBlockNum(src->GetBlock()->GetBlockNum());
+                if (src->GetBlock()->GetTorch()) {
+                        auto torch = make_shared<Torch>();
+                        torch->Init(copy->GetPos(), { x, y });
+                        b->SetTorch(torch);
+                    }
                 copy->SetBlock(b);
             }
 
@@ -100,6 +102,14 @@ Tilemap* TilemapGenerator::Generate(const string& zoneName)
     tilemap->SetPlayerStartIndex(room.playerStart);
     tilemap->SetNextStageIndex(room.nextStage);
     tilemap->GetTile(room.nextStage)->SetTileNum(24);
+
+    placedRects.clear();
+    placedRects.push_back({ 0, 0, room.cols, room.rows });
+    startCandidate = room.playerStart;
+
+    CollectTilemapInfo(tilemap);
+    tilemap->ApplyTorchLighting();
+
     return tilemap;
 }
 
@@ -187,6 +197,24 @@ RoomData TilemapGenerator::ParseMapFile(const string& path)
                 b->Init(room.tiles[y][x]->GetPos(), { x, y });
                 b->SetBlockNum(num);
                 room.tiles[y][x]->SetBlock(b);
+            }
+        }
+    }
+
+    in >> label;
+    if (label == "TORCH") {
+        for (int y = 0; y < rows; ++y) {
+            for (int x = 0; x < cols; ++x) {
+                int torchFlag;
+                in >> torchFlag;
+                if (torchFlag == 1) {
+                    auto block = room.tiles[y][x]->GetBlock();
+                    if (block) {
+                        auto torch = make_shared<Torch>();
+                        torch->Init(room.tiles[y][x]->GetPos(), { x, y });
+                        block->SetTorch(torch);
+                    }
+                }
             }
         }
     }
@@ -343,6 +371,9 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
         leaf->roomRect = tryRect;
         placedRects.push_back(tryRect);
 
+		if (isShopRoom)
+			shopRoomRects.push_back(tryRect);
+
         for (int y = 0; y < rh; ++y)
         {
             for (int x = 0; x < rw; ++x)
@@ -366,6 +397,13 @@ void TilemapGenerator::PlaceRoomsFromBSP(BSPNode* node, Tilemap* tilemap, const 
                     auto b = make_shared<Block>();
                     b->Init(copy->GetPos(), { globalX, globalY });
                     b->SetBlockNum(src->GetBlock()->GetBlockNum());
+
+                    if (src->GetBlock()->GetTorch()) {
+                        auto torch = make_shared<Torch>();
+                        torch->Init(copy->GetPos(), { globalX, globalY });
+                        b->SetTorch(torch);
+                    }
+
                     copy->SetBlock(b);
                 }
 
@@ -564,6 +602,27 @@ void TilemapGenerator::PlaceDoor(Tilemap* tilemap, POINT doorPos, POINT directio
     }
 }
 
+void TilemapGenerator::FinalizeTilemap(Tilemap* tilemap)
+{
+    if (startCandidate.x != -1)
+    {
+        tilemap->SetPlayerStartIndex(startCandidate);
+        placedStart = true;
+    }
+
+    if (endCandidate.x != -1)
+    {
+        tilemap->SetNextStageIndex(endCandidate);
+        placedEnd = true;
+    }
+
+    shared_ptr<Tile> endTile = tilemap->GetTile({ endCandidate.x, endCandidate.y });
+    if (endTile)
+    {
+        endTile->SetTileNum(24);
+    }
+}
+
 void TilemapGenerator::AddMapBorder(Tilemap* tilemap)
 {
     int w = tilemap->GetWidth();
@@ -748,5 +807,106 @@ void TilemapGenerator::ConnectAllRooms(Tilemap* tilemap, const vector<RECT>& roo
             shopConnected = true;
 
         merge(a, b);
+    }
+}
+
+//void TilemapGenerator::CollectSpawnPoints(Tilemap* tilemap)
+//{
+//    // 시작 방 RECT 찾기
+//    RECT startRoomRect = {};
+//    for (const RECT& r : placedRects)
+//    {
+//        if (startCandidate.x >= r.left && startCandidate.x < r.right &&
+//            startCandidate.y >= r.top && startCandidate.y < r.bottom)
+//        {
+//            startRoomRect = r;
+//            break;
+//        }
+//    }
+//
+//    // spawnPoints 수집
+//    for (int y = 0; y < tilemap->GetHeight(); ++y)
+//    {
+//        for (int x = 0; x < tilemap->GetWidth(); ++x)
+//        {
+//            // 시작 방이면 제외
+//            if (x >= startRoomRect.left && x < startRoomRect.right &&
+//                y >= startRoomRect.top && y < startRoomRect.bottom)
+//                continue;
+//
+//            // 상점 방이면 제외
+//            bool isInShop = false;
+//            for (const RECT& shop : shopRoomRects)
+//            {
+//                if (x >= shop.left && x < shop.right &&
+//                    y >= shop.top && y < shop.bottom)
+//                {
+//                    isInShop = true;
+//                    break;
+//                }
+//            }
+//            if (isInShop) continue;
+//
+//            // 조건에 맞으면 추가
+//            shared_ptr<Tile> t = tilemap->GetTile({ x, y });
+//            if (t && t->GetTileNum() == 0 && !t->GetBlock())
+//            {
+//				tilemap->AddSpawnPoint({ x, y });
+//            }
+//        }
+//    }
+//}
+
+
+void TilemapGenerator::CollectTilemapInfo(Tilemap* tilemap)
+{
+    tilemap->ClearTorchSpots();
+    tilemap->ClearSpawnPoints();
+
+    RECT startRoomRect = {};
+    for (const RECT& r : placedRects)
+    {
+        if (startCandidate.x >= r.left && startCandidate.x < r.right &&
+            startCandidate.y >= r.top && startCandidate.y < r.bottom)
+        {
+            startRoomRect = r;
+            break;
+        }
+    }
+
+    for (int y = 0; y < tilemap->GetHeight(); ++y)
+    {
+        for (int x = 0; x < tilemap->GetWidth(); ++x)
+        {
+            shared_ptr<Tile> tile = tilemap->GetTile({ x, y });
+            if (!tile) continue;
+
+            shared_ptr<Block> block = tile->GetBlock();
+            if (block && block->GetTorch())
+            {
+                tilemap->AddTorchSpot({ x, y });
+            }
+
+            if (x >= startRoomRect.left && x < startRoomRect.right &&
+                y >= startRoomRect.top && y < startRoomRect.bottom)
+                continue;
+
+            bool isInShop = false;
+            for (const RECT& shop : shopRoomRects)
+            {
+                if (x >= shop.left && x < shop.right &&
+                    y >= shop.top && y < shop.bottom)
+                {
+                    isInShop = true;
+                    break;
+                }
+            }
+            if (isInShop) continue;
+
+            if (tile->GetTileNum() == 0 && !tile->GetBlock())
+            {
+                tilemap->AddSpawnPoint({ x, y });
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@
 #include "UIManager.h"
 #include "PlayerWallet.h"
 #include "PlayerHp.h"
+#include "MultipleGoldUI.h"
 
 #include "PositionManager.h"
 #include "ItemSpawner.h"
@@ -17,6 +18,14 @@
 
 #include "MonsterManager.h"
 #include "TilemapGenerator.h"
+
+#include "ShadowCasting.h"
+#include "KeyManager.h"
+
+#include "SoundManager.h"
+#include "BeatManager.h"
+#include "TileActorRenderer.h"
+
 HRESULT LevelScene::Init()
 {
     // InitMap
@@ -25,15 +34,17 @@ HRESULT LevelScene::Init()
     //map->Init(20, 20);
     //map->Load("map/ZONE1_01.map");
     map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
-	//cout << map->GetPlayerStartIndex().x << " " << map->GetPlayerStartIndex().y << endl;
+    //map->PrintSpawnPoints();
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();
+    positionManager->Init();
     itemSpawner = make_shared<ItemSpawner>();
     itemSpawner->Init();
     itemSpawner->SetPositionManager(positionManager);
+    itemSpawner->SetTileMap(map);
 
-    uiManager = new UIManager();
+    uiManager = make_shared<UIManager>();
     uiManager->Init();
 
     PlayerWallet* playerCoin = new PlayerWallet();
@@ -42,22 +53,47 @@ HRESULT LevelScene::Init()
 
     PlayerHp* playerHp = new PlayerHp();
     playerHp->Init();
-    playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
     uiManager->AddUI(playerHp);
 
+    MultipleGoldUI* multipleGold = new MultipleGoldUI();
+    multipleGold->Init();
+    uiManager->AddUI(multipleGold);
+
+
+    shadowCasting = make_shared<ShadowCasting>();
+    shadowCasting->Init(map->GetTiles());
+
+	int playerCount = 1;
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
         playerManager.lock()->SetTileMap(map);
+        shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+
         playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, multipleGold);
+        playerCount = playerManager.lock()->GetPlayerCount();
     }
 
-    if (monsterManager.lock())
-    {
-        monsterManager.lock()->SetPositionManager(positionManager);
-        monsterManager.lock()->SetTileMap(map);
-        monsterManager.lock()->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
-    }
+    monsterManager = make_shared<MonsterManager>();
+    monsterManager->Init();
+    monsterManager->SetPositionManager(positionManager);
+    monsterManager->SetTileMap(map);
+    monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+    
+    SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
+	beatManager = make_shared<BeatManager>();
+    beatManager->Init();
+    beatManager->StartBeat(true);
+    beatManager->SetActive2P(playerCount == 1 ? false : true);
+
+    renderer = make_shared<TileActorRenderer>();
+    renderer->Init();
+    renderer->SetPositionManager(positionManager);
+    renderer->SetTileMap(map);
+
+    shadowCasting->Update();
 
     return S_OK;
 }
@@ -67,13 +103,34 @@ void LevelScene::Release()
     if (uiManager)
     {
         uiManager->Release();
-        delete uiManager;
         uiManager = nullptr;
+    }
+
+    if (positionManager)
+    {
+        positionManager->Release();
+        positionManager = nullptr;
     }
 
     if (map) {
         map->Release();
         map = nullptr;
+    }
+    if (itemSpawner)
+    {
+        itemSpawner->Release();
+        itemSpawner = nullptr;
+    }
+    if (beatManager)
+    {
+        beatManager->Release();
+        beatManager = nullptr;
+    }
+
+    if (renderer)
+    {
+        renderer->Release();
+        renderer = nullptr;
     }
 
 	playerManager.lock()->BindRelease();
@@ -83,13 +140,30 @@ void LevelScene::Release()
 
 void LevelScene::Update()
 {
-    map->UpdateVisuable();
+    if (map)
+    {
+		map->Update();
+    }
     if (uiManager)
     {
         uiManager->Update();
     }
-    playerManager.lock()->Update();
-    monsterManager.lock()->Update();
+
+    positionManager->Update();
+
+    if (KeyManager::GetInstance()->IsOnceKeyDown(VK_F3))
+    {
+        SoundManager::GetInstance()->SetTempo(0.8f);
+    }
+    if (KeyManager::GetInstance()->IsOnceKeyDown(VK_F4))
+    {
+        SoundManager::GetInstance()->SetTempo(1.2f);
+    }
+
+    if (beatManager)
+    {
+        beatManager->Update();
+    }
 }
 
 void LevelScene::Render(HDC hdc)
@@ -101,28 +175,27 @@ void LevelScene::Render(HDC hdc)
         pos.x - cPos.x, pos.y - cPos.y,
         SCENE_WIDTH, SCENE_HEIGHT);
 
-    if (map)
+    // 타일, 액터들 렌더링.
+    if (renderer)
     {
-        map->Render(hdc);
+        renderer->Render(hdc);
     }
 
-    if (positionManager)
+    if (beatManager)
     {
-        positionManager->Render(hdc);
+        beatManager->Render(hdc);
     }
 
     if (uiManager)
     {
         uiManager->Render(hdc);
     }
-	playerManager.lock()->Render(hdc);
-	monsterManager.lock()->Render(hdc);
+
 }
 
 void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
-
 
     if (positionManager)
     {
@@ -133,17 +206,3 @@ void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
         this->playerManager.lock()->SetTileMap(map);
     }
 }
-
-void LevelScene::SetMonsterManager(weak_ptr<MonsterManager> monsterManager)
-{
-    this->monsterManager = monsterManager;
-    if (positionManager)
-    {
-        this->monsterManager.lock()->SetPositionManager(positionManager);
-    }
-    if (nullptr != map)
-    {
-        this->monsterManager.lock()->SetTileMap(map);
-    }
-}
-

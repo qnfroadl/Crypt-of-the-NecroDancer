@@ -1,4 +1,4 @@
-#include "PlayerWallet.h"
+﻿#include "PlayerWallet.h"
 #include "Image.h"
 #include "ImageManager.h"
 #include "ItemNumUI.h"
@@ -11,7 +11,7 @@ PlayerWallet::~PlayerWallet()
 {
 }
 
-void PlayerWallet::Init()
+HRESULT PlayerWallet::Init()
 {
 	coinImage = ImageManager::GetInstance()->AddImage("coinUI", L"Image/UI/hud_coins.bmp", 24, 24, 1, 1, true, RGB(255, 0, 255));
 	diamondImage = ImageManager::GetInstance()->AddImage("diamondUI", L"Image/UI/diamond.bmp", 25, 24, 1, 1, true, RGB(255, 0, 255));
@@ -22,6 +22,8 @@ void PlayerWallet::Init()
 	coin = 0;
 	diamond = 0;
 	LocateInfo();
+
+	return S_OK;
 }
 
 void PlayerWallet::Release()

@@ -12,13 +12,12 @@
 HRESULT Tile::Init()
 {
 	tileImage = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"),
-		234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
+		234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255), true);
 
 	type = TileType::NONE;
 	tileNum = -1;
 	block = nullptr;
 	trap = nullptr;
-	light = 0.0f;
 
 	return S_OK;
 }
@@ -26,13 +25,12 @@ HRESULT Tile::Init()
 HRESULT Tile::Init(int x, int y)
 {
 	tileImage = ImageManager::GetInstance()->AddImage("TILE", TEXT("Image/Tiles.bmp"),
-		234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255));
+		234, 156, SAMPLE_TILE_X, SAMPLE_TILE_Y, true, RGB(255, 0, 255), true);
 
 	type = TileType::NONE;
 	tileNum = 0;
 	block = nullptr;
 	trap = nullptr;
-	light = 0.0f;
 
 	pos = {
 		x * TILE_SIZE * TILE_SCALE + (TILE_SIZE * TILE_SCALE) / 2.0f,
@@ -54,6 +52,13 @@ void Tile::Render(HDC hdc, bool useCamera)
 {
 	if (!tileImage) return;
 
+	if (false == sightInfo.revealed && useCamera)
+	{
+
+		
+		return;
+	}
+
 	float renderX = pos.x;
 	float renderY = pos.y;
 
@@ -62,13 +67,22 @@ void Tile::Render(HDC hdc, bool useCamera)
 		renderX -= Camera::GetInstance()->GetPos().x;
 		renderY -= Camera::GetInstance()->GetPos().y;
 
-		tileImage->RenderScaledImage(
+		//tileImage->RenderScaledImage(
+		//	hdc,
+		//	static_cast<int>(renderX),
+		//	static_cast<int>(renderY),
+		//	tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
+		//	static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
+		//	true
+		//);
+		float brightness = GetBrightness();
+		tileImage->FrameRender(
 			hdc,
 			static_cast<int>(renderX),
 			static_cast<int>(renderY),
 			tileNum % SAMPLE_TILE_X, tileNum / SAMPLE_TILE_X,
 			static_cast<float>(TILE_SCALE), static_cast<float>(TILE_SCALE),
-			true
+			false, true, brightness, 0.0f
 		);
 	}
 	else
@@ -83,7 +97,17 @@ void Tile::Render(HDC hdc, bool useCamera)
 	}
 
 	if (trap) trap->Render(hdc, useCamera);
-	if (block) block->Render(hdc, useCamera);
+	if (block) 
+	{
+		block->SetBrightnessInfo(GetBrightnessInfoInfo());
+		block->SetSightInfo(GetSightInfo());
+		block->Render(hdc, useCamera);
+	}
+}
+
+void Tile::Update()
+{
+	if (block) block->Update();
 }
 
 void Tile::OnTile(TileActor* actor)
@@ -93,6 +117,10 @@ void Tile::OnTile(TileActor* actor)
 	{
 		EventManager::GetInstance()->AddEvent(EventType::ENTERZONE, nullptr);
 	}
+	//if (tileNum == 25)
+	//{
+	//	EventManager::GetInstance()->AddEvent(EventType::NEXTLEVEL, nullptr);
+	//}
 }
 
 TileType Tile::GetTypeByTileNum(int tileNum)
@@ -119,10 +147,10 @@ void Tile::OnBeat(bool isCombo)
 		switch (type)
 		{
 		case TileType::BRIGHT_DIRT:
-			SetTileNum(0);
+			SetTileNum((index.x + index.y) % 2 == 0 ? 10 : 11);
 			break;
 		case TileType::DARK_DIRT:
-			SetTileNum((index.x + index.y) % 2 == 0 ? 10 : 11);
+			SetTileNum(1);
 			break;
 		case TileType::COMBO1_DIRT:
 		case TileType::COMBO2_DIRT:
@@ -137,12 +165,16 @@ void Tile::OnBeat(bool isCombo)
 		switch (type)
 		{
 		case TileType::BRIGHT_DIRT:
-		case TileType::COMBO2_DIRT:
 			SetTileNum(0);
 			break;
+		case TileType::COMBO2_DIRT:
+		SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
+			break;
 		case TileType::DARK_DIRT:
-		case TileType::COMBO1_DIRT:
 			SetTileNum(1);
+			break;
+		case TileType::COMBO1_DIRT:
+			SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
 			break;
 		default:
 			break;

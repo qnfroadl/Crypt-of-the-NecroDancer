@@ -1,18 +1,19 @@
-#pragma once
+ï»¿#pragma once
 #include "config.h"
-#include "Singleton.h"
 #include <queue>
 
 class Image;
 class BeatMarkerManager;
-class BeatManager : public Singleton<BeatManager>
+class BeatManager
 {
 private:
 	queue<unsigned int> beatDatas;
 	unsigned int beatBefore;
 
 	bool checkInputTime;
-	bool checkOnBeat; // Á¤¹Ú Ã¼Å©
+	bool checkOnBeat; // ì •ë°• ì²´í¬
+
+	bool active2p;
 
 	bool isP1Hit;
 	bool isP2Hit;
@@ -25,7 +26,8 @@ public:
 	void Update();
 	void Render(HDC hdc);
 
-	void StartBeat(bool _checkBeat); // zone µé¾î°¥ ¶§ È£Ãâ
+	void SetActive2P(bool _active2p) { active2p = _active2p; isP2Hit = !active2p; }
+	void StartBeat(bool _checkBeat); // zone ë“¤ì–´ê°ˆ ë•Œ í˜¸ì¶œ
 	void UpdateBeat();
 
 	void ProcessInput();

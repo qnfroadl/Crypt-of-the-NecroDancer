@@ -42,6 +42,11 @@ void TileItem::Interact(GameActor* actor)
 	}
 }
 
+void TileItem::Destroy()
+{
+	SetActive(false);
+}
+
 void TileItem::Drop()
 {
 	owner = nullptr;

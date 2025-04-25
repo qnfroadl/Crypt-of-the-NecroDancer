@@ -1,14 +1,19 @@
 ﻿// PositionManager.cpp
 #include "PositionManager.h"
 #include "TileActor.h"
+#include "EventManager.h"
 
 PositionManager::PositionManager()
 {
-  
+   
+
 }
 
 PositionManager::~PositionManager()
 {
+
+
+
     Clear();
 }
 
@@ -64,19 +69,20 @@ void PositionManager::RemoveTileActor(const std::shared_ptr<TileActor>& actor, b
         pos = actor->GetTileIndex();
 	}
     
-
     auto it = posMap.find(pos);
     if (it != posMap.end())
     {
         auto& vec = it->second;
-        auto vecIt = std::remove(vec.begin(), vec.end(), actor);
-        if (vecIt != vec.end())
+        auto vecIt =vec.begin();
+        while (vecIt != vec.end())
         {
-            vec.erase(vecIt, vec.end());
-            if (vec.empty())
+            if (*vecIt == actor)
             {
-                posMap.erase(it);
+                vec.erase(vecIt);
+                break;
             }
+
+            vecIt++;
         }
     }
 }
@@ -96,7 +102,7 @@ shared_ptr<TileActor> PositionManager::GetActor(POINT index, ActorType type)
     return nullptr;
 }
 
-std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT& pos)
+const std::vector<std::shared_ptr<TileActor>>& PositionManager::GetActorsAt(const POINT& pos)
 {
     auto it = posMap.find(pos);
     if (it != posMap.end())
@@ -125,21 +131,75 @@ std::vector<std::shared_ptr<TileActor>> PositionManager::GetActorsAt(const POINT
     return actors;
 }
 
-void PositionManager::Render(HDC hdc)
+HRESULT PositionManager::Init()
 {
-    // 테스트용.
+    EventManager::GetInstance()->BindEvent(this, EventType::INTERACT, [&](EventData* data)
+        {
+            if (data)
+            {
+                InteractEventData* interact = static_cast<InteractEventData*>(data);
+                
+                POINT center = interact->actor->GetTileIndex();
+
+
+                auto it =interact->range.begin();
+                while (it != interact->range.end())
+                {
+                    auto actors = GetActorsAt({center.x + it->x , center.y + it->y});
+
+                    for (auto ac : actors)
+                    {
+                        ac->Interact(interact->actor.get());
+                        interact->actor->Interact(ac.get());
+                    }
+
+                    it++;
+                }
+            }
+        });
+   
+    return S_OK;
+}
+
+void PositionManager::Release()
+{
+    EventManager::GetInstance()->UnbindEvent(this, EventType::INTERACT);
+
+}
+void PositionManager::Update()
+{
+    // 포지션 매니저에 등록된 애들만 업데이트.
     auto it = posMap.begin();
     while (it != posMap.end())
     {
-		auto& vec = it->second;
-		for (auto& actor : vec)
-		{
-			actor->Render(hdc);
-		}
-		it++;
+        auto& vec = it->second;
+        for (auto& actor : vec)
+        {
+            if (actor->IsActive())
+            {
+                actor->Update();
+            }
+        }
+        it++;
     }
+}
+
+void PositionManager::Render(HDC hdc)
+{
+    // 테스트용.
+    // auto it = posMap.begin();
+    // while (it != posMap.end())
+    // {
+	// 	auto& vec = it->second;
+	// 	for (auto& actor : vec)
+	// 	{
+	// 		actor->Render(hdc);
+	// 	}
+	// 	it++;
+    // }
 
 }
+
 
 void PositionManager::Clear()
 {

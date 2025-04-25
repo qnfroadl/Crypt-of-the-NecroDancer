@@ -2,20 +2,23 @@
 #include "Camera.h"
 #include "Image.h"
 #include "ImageManager.h"
+#include "Torch.h"
 
 #define TILE_SIZE_SCALED (TILE_SIZE * TILE_SCALE)
 
 HRESULT Block::Init()
 {
-	blocklImage = ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
+	blocklImage = ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255), true);
+	torch = nullptr;
 	return S_OK;
 }
 
 HRESULT Block::Init(FPOINT _pos, POINT _index)
 {
-	blocklImage= ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255));
+	blocklImage= ImageManager::GetInstance()->AddImage("WALL", TEXT("Image/Walls.bmp"), 216, 336, SAMPLE_WALL_X, SAMPLE_WALL_Y, true, RGB(255, 0, 255), true);
 	pos = _pos;
 	index = _index;
+	torch = nullptr;
 	return S_OK;
 }
 
@@ -39,7 +42,8 @@ void Block::Render(HDC hdc, bool useCamera)
 			blockNum / SAMPLE_WALL_X,
 			static_cast<float>(TILE_SCALE),
 			static_cast<float>(TILE_SCALE),
-			false, true  // 중심 기준 
+			false, true
+			, GetStaticBrightness() + GetDynamicBrightness(), 0.0f
 		);
 	}
 	else
@@ -53,16 +57,23 @@ void Block::Render(HDC hdc, bool useCamera)
 			false, true  // 중심 기준
 		);
 	}
+
+	if (torch)
+		torch->Render(hdc, useCamera);
+}
+void Block::Update()
+{
+	if (torch)
+		torch->Update();
 }
 void Block::Destroy()
 {
 	// 삽 아이콘 띄우면서 없어져버려.
 	
 
-
 }
 
-bool Block::Destroy(int strength)
+bool Block::CanDestroy(int strength)
 {
 	if (strength >= hp)
 	{

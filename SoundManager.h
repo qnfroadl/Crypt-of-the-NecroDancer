@@ -13,6 +13,9 @@ enum class ESoundKey
 {
 	NONE,
 
+	INTRO,
+	MAINMENU,
+
 	// Bgm
 	LOBBY,
 
@@ -60,10 +63,16 @@ private:
 	ESoundKey keyBgm;
 	ESoundKey keyBgmShopkeeper;
 
+	float tempo;
+	float elapsedTime;
+	float maxTempoChangeTime;
+
 public:
 	void Init();
 	void Release();
 	void Update();
+
+	void LoadSound();
 
 	FMOD::Sound* AddSound(ESoundKey key, const char* filePath, bool loop=false);
 	FMOD::Sound* FindSound(ESoundKey key);
@@ -79,4 +88,8 @@ public:
 	ESoundKey GetCurrentKeyBgm();
 	unsigned int GetBgmPosition();
 	bool IsBgmEnd();
+
+	void SetTempo(float _tempo);
+	void RecoverTempo();
+	float GetTempo() { return tempo; }
 };

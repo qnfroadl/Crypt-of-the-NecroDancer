@@ -8,13 +8,19 @@ int EventManager::GetPriority(EventType type)
 
 	switch (type) 
 	{
+		case EventType::BEATEND: // 정박 타이밍 끝
+			priority = 0;
+			break;
 		case EventType::BEAT: 
 		case EventType::BEATHIT: 
 		case EventType::BEATMISS: 
 			priority = 1;
 			break;
-		case EventType::BEATEND: 
+		case EventType::SONGEND: 
 			priority = 2;
+			break;
+		case EventType::PLAYERMOVED:
+			priority = 3;
 			break;
 	}
 
@@ -32,9 +38,13 @@ void EventManager::UnbindEvent(GameObject* obj, EventType type)
 	auto it = funcs[type].begin();
 	while (it != funcs[type].end())
 	{
-		
+		if (it->obj == obj)
+		{
+			it = funcs[type].erase(it);
+			continue;
+		}
+		it++;
 	}
-	
 	
 }
 
@@ -72,19 +82,27 @@ void EventManager::Update()
 		queEvents.pop();
 
 		// 이벤트 노티, 매 프레임당 최대 10개의 이벤트만 처리한다. (일단은 로컬변수로 처리)
-		auto it = funcs[event->type].begin();
+		//auto it = funcs[event->type].begin();
 
-		int maxCount = 10;
-		int count = 0;
-		while (it != funcs[event->type].end() && count < maxCount)
+		int maxCount = 0;
+
+		auto& bindEvents = funcs[event->type];
+		maxCount = bindEvents.size();
+		for (int i = 0; i < maxCount; i++)
 		{
-			(*it).func(event->data);
-			
-			it++;
-			count++;
+			bindEvents[i].func(event->data);
 		}
-		
 		delete event;
+
+		//while (it != funcs[event->type].end() && count < maxCount)
+		//{
+		//	(*it).func(event->data);
+		//	
+		//	it++;
+		//	count++;
+		//}
+		
+		
 	}
 	
 }
