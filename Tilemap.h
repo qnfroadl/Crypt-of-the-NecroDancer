@@ -78,7 +78,7 @@ public:
 		}
 	}
 
-	void SetIsCombo(bool _isCombo) { isCombo = _isCombo; }
+	void SetIsCombo(bool _isCombo) { isCombo = _isCombo;}
 
 	void ClearSpawnPoints() { spawnPoints.clear(); }
 	void ClearTorchSpots() { torchSpots.clear(); }

@@ -161,7 +161,7 @@ void Tile::OnBeat(bool isCombo)
 			SetTileNum(0);
 			break;
 		case TileType::COMBO2_DIRT:
-		SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
+			SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
 			break;
 		case TileType::DARK_DIRT:
 			SetTileNum(1);

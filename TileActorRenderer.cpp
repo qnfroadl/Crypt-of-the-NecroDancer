@@ -43,7 +43,7 @@ void TileActorRenderer::Render(HDC hdc)
         for (int x = leftTop.x; x <= rightBottom.x; ++x)
         {
             // 타일 렌더.
-            sightVisible = sightMap[y][x];
+            sightVisible = sightMap[y][x].first;
             tiles[y][x]->SetVisible(sightVisible);
             tiles[y][x]->Render(hdc, true);
             std::vector<std::shared_ptr<TileActor>> actors = positionManager->GetActorsAt(POINT{x,y});

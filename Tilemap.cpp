@@ -45,15 +45,8 @@ HRESULT Tilemap::Init(int _mapRows, int _mapColumns)
 	EventManager::GetInstance()->BindEvent(this, EventType::PLAYERMOVED, std::bind(&Tilemap::UpdateVisuable, this));
 
 
-	// EventManager::GetInstance()->BindEvent(this, EventType::BEAT, std::bind(&Tilemap::UpdateVisuable, this));
-	//EventManager::GetInstance()->BindEvent(
-	//	this,
-	//	EventType::BEAT,
-	//	[this](EventData* data) {
-	//		bool isCombo = static_cast<BeatEventData*>(data)->isCombo;
-	//		this->OnBeat(isCombo);
-	//	}
-	//);
+	EventManager::GetInstance()->BindEvent(this, EventType::COMBOSTART, std::bind(&Tilemap::SetIsCombo, this, true));
+	EventManager::GetInstance()->BindEvent(this, EventType::COMBOFAILED, std::bind(&Tilemap::SetIsCombo, this, false));
 
 
 
@@ -77,7 +70,7 @@ void Tilemap::Release()
 	// 이벤트 언바인드 추가
 	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
 	EventManager::GetInstance()->UnbindEvent(this, EventType::INTERACT);
-	EventManager::GetInstance()->UnBindEvent(this, EventType::PLAYERMOVED);
+	EventManager::GetInstance()->UnbindEvent(this, EventType::PLAYERMOVED);
 
 
 }
