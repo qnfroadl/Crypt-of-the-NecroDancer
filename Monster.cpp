@@ -306,7 +306,14 @@ void Monster::SetTileIndex(const POINT& _index)
 void Monster::SetTileMap(weak_ptr<Tilemap> _tileMap)
 {
 	tileMap = _tileMap;
-	Teleport(tileMap.lock()->GetSpawnIndex());
+
+	POINT pos = tileMap.lock()->GetSpawnIndex();
+	
+	if (0 <= pos.x && 0 <= pos.y)
+	{
+		Teleport(pos);
+	}
+	
 
 }
 

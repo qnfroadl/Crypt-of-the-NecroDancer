@@ -48,6 +48,7 @@ void MonsterManager::Release()
 	{
 		if (monsterVector[i] != nullptr)
 		{
+			monsterVector[i]->SetActive(false);
 			monsterVector[i]->Release();
 			monsterVector[i] = nullptr;
 		}
