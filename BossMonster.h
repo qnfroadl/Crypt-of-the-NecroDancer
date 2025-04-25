@@ -23,7 +23,6 @@ private:
 	int blastAnimFrame;
 	int textX;
 	int textY;
-	int breathRange;
 	unordered_map<BossType, MonsterImageInfo>MonsterInfoTable =
 	{
 		{ BossType::Dragon,		{ "Dragon",TEXT("Image/BossMonster/dragon_red.bmp"),427,102, 7,2}},
@@ -43,7 +42,7 @@ public:
 	void SettingImageFrameImage();
 	void FireImageRender(int index, HDC hdc, FPOINT pos, int animationFrame);
 	void AttackTarget();
-	void FindWall(bool isLeft, int maxRange);
+	bool FindWall(bool _isLeft);
 	MonsterImageInfo FindImageInfo(BossType _bm);
 	BossMonster();
 	virtual ~BossMonster();

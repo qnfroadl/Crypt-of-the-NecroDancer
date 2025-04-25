@@ -18,7 +18,7 @@ class LobbyScene : public GameObject
 {
 private:
     unique_ptr<TileActorRenderer> renderer;
-    
+    unique_ptr<LevelManager> levelManager;
 
     shared_ptr<Tilemap> map;
 	weak_ptr<PlayerManager> playerManager;

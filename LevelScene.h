@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "config.h"
 #include "GameObject.h"
-#include "SoundManager.h"
 class TileActorRenderer;
 class Tilemap;
 class PlayerManager;
@@ -25,11 +24,6 @@ private:
     shared_ptr<ShadowCasting> shadowCasting;
     shared_ptr<BeatManager> beatManager;
 
-    vector<pair<ESoundKey, ESoundKey>> soundKey = {
-      {ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M},
-      {ESoundKey::ZONE1_2, ESoundKey::ZONE1_2_SHOPKEEPER_M},
-      {ESoundKey::ZONE1_3, ESoundKey::ZONE1_3_SHOPKEEPER_M},
-    };
     // 검정 배경
     HBRUSH blackBrush;
 public:
@@ -38,6 +32,5 @@ public:
     virtual void Update() override;
     virtual void Render(HDC hdc) override;
 
-    HRESULT Init(int zone);
     void SetPlayerManager(shared_ptr<PlayerManager> playerManager);
 };

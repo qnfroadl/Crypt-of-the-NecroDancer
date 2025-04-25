@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "config.h"
 #include <queue>
-#include "GameObject.h"
+
 class Image;
 class BeatMarkerManager;
-class BeatManager : GameObject
+class BeatManager
 {
 private:
 	queue<unsigned int> beatDatas;
@@ -21,7 +21,7 @@ private:
 	BeatMarkerManager* markerManager;
 
 public:
-	HRESULT Init();
+	void Init();
 	void Release();
 	void Update();
 	void Render(HDC hdc);
