@@ -44,7 +44,7 @@ void LevelManager::OnEnterZone(EventData* data)
         
 
 
-        if (keyName == "LevelScene" && zone == 3)
+        if (keyName == "LevelScene" && zone == 1)
         {
             SceneManager::GetInstance()->ChangeScene("BossScene", "Loading");
             keyName = "BossScene";

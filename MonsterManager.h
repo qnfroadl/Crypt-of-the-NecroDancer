@@ -24,7 +24,8 @@ public:
 	void Update() override;
 	void Render(HDC hdc) override;
 	void Release() override;
-
+	
+	void SpwanBossMonster();
 	shared_ptr<Monster> AddMonster(MONSTERTYPE _type);
 	shared_ptr<Monster> AddMonster(MonsterImageInfo _info);
 	shared_ptr<BossMonster> AddBossMonster(BossType _type);

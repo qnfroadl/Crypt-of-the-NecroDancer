@@ -44,7 +44,7 @@ void MonsterManager::Render(HDC hdc)
 
 void MonsterManager::Release()
 {
-	for (int i = 0; i < monsterNumber; i++)
+	for (int i = 0; i < monsterVector.size(); i++)
 	{
 		if (monsterVector[i] != nullptr)
 		{
@@ -53,6 +53,11 @@ void MonsterManager::Release()
 			monsterVector[i] = nullptr;
 		}
 	}
+}
+
+void MonsterManager::SpwanBossMonster()
+{
+	monsterVector.push_back(AddBossMonster(BossType::Dragon));
 }
 
 shared_ptr<Monster> MonsterManager::AddMonster(MONSTERTYPE _type)
@@ -79,7 +84,7 @@ shared_ptr<BossMonster> MonsterManager::AddBossMonster(BossType _type)
 void MonsterManager::SetTileMap(weak_ptr<Tilemap> _tileMap)
 {
 	tileMap = _tileMap;
-	for (int i = 0; i < monsterNumber; i++)
+	for (int i = 0; i < monsterVector.size(); i++)
 	{
 		if (monsterVector[i] != nullptr)
 		{
@@ -91,7 +96,7 @@ void MonsterManager::SetTileMap(weak_ptr<Tilemap> _tileMap)
 void MonsterManager::SetPositionManager(weak_ptr<PositionManager> _positionManager)
 {
 	positionManager = _positionManager;
-	for (int i = 0; i < monsterNumber; i++)
+	for (int i = 0; i < monsterVector.size(); i++)
 	{
 		if (monsterVector[i] != nullptr)
 		{
@@ -102,7 +107,7 @@ void MonsterManager::SetPositionManager(weak_ptr<PositionManager> _positionManag
 
 void MonsterManager::SetPlayer(weak_ptr<Player> _player)
 {
-	for (int i = 0; i < monsterNumber; i++)
+	for (int i = 0; i < monsterVector.size(); i++)
 	{
 		if (monsterVector[i] != nullptr)
 		{

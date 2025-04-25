@@ -69,9 +69,10 @@ HRESULT BossScene::Init()
         playerCount = playerManager.lock()->GetPlayerCount();
     }
     monsterManager = make_shared<MonsterManager>();
-    monsterManager->Init();
+    monsterManager->SpwanBossMonster();
     monsterManager->SetPositionManager(positionManager);
     monsterManager->SetTileMap(map);
+    monsterManager->SpwanBossMonster();
     monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
 
     SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::LOBBY);

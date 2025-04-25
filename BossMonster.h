@@ -44,6 +44,7 @@ public:
 	void FireImageRender(int index, HDC hdc, FPOINT pos, int animationFrame);
 	void AttackTarget();
 	void FindWall(bool isLeft, int maxRange);
+	void SetTileMap(weak_ptr<Tilemap> _tileMap);
 	MonsterImageInfo FindImageInfo(BossType _bm);
 	BossMonster();
 	virtual ~BossMonster();

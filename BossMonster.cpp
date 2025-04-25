@@ -305,6 +305,13 @@ void BossMonster::FindWall(bool isLeft, int maxRange)
 	cout << "breathRange: " << breathRange << endl;
 }
 
+void BossMonster::SetTileMap(weak_ptr<Tilemap> _tileMap)
+{
+	tileMap = _tileMap;
+	
+	Teleport(POINT({6,6}));
+}
+
 
 MonsterImageInfo BossMonster::FindImageInfo(BossType _bm)
 {
