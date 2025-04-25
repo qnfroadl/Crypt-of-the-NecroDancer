@@ -30,8 +30,25 @@ float ShadowCasting::CalcBrightness(POINT origin, int col, int row)
 		이후에는 렌더러에서 읽어서 밝기값만큼 렌더 하면됨(Render 할 때 투명값을 줄 수도 있겠지만? 밝기값 설정 후 렌더)
 	*/
 
+	// 거리 계산
+	int dx = col - origin.x;
+	int dy = row - origin.y;
+	float distance = sqrtf(dx * dx + dy * dy);
 
-	return 0.0f;
+	// 밝기 계산 (0.0f ~ 1.0f)
+	const float maxDistance = 4.0f; // 최대 밝기가 닿는 거리
+	const float minBrightness = 0.1f; // 최소 밝기
+	const float maxBrightness = 1.0f;
+
+	if (distance >= maxDistance)
+		return minBrightness;
+
+	// 밝기 감소는 선형 또는 제곱 방식 등 선택 가능
+	float brightness = maxBrightness - (distance / maxDistance); // 선형 감소
+	// float brightness = maxBrightness - (distance * distance) / (maxDistance * maxDistance); // 제곱 감소
+
+	// 최소 밝기 보장
+	return max(minBrightness, brightness);
 }
 
 ShadowCasting::ShadowCasting()

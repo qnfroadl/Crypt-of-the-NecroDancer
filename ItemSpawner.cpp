@@ -75,7 +75,6 @@ void ItemSpawner::SpawnItem(POINT tileIndex,ItemType type, int value)
 	case ItemType::BOMB:
 		item = std::make_shared<ItemBomb>();
 		break;
-	
 	default:
 		break;
 	}

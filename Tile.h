@@ -38,7 +38,6 @@ public:
 	void OnTile(TileActor* actor);
 	void OnBeat(bool isCombo);
 	virtual void Interact(GameActor* actor) override;
-
 	// 바닥 번호
 	int GetTileNum() { return tileNum; }
 	void SetTileNum(int _tileNum) {

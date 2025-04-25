@@ -13,7 +13,7 @@ TileActor::TileActor()
 	sightInfo.visible = false;
 
 	brightnessInfo.staticBrightness = 0.f;
-	brightnessInfo.dynamicBrightness = 1.f;
+	brightnessInfo.dynamicBrightness = 0.f;
 
 }
 
@@ -63,6 +63,11 @@ void TileActor::SetVisible(bool visible)
 	}
 }
 
+void TileActor::SetSightInfo(const SightInfo& _sightInfo)
+{
+	sightInfo = _sightInfo;
+}
+
 const SightInfo& TileActor::GetSightInfo()
 {
 	return sightInfo;
@@ -87,6 +92,11 @@ float TileActor::GetDynamicBrightness()
 float TileActor::GetStaticBrightness()
 {
 	return brightnessInfo.staticBrightness;
+}
+
+float TileActor::GetBrightness()
+{
+	return brightnessInfo.dynamicBrightness + brightnessInfo.staticBrightness;
 }
 
 void TileActor::SetBrightnessInfo(const BrightnessInfo& info)

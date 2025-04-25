@@ -92,6 +92,7 @@ HRESULT LevelScene::Init()
     renderer->Init();
     renderer->SetPositionManager(positionManager);
     renderer->SetTileMap(map);
+
     shadowCasting->Update();
 
     return S_OK;
