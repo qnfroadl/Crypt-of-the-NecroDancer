@@ -54,8 +54,6 @@ void Tile::Render(HDC hdc, bool useCamera)
 
 	if (false == sightInfo.revealed && useCamera)
 	{
-
-		
 		return;
 	}
 
@@ -76,6 +74,10 @@ void Tile::Render(HDC hdc, bool useCamera)
 		//	true
 		//);
 		float brightness = GetBrightness();
+		if (false == GetSightInfo().visible)
+		{
+			brightness = 0.3;
+		}
 		tileImage->FrameRender(
 			hdc,
 			static_cast<int>(renderX),
