@@ -82,7 +82,10 @@ HRESULT LevelScene::Init()
     monsterManager->SetTileMap(map);
     monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
     
+
+
     SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
+
 	beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(true);
@@ -132,6 +135,18 @@ void LevelScene::Release()
         renderer = nullptr;
     }
 
+    if (monsterManager)
+    {
+		monsterManager->Release();
+		monsterManager = nullptr;
+    }
+
+    if (shadowCasting)
+    {
+		shadowCasting->Release();
+		shadowCasting = nullptr;
+    }
+
 	playerManager.lock()->BindRelease();
     DeleteObject(blackBrush);
 
@@ -158,7 +173,10 @@ void LevelScene::Update()
     {
         SoundManager::GetInstance()->SetTempo(1.2f);
     }
-
+    if (KeyManager::GetInstance()->IsOnceKeyDown('G'))
+    {
+        EventManager::GetInstance()->AddEvent(EventType::ENTERZONE, nullptr);
+    }
     if (beatManager)
     {
         beatManager->Update();
@@ -190,6 +208,65 @@ void LevelScene::Render(HDC hdc)
         uiManager->Render(hdc);
     }
 
+}
+
+HRESULT LevelScene::Init(int zone)
+{
+    SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
+
+    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE" + std::to_string(zone), 30, 30)));
+    blackBrush = CreateSolidBrush(RGB(0, 0, 0));
+
+    positionManager = make_shared<PositionManager>();
+    itemSpawner = make_shared<ItemSpawner>();
+    itemSpawner->Init();
+    itemSpawner->SetPositionManager(positionManager);
+    itemSpawner->SetTileMap(map);
+
+    uiManager = make_shared<UIManager>();
+    uiManager->Init();
+
+    PlayerWallet* playerCoin = new PlayerWallet();
+    playerCoin->Init();
+    uiManager->AddUI(playerCoin);
+
+    PlayerHp* playerHp = new PlayerHp();
+    playerHp->Init();
+    playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
+    uiManager->AddUI(playerHp);
+
+    shadowCasting = make_shared<ShadowCasting>();
+    shadowCasting->Init(map->GetTiles());
+
+    if (playerManager.lock())
+    {
+        playerManager.lock()->SetPositionManager(positionManager);
+        playerManager.lock()->SetTileMap(map);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+        shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+    }
+
+
+    monsterManager = make_shared<MonsterManager>();
+    monsterManager->Init();
+    monsterManager->SetPositionManager(positionManager);
+    monsterManager->SetTileMap(map);
+    monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+
+
+
+    SoundManager::GetInstance()->PlaySoundBgm(soundKey[zone%3].first, soundKey[zone%3].second);
+     beatManager = make_shared<BeatManager>();
+    beatManager->Init();
+    beatManager->StartBeat(true);
+
+    renderer = make_shared<TileActorRenderer>();
+    renderer->Init();
+    renderer->SetPositionManager(positionManager);
+    renderer->SetTileMap(map);
+    shadowCasting->Update();
+
+    return S_OK;
 }
 
 void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)

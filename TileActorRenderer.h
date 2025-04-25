@@ -29,6 +29,7 @@ private:
 public:
 
 	HRESULT Init() override;
+	void Release() override;
 	void Render(HDC hdc) override;
 
 	void SetTileMap(shared_ptr<Tilemap> tileMap); 
