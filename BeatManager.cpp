@@ -9,23 +9,15 @@
 
 #include <fstream>
 
-HRESULT BeatManager::Init()
+void BeatManager::Init()
 {
 	checkInputTime = false;
 
 	markerManager = new BeatMarkerManager();
-
-	return S_OK;
 }
 
 void BeatManager::Release()
 {
-
-	EventManager::GetInstance()->UnbindEvent(this, EventType::BEAT);
-	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATEND);
-	EventManager::GetInstance()->UnbindEvent(this, EventType::BEATMISS);
-
-
 	if (markerManager)
 	{
 		markerManager->Release();

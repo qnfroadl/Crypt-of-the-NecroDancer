@@ -31,8 +31,13 @@ HRESULT LobbyScene::Init()
     // InitMap
 	SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
 
-   
-   //map = make_shared<Tilemap>();
+    if (nullptr == levelManager)
+    {
+        levelManager = make_unique<LevelManager>();
+        levelManager->Init();
+    }
+
+    //map = make_shared<Tilemap>();
     map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("LOBBY")));
     map->PrintTorchSpots();
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
@@ -117,8 +122,6 @@ void LobbyScene::Release()
 		beatManager->Release();
 		beatManager = nullptr;
 	}
-
-    
 
     playerManager.lock()->BindRelease();
 

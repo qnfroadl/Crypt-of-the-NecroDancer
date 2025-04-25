@@ -2,23 +2,22 @@
 #include "EventManager.h"
 #include "EventData.h"
 #include "SceneManager.h"
-#include "LevelScene.h"
 
 HRESULT LevelManager::Init()
 {
     curLevel = 0;
-    zone = 0;
-    keyName = "Lobby";
-   
+    zone = 1;
+
     EventManager::GetInstance()->BindEvent(this, EventType::ENTERZONE, bind(&LevelManager::OnEnterZone, this, placeholders::_1));
-    
+    EventManager::GetInstance()->BindEvent(this, EventType::NEXTLEVEL, bind(&LevelManager::OnNextLevel, this, placeholders::_1));
+
     return S_OK;
 }
 
 void LevelManager::Release()
 {
     EventManager::GetInstance()->UnbindEvent(this, EventType::ENTERZONE);
-
+    EventManager::GetInstance()->UnbindEvent(this, EventType::NEXTLEVEL);
 }
 
 void LevelManager::OnNextLevel(EventData* data)
@@ -28,21 +27,6 @@ void LevelManager::OnNextLevel(EventData* data)
 
 void LevelManager::OnEnterZone(EventData* data)
 {
-    if (keyName == "Lobby")
-    {
-        SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
-        keyName = "LevelScene";
-      
-    }
-	else if (keyName == "LevelScene")
-	{
-        LevelScene* clearScene = (LevelScene*)(SceneManager::GetInstance()->GetCurrentScene());
-		clearScene->Release();
-           
-        
-        clearScene->Init(zone);
-		zone++;
-        
-	}
-    
+    SceneManager::GetInstance()->ChangeScene("LevelScene", "Loading");
+
 }
