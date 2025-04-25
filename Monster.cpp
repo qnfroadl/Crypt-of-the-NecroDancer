@@ -131,13 +131,43 @@ void Monster::Render(HDC hdc)
 		
 		FPOINT pos = Camera::GetInstance()->GetScreenPos(FPOINT(GetPos()));
 		
-		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, 0,isLeft);
+		image->FrameRender(hdc, pos.x, pos.y - jumpData.height, animationFrame, sightState == SightState::VISIBLE ? 0 : 1,isLeft);
 		if (isAttack)
 		{
 			FPOINT attackPos = Camera::GetInstance()->GetScreenPos(FPOINT(target.lock()->GetPos()));
 			attackImage->FrameRender(hdc, attackPos.x, attackPos.y, attackAnimationFrame, 0, isLeft);
 		}
 	}
+}
+
+void Monster::imageInit(const MonsterImageInfo& _p)
+{
+	image = ImageManager::GetInstance()->AddImage(_p.keyName, _p.imagePath, _p.width * 3, _p.height * 3,
+		_p.imageFrameX, _p.ImageFrameY, true, RGB(255, 0, 255));
+	attackImage = ImageManager::GetInstance()->AddImage("Monster_Attack", TEXT("Image/Monster/swipe_enemy.bmp"), 135 * 3, 24 * 3,
+		5, 1, true, RGB(255, 0, 255));
+
+	state = MonsterState::IDLE;
+	
+	damage = 0.5;
+	moveDelay = 3;
+	beatCount = 0;
+	monsterType = MONSTERTYPE::SKELETON;
+
+	SettingFrame(MONSTERTYPE::SKELETON);
+	SetActive(true);
+
+	isLeft = true;
+	elapsedTime = 0;
+	changeTime = 0;
+	animationFrame = minFrame;
+	attackAnimationFrame = 0;
+	isAttack = false;
+
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATMISS, std::bind(&Monster::OnBeat, this));
+	EventManager::GetInstance()->BindEvent(this, EventType::BEATHIT, std::bind(&Monster::OnBeat, this));
+
+
 }
 
 void Monster::SettingFrame(MONSTERTYPE _m)
@@ -184,7 +214,7 @@ POINT Monster::Trace()
 
 void Monster::Dead()
 {
-	EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData(GetTileIndex(), ItemType::GOLD, 50));
+	
 	SetActive(false);
 	state = MonsterState::DEAD;
 	positionManager.lock()->RemoveTileActor(shared_from_this(), true, GetTileIndex());
@@ -276,7 +306,7 @@ void Monster::SetTileIndex(const POINT& _index)
 void Monster::SetTileMap(weak_ptr<Tilemap> _tileMap)
 {
 	tileMap = _tileMap;
-	Teleport(POINT{ 6, 5 });
+	Teleport(tileMap.lock()->GetSpawnIndex());
 
 }
 
@@ -334,7 +364,7 @@ void Monster::TakeDamage(int damage)
 	if (curHP <= 0)
 	{
 		curHP = 0;
-		
+		EventManager::GetInstance()->AddEvent(EventType::SPAWNITEM, new SpawnItemEventData(GetTileIndex(), ItemType::GOLD, 100));
 		Dead();
 	}
 }
