@@ -2,7 +2,7 @@
 #include"GameObject.h"
 #include "Monster.h"
 #include "BossMonster.h"
-#include "BossMonster.h"
+
 class Tilemap;
 class PositionManager;
 class Player;
@@ -18,6 +18,7 @@ private:
 	//vector<MonsterImageInfo>vecImageInfo;
 	vector<MonsterImageInfo> vecMonsterInfo;
 	int monsterNumber;
+	shared_ptr<BossMonster>temp;
 public:
 
 	HRESULT Init() override;
@@ -32,6 +33,7 @@ public:
 	inline void SetMonsterNumber(int _monsterNumber) { monsterNumber = _monsterNumber; }
 	inline int GetMonsterNumber() { return monsterNumber; }
 
+	void SetTp();
 	void SetTileMap(weak_ptr<Tilemap>_tileMap);
 	void SetPositionManager(weak_ptr<PositionManager> _positionManager);
 	void SetPlayer(weak_ptr<Player> _player);

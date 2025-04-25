@@ -212,11 +212,11 @@ void LevelScene::Render(HDC hdc)
 
 }
 
-HRESULT LevelScene::Init(int zone)
+HRESULT LevelScene::InitBoss()
 {
     SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
 
-    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
+    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("BOSS")));
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();
@@ -260,14 +260,15 @@ HRESULT LevelScene::Init(int zone)
 
 
     monsterManager = make_shared<MonsterManager>();
-    monsterManager->Init();
+    monsterManager->SpwanBossMonster();
     monsterManager->SetPositionManager(positionManager);
     monsterManager->SetTileMap(map);
     monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+    monsterManager->SetTp();
 
 
 
-    SoundManager::GetInstance()->PlaySoundBgm(soundKey[zone%3].first, soundKey[zone%3].second);
+    SoundManager::GetInstance()->PlaySoundBgm(soundKey[2].first, soundKey[2].second);
     beatManager = make_shared<BeatManager>();
     beatManager->Init();
     beatManager->StartBeat(true);

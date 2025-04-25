@@ -1,22 +1,24 @@
 ﻿#include "MonsterManager.h"
 #include "json.hpp"
 #include <fstream>
-#include <cstdlib> 
+#include <cstdlib>
+#include "BossMonster.h"
 
 using json = nlohmann::json;
 
 HRESULT MonsterManager::Init()
 {
 	monsterNumber = 8;
-	//monsterVector.resize(10);
+	
 	GetMonsterDataFromJson();
 	for (int i = 0; i < vecMonsterInfo.size(); i++)
 	{
 		
 			monsterVector.push_back(AddMonster(vecMonsterInfo[i]));
-			//monsterVector[i] = AddBossMonster(BossType::Dragon);
+			//monsterVector = AddBossMonster(BossType::Dragon);
 		
 	}
+	monsterVector.push_back(AddBossMonster(BossType::Dragon));
 	return S_OK;
 }
 
@@ -57,7 +59,13 @@ void MonsterManager::Release()
 
 void MonsterManager::SpwanBossMonster()
 {
-	monsterVector.push_back(AddBossMonster(BossType::Dragon));
+	monsterVector.resize(15);
+	for (int i = 0; i < monsterVector.size(); i++) {
+
+	monsterVector[i] =make_shared<Monster>();
+	monsterVector[i]->Init(MONSTERTYPE::SKELETON);
+
+	}
 }
 
 shared_ptr<Monster> MonsterManager::AddMonster(MONSTERTYPE _type)
@@ -79,6 +87,28 @@ shared_ptr<BossMonster> MonsterManager::AddBossMonster(BossType _type)
 	shared_ptr<BossMonster>temp = std::make_shared<BossMonster>();
 	temp->Init(_type);
 	return temp;
+}
+
+void MonsterManager::SetTp()
+{
+	for (int i = 0; i < monsterVector.size(); i++)
+	{
+		if (monsterVector[i] != nullptr)
+		{
+			
+			monsterVector[i]->Teleport(POINT({ 1+i%5,1 }));
+			if (i > 5&&i<=10)
+			{
+				
+				monsterVector[i]->Teleport(POINT({ 1,6+i%5 }));
+			}
+			if (i > 10)
+			{
+				monsterVector[i]->Teleport(POINT({ 6+i%5,1 }));
+			}
+			
+		}
+	}
 }
 
 void MonsterManager::SetTileMap(weak_ptr<Tilemap> _tileMap)

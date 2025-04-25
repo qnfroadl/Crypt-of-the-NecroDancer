@@ -38,17 +38,12 @@ void LevelManager::OnEnterZone(EventData* data)
     {
         LevelScene* clearScene = (LevelScene*)(SceneManager::GetInstance()->GetCurrentScene());
         clearScene->Release();
-
-
-        clearScene->Init(zone);
         
-
 
         if (keyName == "LevelScene" && zone == 1)
         {
-            SceneManager::GetInstance()->ChangeScene("BossScene", "Loading");
-            keyName = "BossScene";
+            clearScene->InitBoss();
         }
-        zone++;
+        
     }
 }

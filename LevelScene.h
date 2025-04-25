@@ -39,6 +39,6 @@ public:
     virtual void Update() override;
     virtual void Render(HDC hdc) override;
 
-    HRESULT Init(int zone);
+    HRESULT InitBoss();
     void SetPlayerManager(shared_ptr<PlayerManager> playerManager);
 };

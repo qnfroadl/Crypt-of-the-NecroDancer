@@ -8,6 +8,7 @@
 #include "UIManager.h"
 #include "PlayerWallet.h"
 #include "PlayerHp.h"
+#include "MultipleGoldUI.h"
 
 #include "PositionManager.h"
 #include "ItemSpawner.h"
@@ -21,20 +22,18 @@
 #include "ShadowCasting.h"
 #include "KeyManager.h"
 
-#include "BeatManager.h"
 #include "SoundManager.h"
+#include "BeatManager.h"
+#include "TileActorRenderer.h"
 
 HRESULT BossScene::Init()
 {
-    SoundManager::GetInstance()->LoadSound();
-
-    // InitMap
-    SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
-
-
+     SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
     //map = make_shared<Tilemap>();
+    //map->Init(20, 20);
+    //map->Load("map/ZONE1_01.map");
     map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("BOSS")));
-    map->PrintTorchSpots();
+    //map->PrintSpawnPoints();
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
     positionManager = make_shared<PositionManager>();
@@ -47,46 +46,57 @@ HRESULT BossScene::Init()
     uiManager = make_shared<UIManager>();
     uiManager->Init();
 
-    PlayerWallet* playerWallet = new PlayerWallet();
-    playerWallet->Init();
-    uiManager->AddUI(playerWallet);
+    PlayerWallet* playerCoin = new PlayerWallet();
+    playerCoin->Init();
+    uiManager->AddUI(playerCoin);
 
     PlayerHp* playerHp = new PlayerHp();
     playerHp->Init();
     uiManager->AddUI(playerHp);
 
+    MultipleGoldUI* multipleGold = new MultipleGoldUI();
+    multipleGold->Init();
+    uiManager->AddUI(multipleGold);
+
+
     shadowCasting = make_shared<ShadowCasting>();
     shadowCasting->Init(map->GetTiles());
 
-    int playerCount = 1;
+	int playerCount = 1;
     if (playerManager.lock())
     {
         playerManager.lock()->SetPositionManager(positionManager);
         playerManager.lock()->SetTileMap(map);
-        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerWallet);
-        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
         shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
+        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, multipleGold);
         playerCount = playerManager.lock()->GetPlayerCount();
     }
+
     monsterManager = make_shared<MonsterManager>();
-    monsterManager->SpwanBossMonster();
+    monsterManager->Init();
     monsterManager->SetPositionManager(positionManager);
     monsterManager->SetTileMap(map);
-    monsterManager->SpwanBossMonster();
     monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
+    monsterManager->SetTp();
 
-    SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::LOBBY);
-    beatManager = make_shared<BeatManager>();
+
+    SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
+
+	beatManager = make_shared<BeatManager>();
     beatManager->Init();
-    beatManager->StartBeat(false);
+    beatManager->StartBeat(true);
     beatManager->SetActive2P(playerCount == 1 ? false : true);
 
-    renderer = make_unique<TileActorRenderer>();
+    renderer = make_shared<TileActorRenderer>();
     renderer->Init();
     renderer->SetPositionManager(positionManager);
     renderer->SetTileMap(map);
 
     shadowCasting->Update();
+
 
    
     return S_OK;
@@ -182,6 +192,7 @@ void BossScene::Render(HDC hdc)
     {
         uiManager->Render(hdc);
     }
+    
 
 }
 
