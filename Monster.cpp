@@ -147,6 +147,7 @@ void Monster::imageInit(const MonsterImageInfo& _p)
 	attackImage = ImageManager::GetInstance()->AddImage("Monster_Attack", TEXT("Image/Monster/swipe_enemy.bmp"), 135 * 3, 24 * 3,
 		5, 1, true, RGB(255, 0, 255));
 
+	state = MonsterState::IDLE;
 	
 	damage = 0.5;
 	moveDelay = 3;

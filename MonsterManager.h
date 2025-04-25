@@ -16,7 +16,7 @@ private:
 	weak_ptr<PositionManager> positionManager;
 	weak_ptr<Tilemap> tileMap;
 	//vector<MonsterImageInfo>vecImageInfo;
-	MonsterImageInfo monsterInfo;
+	vector<MonsterImageInfo> vecMonsterInfo;
 	int monsterNumber;
 public:
 
@@ -34,7 +34,7 @@ public:
 	void SetTileMap(weak_ptr<Tilemap>_tileMap);
 	void SetPositionManager(weak_ptr<PositionManager> _positionManager);
 	void SetPlayer(weak_ptr<Player> _player);
-	MonsterImageInfo GetMonsterDataFromJson();
+	void GetMonsterDataFromJson();
 	TCHAR* StringToTCHAR(const string& str);
 	
 	MonsterManager();

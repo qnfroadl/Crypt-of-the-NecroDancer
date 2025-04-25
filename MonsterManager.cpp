@@ -8,22 +8,21 @@ using json = nlohmann::json;
 HRESULT MonsterManager::Init()
 {
 	monsterNumber = 8;
-	monsterVector.resize(10);
-	monsterInfo=GetMonsterDataFromJson();
-	for (int i = 0; i < monsterNumber; i++)
+	//monsterVector.resize(10);
+	GetMonsterDataFromJson();
+	for (int i = 0; i < vecMonsterInfo.size(); i++)
 	{
-		if (monsterVector[i] == nullptr)
-		{
-			monsterVector[i] = AddMonster(monsterInfo);
+		
+			monsterVector.push_back(AddMonster(vecMonsterInfo[i]));
 			//monsterVector[i] = AddBossMonster(BossType::Dragon);
-		}
+		
 	}
 	return S_OK;
 }
 
 void MonsterManager::Update()
 {
-	for (int i = 0; i < monsterNumber; i++)
+	for (int i = 0; i < monsterVector.size(); i++)
 	{
 		if (monsterVector[i] != nullptr)
 		{
@@ -34,7 +33,7 @@ void MonsterManager::Update()
 
 void MonsterManager::Render(HDC hdc)
 {
-	for (int i = 0; i < monsterNumber; i++)
+	for (int i = 0; i < monsterVector.size(); i++)
 	{
 		if (monsterVector[i] != nullptr)
 		{
@@ -111,7 +110,7 @@ void MonsterManager::SetPlayer(weak_ptr<Player> _player)
 	}
 }
 
-MonsterImageInfo MonsterManager::GetMonsterDataFromJson()
+void MonsterManager::GetMonsterDataFromJson()
 {
 	std::ifstream file("MonsterData.json");
 	if (!file.is_open())
@@ -124,16 +123,18 @@ MonsterImageInfo MonsterManager::GetMonsterDataFromJson()
 	
 	MonsterImageInfo monsterInfo;
 
-	
-		monsterInfo.keyName = jon["keyName"].get<std::string>();
+     for (const auto& item : jon["monster"])
+	{
+		monsterInfo.keyName = item["keyName"].get<std::string>();
 
-		monsterInfo.imagePath = StringToTCHAR(jon["imagePath"].get<std::string>());
-		monsterInfo.width = jon["width"].get<int>();
-		monsterInfo.height = jon["height"].get<int>();
-		monsterInfo.imageFrameX = jon["imageFrameX"].get<int>();
-		monsterInfo.ImageFrameY = jon["imageFrameY"].get<int>();
-		
-		return monsterInfo;
+		monsterInfo.imagePath = StringToTCHAR(item["imagePath"].get<std::string>());
+		monsterInfo.width = item["width"].get<int>();
+		monsterInfo.height = item["height"].get<int>();
+		monsterInfo.imageFrameX = item["imageFrameX"].get<int>();
+		monsterInfo.ImageFrameY = item["imageFrameY"].get<int>();
+		vecMonsterInfo.push_back(monsterInfo);
+	
+	 }
 }
 
 
