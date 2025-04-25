@@ -78,9 +78,12 @@ void ShadowCasting::Update()
 	{
 		if (auto p = player.lock())
 		{
-			// 플레이어가 위치한 타일 기준 시야 계산
-			POINT pos = p->GetTileIndex();
-			ComputeShadowMap(pos);
+			if (p)
+			{
+				// 플레이어가 위치한 타일 기준 시야 계산
+				POINT pos = p->GetTileIndex();
+				ComputeShadowMap(pos);
+			}
 		}
 	}
 
