@@ -1,5 +1,8 @@
 ## 프로젝트 시연 영상
 https://www.youtube.com/watch?v=dScyBdCraeI
+## 발표 자료
+https://docs.google.com/presentation/d/1nQrv_zrJGoHVlTaP4HoKOac3sP8H_0-o/edit?usp=sharing&ouid=109931408228545427115&rtpof=true&sd=true
+
 ## 🛠 기술 스택
 
 - **언어**: C++
