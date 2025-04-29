@@ -179,6 +179,9 @@
     <ClCompile Include="SoundManager.cpp">
       <Filter>2D Framework\SoundManager</Filter>
     </ClCompile>
+    <ClCompile Include="BossScene.cpp">
+      <Filter>Scene\GamePlayScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -381,6 +384,9 @@
     </ClInclude>
     <ClInclude Include="SoundManager.h">
       <Filter>2D Framework\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="BossScene.h">
+      <Filter>Scene\GamePlayScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

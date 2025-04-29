@@ -25,7 +25,12 @@
 #include "MainMenuScene.h"
 #include "LobbyScene.h"
 #include "LevelScene.h"
+#include "BossScene.h"
+
+#include "LevelManager.h"
+
 #include "EffectManager.h"
+
 
 #define MENU_ID_SAVE 1
 #define MENU_ID_LOAD 2
@@ -143,6 +148,10 @@ HRESULT MainGame::Init()
 	level->SetPlayerManager(playerManager);
 	SceneManager::GetInstance()->AddScene("LevelScene", level);
 
+	BossScene* boss = new BossScene();
+	boss->SetPlayerManager(playerManager);
+	SceneManager::GetInstance()->AddScene("BossScene", boss);
+
 	SceneManager::GetInstance()->AddLoadingScene("Loading", new LoadingScene());
 
 	//Init Camera
@@ -158,7 +167,11 @@ HRESULT MainGame::Init()
 	SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
 	SoundManager::GetInstance()->ChangeVolumeBgm(0.1f);
 
-
+	if (nullptr == levelManager)
+	{
+		levelManager = make_unique<LevelManager>();
+		levelManager->Init();
+	}
 
 	Camera::GetInstance()->SetTarget(playerManager->GetPlayer(PlayerIndex::PLAYER1));
 
@@ -213,7 +226,11 @@ void MainGame::Release()
 		delete backBuffer;
 		backBuffer = nullptr;
 	}
-
+	if (levelManager)
+	{
+		levelManager->Release();
+		levelManager = nullptr;
+	}
 	ReleaseDC(g_hWnd, hdc);
 }
 

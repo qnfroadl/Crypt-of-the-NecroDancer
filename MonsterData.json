@@ -1,0 +1,69 @@
+{
+	"monster":
+	[
+		{
+		"keyName": "skeleton",
+		"imagePath": "Image/Monster/skeleton_Normal.bmp",
+		"width": 195,
+		"height": 25,
+		"imageFrameX": 8,
+		"imageFrameY": 1
+		},
+		{
+			"keyName": "silme",
+			"imagePath": "Image/Monster/slime_green_normal.bmp",
+			"width": 104,
+			"height": 26,
+			"imageFrameX": 4,
+			"imageFrameY": 1
+		},
+		{
+			"keyName": "BlueSilme",
+			"imagePath": "Image/Monster/slime_ice_normal.bmp",
+			"width": 104,
+			"height": 26,
+			"imageFrameX": 4,
+			"imageFrameY": 1
+		},
+		{
+			"keyName": "blackSilme",
+			"imagePath": "Image/Monster/slime_ice_black.bmp",
+			"width": 104,
+			"height": 26,
+			"imageFrameX": 4,
+			"imageFrameY": 1
+		},
+		{
+			"keyName": "blackSkeleton",
+			"imagePath": "Image/Monster/skeleton_Black.bmp",
+			"width": 195,
+			"height": 25,
+			"imageFrameX": 8,
+			"imageFrameY": 1
+		},
+		{
+			"keyName": "silme",
+			"imagePath": "Image/Monster/slime_green_normal.bmp",
+			"width": 104,
+			"height": 26,
+			"imageFrameX": 4,
+			"imageFrameY": 1
+		},
+		{
+			"keyName": "skeleton",
+			"imagePath": "Image/Monster/skeleton_Normal.bmp",
+			"width": 195,
+			"height": 25,
+			"imageFrameX": 8,
+			"imageFrameY": 1
+		},
+		{
+			"keyName": "silme",
+			"imagePath": "Image/Monster/slime_green_normal.bmp",
+			"width": 104,
+			"height": 26,
+			"imageFrameX": 4,
+			"imageFrameY": 1
+		}
+	]
+}

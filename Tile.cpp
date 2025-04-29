@@ -54,8 +54,6 @@ void Tile::Render(HDC hdc, bool useCamera)
 
 	if (false == sightInfo.revealed && useCamera)
 	{
-
-		
 		return;
 	}
 
@@ -76,6 +74,10 @@ void Tile::Render(HDC hdc, bool useCamera)
 		//	true
 		//);
 		float brightness = GetBrightness();
+		if (false == GetSightInfo().visible)
+		{
+			brightness = 0.3;
+		}
 		tileImage->FrameRender(
 			hdc,
 			static_cast<int>(renderX),
@@ -174,7 +176,7 @@ void Tile::OnBeat(bool isCombo)
 			SetTileNum(1);
 			break;
 		case TileType::COMBO1_DIRT:
-			SetTileNum((index.x + index.y) % 2 == 0 ? 1 : 0);
+			SetTileNum((index.x + index.y) % 2 == 0 ? 0 : 1);
 			break;
 		default:
 			break;

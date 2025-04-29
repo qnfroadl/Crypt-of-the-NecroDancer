@@ -48,6 +48,13 @@ void Torch::Render(HDC hdc, bool useCamera)
 	{
 		centerX -= Camera::GetInstance()->GetPos().x;
 		centerY -= Camera::GetInstance()->GetPos().y;
+
+		float brightness = GetBrightness();
+		if (false == GetSightInfo().visible)
+		{
+			brightness = 0.3;
+		}
+
 		torchImage->FrameRender(
 			hdc,
 			static_cast<int>(centerX),
@@ -55,7 +62,7 @@ void Torch::Render(HDC hdc, bool useCamera)
 			curFrame, 0,
 			static_cast<float>(TILE_SCALE),
 			static_cast<float>(TILE_SCALE),
-			false, true, GetDynamicBrightness() + GetStaticBrightness(), 0.0f
+			false, true, brightness, 0.0f
 		);
 	}
 	else

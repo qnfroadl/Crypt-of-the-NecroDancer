@@ -34,6 +34,12 @@ void Block::Render(HDC hdc, bool useCamera)
 		centerX -= Camera::GetInstance()->GetPos().x;
 		centerY -= Camera::GetInstance()->GetPos().y;
 
+		float brightness = GetBrightness();
+		if (false == GetSightInfo().visible)
+		{
+			brightness = 0.3;
+		}
+
 		blocklImage->FrameRender(
 			hdc,
 			static_cast<int>(centerX),
@@ -43,7 +49,7 @@ void Block::Render(HDC hdc, bool useCamera)
 			static_cast<float>(TILE_SCALE),
 			static_cast<float>(TILE_SCALE),
 			false, true
-			, GetStaticBrightness() + GetDynamicBrightness(), 0.0f
+			, brightness, 0.0f
 		);
 	}
 	else
@@ -58,8 +64,13 @@ void Block::Render(HDC hdc, bool useCamera)
 		);
 	}
 
-	if (torch)
+	if (torch) 
+	{
+		torch->SetBrightnessInfo(GetBrightnessInfoInfo());
+		torch->SetSightInfo(GetSightInfo());
 		torch->Render(hdc, useCamera);
+	}
+		
 }
 void Block::Update()
 {

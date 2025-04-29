@@ -163,8 +163,8 @@ HRESULT PositionManager::Init()
 
 void PositionManager::Release()
 {
+    posMap.clear();
     EventManager::GetInstance()->UnbindEvent(this, EventType::INTERACT);
-
 }
 void PositionManager::Update()
 {
@@ -175,7 +175,9 @@ void PositionManager::Update()
         auto& vec = it->second;
         for (auto& actor : vec)
         {
-            if (actor->IsActive())
+            int count = actor.use_count();
+
+            if (0 < count && actor->IsActive())
             {
                 actor->Update();
             }

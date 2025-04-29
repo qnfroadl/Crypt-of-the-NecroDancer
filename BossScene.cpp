@@ -1,4 +1,4 @@
-ï»¿#include "LevelScene.h"
+#include "BossScene.h"
 #include "Tilemap.h"
 #include "Camera.h"
 #include "CommonFunction.h"
@@ -26,14 +26,13 @@
 #include "BeatManager.h"
 #include "TileActorRenderer.h"
 
-HRESULT LevelScene::Init()
+HRESULT BossScene::Init()
 {
-    // InitMap
-    SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
+     SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
     //map = make_shared<Tilemap>();
     //map->Init(20, 20);
     //map->Load("map/ZONE1_01.map");
-    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("ZONE1", 30, 30)));
+    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("BOSS")));
     //map->PrintSpawnPoints();
     blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
@@ -81,7 +80,7 @@ HRESULT LevelScene::Init()
     monsterManager->SetPositionManager(positionManager);
     monsterManager->SetTileMap(map);
     monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
-    
+    monsterManager->SetTp();
 
 
     SoundManager::GetInstance()->PlaySoundBgm(ESoundKey::ZONE1_1, ESoundKey::ZONE1_1_SHOPKEEPER_M);
@@ -98,15 +97,26 @@ HRESULT LevelScene::Init()
 
     shadowCasting->Update();
 
+
+   
     return S_OK;
 }
 
-void LevelScene::Release()
+void BossScene::Release()
 {
     if (uiManager)
     {
         uiManager->Release();
         uiManager = nullptr;
+    }
+    if (itemSpawner)
+    {
+        itemSpawner->Release();
+        itemSpawner = nullptr;
+    }
+    if (map) {
+        map->Release();
+        map = nullptr;
     }
 
     if (positionManager)
@@ -115,50 +125,25 @@ void LevelScene::Release()
         positionManager = nullptr;
     }
 
-    if (map)
-    {
-        map->Release();
-        map = nullptr;
-    }
-    if (itemSpawner)
-    {
-        itemSpawner->Release();
-        itemSpawner = nullptr;
-    }
+
     if (beatManager)
     {
         beatManager->Release();
         beatManager = nullptr;
     }
 
-    if (renderer)
-    {
-        renderer->Release();
-        renderer = nullptr;
-    }
 
-    if (monsterManager)
-    {
-		monsterManager->Release();
-		monsterManager = nullptr;
-    }
 
-    if (shadowCasting)
-    {
-		shadowCasting->Release();
-		shadowCasting = nullptr;
-    }
+    playerManager.lock()->BindRelease();
 
-	playerManager.lock()->BindRelease();
     DeleteObject(blackBrush);
-
 }
 
-void LevelScene::Update()
+void BossScene::Update()
 {
     if (map)
     {
-		map->Update();
+        map->Update();
     }
     if (uiManager)
     {
@@ -166,6 +151,7 @@ void LevelScene::Update()
     }
 
     positionManager->Update();
+    // playerManager.lock()->Update();
 
     if (KeyManager::GetInstance()->IsOnceKeyDown(VK_F3))
     {
@@ -175,26 +161,23 @@ void LevelScene::Update()
     {
         SoundManager::GetInstance()->SetTempo(1.2f);
     }
-    if (KeyManager::GetInstance()->IsOnceKeyDown('G'))
-    {
-        EventManager::GetInstance()->AddEvent(EventType::ENTERZONE, nullptr);
-    }
+
     if (beatManager)
     {
         beatManager->Update();
     }
+
 }
 
-void LevelScene::Render(HDC hdc)
+void BossScene::Render(HDC hdc)
 {
     FPOINT pos = playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1).lock()->GetPos();
     FPOINT cPos = Camera::GetInstance()->GetPos();
-    // ê²€ì€ìƒ‰ ë°°ê²½ìœ¼ë¡œ ì´ˆê¸°í™”    
-    RenderFillRectAtCenter(hdc, blackBrush,
-        pos.x - cPos.x, pos.y - cPos.y,
-        SCENE_WIDTH, SCENE_HEIGHT);
 
-    // íƒ€ì¼, ì•¡í„°ë“¤ ë Œë”ë§.
+    // °ËÀº»ö ¹è°æÀ¸·Î ÃÊ±âÈ­    (ÇÃ·¹ÀÌ¾îÀÇ ½ºÅ©¸°º¸½º¸¦ Áß½ÉÀ¸·Î)
+    RenderFillRectAtCenter(hdc, blackBrush, pos.x - cPos.x, pos.y - cPos.y, SCENE_WIDTH, SCENE_HEIGHT);
+
+    // Å¸ÀÏ, ¾×ÅÍµé ·»´õ¸µ.
     if (renderer)
     {
         renderer->Render(hdc);
@@ -209,82 +192,11 @@ void LevelScene::Render(HDC hdc)
     {
         uiManager->Render(hdc);
     }
+    
 
 }
 
-HRESULT LevelScene::InitBoss()
-{
-    SetClientRect(g_hWnd, SCENE_WIDTH, SCENE_HEIGHT);
-
-    map = make_shared<Tilemap>(*(TilemapGenerator::GetInstance()->Generate("BOSS")));
-    blackBrush = CreateSolidBrush(RGB(0, 0, 0));
-
-    positionManager = make_shared<PositionManager>();
-    positionManager->Init();
-
-    itemSpawner = make_shared<ItemSpawner>();
-    itemSpawner->Init();
-    itemSpawner->SetPositionManager(positionManager);
-    itemSpawner->SetTileMap(map);
-
-    uiManager = make_shared<UIManager>();
-    uiManager->Init();
-
-    PlayerWallet* playerCoin = new PlayerWallet();
-    playerCoin->Init();
-    uiManager->AddUI(playerCoin);
-
-    PlayerHp* playerHp = new PlayerHp();
-    playerHp->Init();
-    playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
-    uiManager->AddUI(playerHp);
-
-    MultipleGoldUI* multipleGold = new MultipleGoldUI();
-    multipleGold->Init();
-    uiManager->AddUI(multipleGold);
-
-    shadowCasting = make_shared<ShadowCasting>();
-    shadowCasting->Init(map->GetTiles());
-
-    float playerCount = 1;
-    if (playerManager.lock())
-    {
-        playerManager.lock()->SetPositionManager(positionManager);
-        playerManager.lock()->SetTileMap(map);
-        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerCoin);
-        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, playerHp);
-        playerManager.lock()->BindPlayerObserver(PlayerIndex::PLAYER1, multipleGold);
-        shadowCasting->AddPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
-        playerCount = playerManager.lock()->GetPlayerCount();
-    }
-
-
-    monsterManager = make_shared<MonsterManager>();
-    monsterManager->SpwanBossMonster();
-    monsterManager->SetPositionManager(positionManager);
-    monsterManager->SetTileMap(map);
-    monsterManager->SetPlayer(playerManager.lock()->GetPlayer(PlayerIndex::PLAYER1));
-    monsterManager->SetTp();
-
-
-
-    SoundManager::GetInstance()->PlaySoundBgm(soundKey[2].first, soundKey[2].second);
-    beatManager = make_shared<BeatManager>();
-    beatManager->Init();
-    beatManager->StartBeat(true);
-    beatManager->SetActive2P(playerCount == 1 ? false : true);
-
-    renderer = make_shared<TileActorRenderer>();
-    renderer->Init();
-    renderer->SetPositionManager(positionManager);
-    renderer->SetTileMap(map);
-
-    shadowCasting->Update();
-
-    return S_OK;
-}
-
-void LevelScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
+void BossScene::SetPlayerManager(shared_ptr<PlayerManager> playerManager)
 {
     this->playerManager = playerManager;
 
