@@ -1,3 +1,5 @@
+## 프로젝트 시연 영상
+https://www.youtube.com/watch?v=dScyBdCraeI
 ## 🛠 기술 스택
 
 - **언어**: C++
