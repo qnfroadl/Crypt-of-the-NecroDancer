@@ -81,8 +81,7 @@
 
 📅 개발 일정표 (2주 단기 프로젝트)
 
-![image.png](attachment:7be68933-e809-48e8-b78c-a659f02182c5:image.png)
-
+<img width="536" alt="Image" src="https://github.com/user-attachments/assets/ce53e06a-9484-41fa-89bf-e81927030a1e" />
 ---
 
 ## 👥 역할 분담 (4인 기준)
